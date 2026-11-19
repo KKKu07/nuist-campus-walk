@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" href="icon.svg"><title>南信大 · 校园漫游小游戏</title>
+<link rel="stylesheet" href="game.css"><link rel="stylesheet" href="campus-hud.css"></head>
+<body>
+<canvas id="canvas" aria-label="三维校园"></canvas>
+<header class="hud-glass"><span class="campus-emblem" aria-hidden="true">南</span><section><strong>南信大 · 校园漫游</strong><span id="progress"></span></section></header>
+<aside id="taskCard" class="hud-glass"><section class="task-meta"><span id="taskKind">迎新手记</span><output id="taskDistance"></output></section>
+<h2 id="task"></h2><p id="taskHint"></p><button id="trackTask"></button></aside>
+<nav class="hud-glass" aria-label="漫游工具"><button id="map" data-key="M">校园鸟瞰</button><button id="photo" data-key="P">拍照留影</button></nav>
+<section id="walkingGuide" class="hud-glass" aria-label="步行指引" hidden><i aria-hidden="true">↑</i><section><small>步行指引</small><strong></strong><span></span></section><button aria-label="结束步行指引">×</button></section>
+<div id="selectedPin" aria-hidden="true" hidden></div>
+<section id="destinations" aria-label="校园地点" hidden>
+<section class="atlas-head"><h2>校园地图</h2><button id="closeMap" aria-label="关闭地图">×</button></section>
+<label class="place-search"><span aria-hidden="true">⌕</span><input type="search" id="placeSearch" placeholder="搜索地点" aria-label="搜索校园地点"></label>
+<section class="filters" aria-label="筛选地点"><button data-filter="all" aria-pressed="true">全部</button><button data-filter="unread" aria-pressed="false">未读简介</button></section>
+<ul id="placeList" aria-label="目的地"></ul><p id="emptyPlaces" hidden></p>
+<section id="placeDetail" hidden><small id="placeStatus"></small><h3 id="placeName"></h3><section class="place-actions"><button id="walkTo">步行指引</button><button id="jumpTo">传送到此</button></section></section></section>
+<section id="contextActions" aria-label="附近可用操作"><button id="interact" hidden><kbd>E</kbd><span><strong></strong><small>阅读地点简介</small></span></button></section>
+<div id="notice" role="status"></div><div id="joystick" aria-label="行走摇杆"><div id="knob"></div></div>
+<section id="welcome" aria-label="人物装扮"><article class="creator"><div class="creator-heading"><small>NUIST · YOUR CAMPUS LIFE</small><h1>以你的模样，走进校园</h1><p>挑一身喜欢的装扮，从图书馆开始慢慢逛。</p></div><div class="creator-body"><div class="preview-panel"><canvas id="characterPreview" aria-label="人物装扮实时预览"></canvas><span class="preview-caption">你的校园形象</span><label class="rotation-label">转身看看<input id="characterRotation" type="range" min="-180" max="180" value="0" aria-label="旋转人物预览"></label></div><div id="appearanceOptions"></div></div><div class="creator-bottom"><p class="hint">装扮保存在当前浏览器，进入后也可以更换。<br>WASD 行走 · 拖动画面环顾 · C 切换视角</p><button id="start">穿好啦，进入校园 →</button></div><p id="appearanceNotice" role="status"></p></article></section>
+<dialog id="story" aria-labelledby="storyName"><small class="story-label">校园手记 · 地点简介</small><h2 id="storyName"></h2><p id="storyText"></p><button id="closeStory" autofocus>继续逛逛</button></dialog>
+<footer>© OpenStreetMap contributors</footer><script src="game.bundle.js"></script></body></html>
