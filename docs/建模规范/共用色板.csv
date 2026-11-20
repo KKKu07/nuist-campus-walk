@@ -1,0 +1,21 @@
+﻿类别,用途,项目键或来源,sRGB HEX
+外墙与石作,主墙,wall,#EEE4CF
+外墙与石作,白色构件,white,#FFF6DF
+外墙与石作,石线脚,trim,#D0BFA0
+外墙与石作,台阶,sand,#D8C4A0
+屋面与砖墙,蓝灰屋面,blueRoof,#607E91
+屋面与砖墙,暖瓦屋面,roof,#BB806F
+屋面与砖墙,浅砖墙,brick,#B98A77
+屋面与砖墙,深砖墙,brickBurnt,#A56750
+窗与入口,室内窗景,roomPane,#436171
+窗与入口,普通玻璃,glass,#395C70
+窗与入口,灰绿框料,slate,#85938E
+窗与入口,馆名字色,entrance-signs.js 字色,#E6B550
+树冠与地面,背光树冠,leafDark,#326B4A
+树冠与地面,中间叶色,leaf,#548B55
+树冠与地面,受光叶簇,leafLight,#80A85F
+树冠与地面,草地区块,grass,#BFD09C
+道路与小品,人行铺地,paving,#F2E3BE
+道路与小品,路缘石,curb,#C9C7B6
+道路与小品,沥青路面,asphalt,#74797B
+道路与小品,几何轮廓,game.js 几何线色,#303A40
