@@ -4,7 +4,16 @@
 
 现有内容：306 栋建筑，其中 64 个 Blender 精修地标、178 栋 Blender 普通楼模型；约 34,000 棵树；303 条道路；29 处运动场。
 
-## 打开
+## 最简单：下载一个文件，双击打开（给老师演示用这个）
+
+1. 在本分支的文件列表里点 **`nuist-campus-3d.html`**，再点右上角的 **下载按钮**（Download raw file，向下箭头图标）。文件约 42 MB。
+   也可以点绿色的 **Code → Download ZIP**，解压后找到 `nuist-campus-3d.html`。
+2. 双击这个文件，用 **Chrome 或 Edge** 打开（默认不是这两个浏览器的话：右键 → 打开方式 → 选 Chrome 或 Edge）。
+3. 等 10～30 秒加载完，就是全校俯瞰画面。**不需要联网，也不需要安装任何软件。**
+
+注意：不要点 GitHub 上的 “View raw” 或在网页里预览这个文件（只会显示一大段代码），一定要下载到电脑上再双击。建议用电脑，有独立显卡更流畅。
+
+## 开发方式（需要 Node.js）
 
 需要 [Node.js](https://nodejs.org/) 18 以上。
 
@@ -17,7 +26,7 @@ npm run dev
 
 浏览器打开终端里显示的地址（默认 http://localhost:5173 ）。首次加载约 40 MB，需要几秒到十几秒。建议用电脑上的 Chrome / Edge，独立显卡更流畅。
 
-打包成静态网页：`npm run build`，把生成的 `dist/` 整个放到任意静态网站（GitHub Pages、学校服务器等）。`dist/index.html` 不能直接双击打开（浏览器不允许本地网页读取数据文件），本机查看用 `npm run preview`。
+打包成静态网页：`npm run build`，把生成的 `dist/` 整个放到任意静态网站（GitHub Pages、学校服务器等）。`dist/index.html` 不能直接双击打开（浏览器不允许本地网页读取数据文件），本机查看用 `npm run preview`；要双击打开就用上面的 `nuist-campus-3d.html`（所有模型、贴图、数据都打包在这一个文件里）。
 
 ## 操作
 
@@ -42,4 +51,4 @@ npm run dev
 
 ## 这个分支怎么来的
 
-由完整项目（含玩法、数据工具和 Blender 工程，另行保存）自动生成：`tools/make_showcase_branch.py`，来源提交 `3bb9e4b5dd6a`，生成日期 2026-11-27。请不要直接在这个分支上改代码；要改场景，在完整项目里改好后重新生成。
+由完整项目（含玩法、数据工具和 Blender 工程，另行保存）自动生成：`tools/make_showcase_branch.py`（`nuist-campus-3d.html` 由 `tools/offline_html.py` 打包），来源提交 `3bb9e4b5dd6a`，生成日期 2026-11-27。请不要直接在这个分支上改代码；要改场景，在完整项目里改好后重新生成。
