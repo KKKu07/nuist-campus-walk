@@ -1,0 +1,141 @@
+{
+ "box": [
+  -460.0,
+  -160.0,
+  -250.0,
+  -20.0
+ ],
+ "buildings": [],
+ "roads": [
+  {
+   "id": 656927781,
+   "name": "龙山北路",
+   "kind": "tertiary",
+   "w": 11.5,
+   "sw": 3.0,
+   "pave": "grey",
+   "audited": true
+  },
+  {
+   "id": 682188146,
+   "name": "",
+   "kind": "service",
+   "w": 5.5,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 682188149,
+   "name": "",
+   "kind": "service",
+   "w": 9.5,
+   "sw": 2.4,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 682188165,
+   "name": "",
+   "kind": "service",
+   "w": 9.5,
+   "sw": 2.4,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 971602093,
+   "name": "",
+   "kind": "service",
+   "w": 6.0,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 1057165398,
+   "name": "",
+   "kind": "footway",
+   "w": 3,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 1057165399,
+   "name": "",
+   "kind": "footway",
+   "w": 3,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  }
+ ],
+ "sports": [
+  {
+   "kind": "court",
+   "name": "",
+   "obb": [
+    -378.34,
+    -154.41,
+    25.6,
+    14.81,
+    3.0096
+   ]
+  },
+  {
+   "kind": "court",
+   "name": "",
+   "obb": [
+    -348.01,
+    -158.23,
+    26.07,
+    14.54,
+    3.0046
+   ]
+  },
+  {
+   "kind": "soccer",
+   "name": "",
+   "obb": [
+    -353.88,
+    -88.57,
+    107.32,
+    71.13,
+    -1.7076
+   ]
+  },
+  {
+   "kind": "oval",
+   "name": "",
+   "obb": [
+    -353.88,
+    -88.57,
+    181.36,
+    106.07,
+    -1.7076
+   ]
+  }
+ ],
+ "markers": [
+  {
+   "name": "临江楼",
+   "cat": "教学科研",
+   "x": -329.0,
+   "z": -26.1
+  },
+  {
+   "name": "西苑文创街区",
+   "cat": "商业服务",
+   "x": -449.8,
+   "z": -53.5
+  },
+  {
+   "name": "西苑运动场",
+   "cat": "体育场馆",
+   "x": -335.7,
+   "z": -78.9
+  }
+ ],
+ "models": []
+}

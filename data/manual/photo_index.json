@@ -1,0 +1,166 @@
+{
+ "气象楼": [
+  {
+   "file": "photos/qixianglou_0.jpg",
+   "caption": "气象楼"
+  },
+  {
+   "file": "photos/qixianglou_1.jpg",
+   "caption": "气象楼 (2)"
+  },
+  {
+   "file": "photos/qixianglou_2.jpg",
+   "caption": "气象楼-晚霞"
+  },
+  {
+   "file": "photos/qixianglou_3.jpg",
+   "caption": "气象楼-亮灯"
+  },
+  {
+   "file": "photos/qixianglou_4.jpg",
+   "caption": "气象楼"
+  }
+ ],
+ "尚贤楼": [
+  {
+   "file": "photos/shangxianlou_0.jpg",
+   "caption": "尚贤楼"
+  }
+ ],
+ "图书馆": [
+  {
+   "file": "photos/tushuguan_0.jpg",
+   "caption": "图书馆"
+  },
+  {
+   "file": "photos/tushuguan_1.jpg",
+   "caption": "图书馆"
+  }
+ ],
+ "文德楼": [
+  {
+   "file": "photos/wendelou_0.jpg",
+   "caption": "文德楼"
+  },
+  {
+   "file": "photos/wendelou_1.jpg",
+   "caption": "文德楼"
+  }
+ ],
+ "滨江楼": [
+  {
+   "file": "photos/binjianglou_0.jpg",
+   "caption": "滨江楼"
+  }
+ ],
+ "藕舫楼": [
+  {
+   "file": "photos/oufanglou_0.jpg",
+   "caption": "藕舫楼"
+  },
+  {
+   "file": "photos/oufanglou_1.jpg",
+   "caption": "藕舫园"
+  }
+ ],
+ "见山园": [
+  {
+   "file": "photos/jianshanyuan_0.jpg",
+   "caption": "见山园"
+  },
+  {
+   "file": "photos/jianshanyuan_1.jpg",
+   "caption": "见山园"
+  }
+ ],
+ "逸夫楼": [
+  {
+   "file": "photos/yifulou_0.jpg",
+   "caption": "逸夫楼"
+  },
+  {
+   "file": "photos/yifulou_1.jpg",
+   "caption": "樱花大道"
+  }
+ ],
+ "行政楼": [
+  {
+   "file": "photos/xingzhenglou_0.jpg",
+   "caption": "行政楼前杏树(2)"
+  }
+ ],
+ "东苑体育馆": [
+  {
+   "file": "photos/dongyuan_tiyuguan_0.jpg",
+   "caption": "体育馆"
+  },
+  {
+   "file": "photos/dongyuan_tiyuguan_1.jpg",
+   "caption": "东苑体育馆"
+  }
+ ],
+ "水云方": [
+  {
+   "file": "photos/shuiyunfang_0.jpg",
+   "caption": "游泳馆水立方"
+  }
+ ],
+ "国际教育学院": [
+  {
+   "file": "photos/guoji_jiaoyu_0.jpg",
+   "caption": "国际教育学院"
+  }
+ ],
+ "信息科技大楼": [
+  {
+   "file": "photos/xinxikeji_0.jpg",
+   "caption": "临江楼"
+  },
+  {
+   "file": "photos/xinxikeji_1.jpg",
+   "caption": "临江楼 (2)"
+  },
+  {
+   "file": "photos/xinxikeji_2.jpg",
+   "caption": "临江楼 (3)"
+  }
+ ],
+ "气象谷美食城": [
+  {
+   "file": "photos/qixianggu_0.jpg",
+   "caption": "气象谷"
+  },
+  {
+   "file": "photos/qixianggu_1.jpg",
+   "caption": "气象谷2"
+  }
+ ],
+ "老校门": [
+  {
+   "file": "photos/laoxiaomen_0.jpg",
+   "caption": "校门"
+  }
+ ],
+ "东大门": [
+  {
+   "file": "photos/dongdamen_0.jpg",
+   "caption": "东大门全景"
+  }
+ ],
+ "升旗广场": [
+  {
+   "file": "photos/shengqi_0.jpg",
+   "caption": "升旗广场"
+  },
+  {
+   "file": "photos/shengqi_1.jpg",
+   "caption": "升旗广场"
+  }
+ ],
+ "雷达塔": [
+  {
+   "file": "photos/leidata_0.jpg",
+   "caption": "雷达塔"
+  }
+ ]
+}

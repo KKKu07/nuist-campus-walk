@@ -1,0 +1,53 @@
+# 宿舍檐口（2026-11-28 重建）：楼名 | 结果 | 层数 | 檐口 m | 屋脊 m
+# 规则：檐口 = 官网层数 × 3.1，坡高 = 0.2 × 进深；模型的 DSM 等效 p70（檐口 + 0.6 × 坡高）与配准后 DSM p70 相差 ≤ 1.5 m 且屋脊 ≤ p95 + 1 m 时用规则，否则按 DSM 拟合（层高限 2.9–3.6 m）
+文园17栋 rule (no reliable DSM) 6 18.6 21.5
+文园20栋 rule ok 6 18.6 22.8
+文园21栋 rule ok 6 18.6 23.4
+文园11栋 rule failed (p70 19.9, p95 20.9) -> DSM fit 6 17.6 21.4
+文园4栋 rule ok 6 18.6 21.8
+文园19栋 rule ok 6 18.6 21.8
+文园1栋 rule ok 6 18.6 21.5
+文园2栋 rule ok 6 18.6 22.1
+文园3栋 rule ok 6 18.6 21.8
+文园12栋 rule ok 6 18.6 22.7
+文园13栋 rule ok 6 18.6 22.6
+文园14栋 rule ok 6 18.6 22.8
+文园15栋 rule ok 6 18.6 22.2
+文园16栋 rule (no reliable DSM) 6 18.6 22.5
+文园10栋 rule failed (p70 13.7, p95 15.0) -> DSM fit 6 17.4 20.8
+文园18栋 rule ok 6 18.6 22.2
+文园5栋 rule failed (p70 22.4, p95 26.1) -> DSM fit 6 20.3 23.8
+文园6栋 rule ok 6 18.6 22.2
+文园7栋 rule ok 6 18.6 22.1
+文园8栋 rule ok 6 18.6 22.8
+文园9栋 rule ok 6 18.6 22.0
+沁园35栋 rule failed (p70 22.1, p95 23.3) -> DSM fit 7 20.3 24.3
+沁园36栋 rule failed (p70 21.2, p95 22.9) -> DSM fit 6 18.0 23.3
+新园31栋 rule failed (p70 21.3, p95 22.8) -> DSM fit 5 18.0 23.1
+沁园27栋 rule ok 6 18.6 23.4
+沁园28栋 rule failed (p70 20.6, p95 22.3) -> DSM fit 6 17.4 23.2
+沁园29栋 rule failed (p70 20.3, p95 22.3) -> DSM fit 6 17.4 22.8
+沁园32栋 rule failed (p70 20.7, p95 21.9) -> DSM fit 6 17.9 22.6
+沁园34栋 rule failed (p70 21.4, p95 22.4) -> DSM fit 7 20.3 23.4
+沁园35栋 rule failed (p70 21.3, p95 22.8) -> DSM fit 6 18.1 23.4
+沁园37栋 rule failed (p70 21.0, p95 22.7) -> DSM fit 6 17.4 23.5
+沁园40栋 rule failed (p70 20.6, p95 22.1) -> DSM fit 5 17.2 22.9
+青教公寓6幢 rule failed (p70 16.4, p95 16.9) -> DSM fit 3 10.8 13.4
+沁园38栋 rule failed (p70 19.0, p95 20.4) -> DSM fit 6 17.4 21.2
+沁园39栋 rule ok 5 15.5 18.8
+沁园41栋 rule ok 6 18.6 18.6
+862952696 rule failed (p70 15.5, p95 16.9) -> DSM fit 4 14.4 14.4
+沁园22栋 rule failed (p70 16.0, p95 16.8) -> DSM fit 4 14.4 14.4
+沁园23栋 rule failed (p70 15.4, p95 16.5) -> DSM fit 4 14.4 14.4
+沁园25栋 rule ok 5 15.5 20.1
+沁园30栋 rule ok 6 18.6 23.7
+东苑晖园14 rule failed (p70 23.2, p95 25.3) -> DSM fit 6 21.0 24.7
+硕园5栋-云中信大 rule failed (p70 26.1, p95 27.8) -> DSM fit 6 21.6 25.9
+东苑晖园11 rule ok 6 18.6 22.4
+东苑晖园12 rule failed (p70 22.9, p95 24.2) -> DSM fit 6 20.6 24.4
+东苑晖园13 rule ok 6 18.6 22.5
+硕园3栋 rule failed (p70 23.0, p95 24.1) -> DSM fit 6 20.9 24.4
+硕园4栋 rule failed (p70 23.0, p95 23.6) -> DSM fit 6 20.7 24.5
+硕园1栋 rule failed (p70 23.3, p95 24.7) -> DSM fit 6 21.0 24.8
+硕园2栋 rule failed (p70 22.6, p95 23.3) -> DSM fit 6 20.4 24.1
+硕园6栋 rule failed (p70 18.5, p95 20.2) -> DSM fit 6 17.4 20.3

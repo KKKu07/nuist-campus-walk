@@ -1,0 +1,17 @@
+#startMenu { position: fixed; inset: 0; z-index: 47; display: flex; align-items: center; padding: 24px; pointer-events: none; }
+.sm-card { pointer-events: auto; width: min(380px, calc(100vw - 32px)); background: rgba(16,24,22,.86); color: #eef3f0; border-radius: 16px; padding: 20px 22px;
+  box-shadow: 0 16px 50px rgba(0,0,0,.45); backdrop-filter: blur(6px); display: grid; gap: 10px; }
+.sm-card h1 { margin: 0; font-size: 30px; letter-spacing: 4px; }
+.sm-card h3 { margin: 6px 0 0; font-size: 13px; color: #a9b8b2; font-weight: 500; }
+.sm-sub { margin: -4px 0 0; color: #a9b8b2; font-size: 13px; }
+.sm-chars { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.sm-char { display: flex; align-items: center; gap: 10px; border: 2px solid transparent; border-radius: 12px; padding: 10px; background: rgba(255,255,255,.08); color: inherit; font: inherit; cursor: pointer; }
+.sm-char i { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; font-style: normal; font-weight: 700; color: #fff; }
+.sm-char.on { border-color: #ff8450; background: rgba(255,132,80,.16); }
+.sm-go { display: grid; gap: 2px; text-align: left; border: 1px solid rgba(255,255,255,.18); border-radius: 12px; padding: 12px 14px; background: rgba(255,255,255,.06); color: inherit; font: inherit; cursor: pointer; }
+.sm-go b { font-size: 16px; } .sm-go span { font-size: 12px; color: #a9b8b2; }
+.sm-go.primary { background: #e5732a; border-color: #e5732a; } .sm-go.primary span { color: #ffe6d6; }
+.sm-go:hover { filter: brightness(1.08); }
+.sm-keys { margin: 2px 0 0; font-size: 12px; color: #a9b8b2; line-height: 1.6; }
+@media (max-width: 700px) { #startMenu { align-items: flex-end; padding: 12px; } .sm-card { width: 100%; padding: 14px 16px; gap: 8px; } .sm-card h1 { font-size: 24px; } }
+body.menu-on :is(#hud, #card, #questbar, #phHint, #phBanners, #nearby, #lifeTask, #minimap) { display: none !important; }

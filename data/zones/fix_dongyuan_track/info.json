@@ -1,0 +1,164 @@
+{
+ "box": [
+  1170.0,
+  -730.0,
+  1385.0,
+  -570.0
+ ],
+ "buildings": [
+  {
+   "id": 478388467,
+   "name": "东苑体育馆",
+   "h": 22,
+   "lv": null,
+   "kind": "hall",
+   "style": "hall",
+   "color": "#e9e9e6",
+   "replaced": true,
+   "fixed": true
+  }
+ ],
+ "roads": [
+  {
+   "id": 93553393,
+   "name": "杨新路",
+   "kind": "secondary",
+   "w": 8.0,
+   "sw": 3.0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 422681310,
+   "name": "杨新路",
+   "kind": "secondary",
+   "w": 9.0,
+   "sw": 3.0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 656927793,
+   "name": "六合大道",
+   "kind": "primary",
+   "w": 9.0,
+   "sw": 3.0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 682188151,
+   "name": "",
+   "kind": "service",
+   "w": 6,
+   "sw": 0,
+   "pave": null,
+   "audited": true
+  },
+  {
+   "id": 682188169,
+   "name": "",
+   "kind": "service",
+   "w": 5.5,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 971602078,
+   "name": "",
+   "kind": "service",
+   "w": 4.0,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 1057158539,
+   "name": "",
+   "kind": "footway",
+   "w": 3,
+   "sw": 0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 1174938484,
+   "name": "六合大道",
+   "kind": "primary",
+   "w": 6.0,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  }
+ ],
+ "sports": [
+  {
+   "kind": "soccer",
+   "name": "",
+   "obb": [
+    1277.16,
+    -650.37,
+    105.01,
+    67.48,
+    1.4393
+   ]
+  },
+  {
+   "kind": "court",
+   "name": "",
+   "obb": [
+    1253.4,
+    -716.17,
+    24.52,
+    14.38,
+    3.0136
+   ]
+  },
+  {
+   "kind": "court",
+   "name": "",
+   "obb": [
+    1282.88,
+    -720.07,
+    24.72,
+    14.27,
+    3.0093
+   ]
+  },
+  {
+   "kind": "oval",
+   "name": "",
+   "obb": [
+    1277.16,
+    -650.37,
+    176.4,
+    92.4,
+    1.4393
+   ]
+  }
+ ],
+ "markers": [
+  {
+   "name": "体育馆AED",
+   "cat": "AED",
+   "x": 1224.3,
+   "z": -606.4
+  },
+  {
+   "name": "东苑运动场",
+   "cat": "体育场馆",
+   "x": 1295.2,
+   "z": -642.4
+  }
+ ],
+ "models": [
+  {
+   "name": "东苑体育馆",
+   "file": "models/dongyuan_tiyuguan.glb",
+   "x": 1176.15,
+   "z": -654.03,
+   "rotY": 0
+  }
+ ]
+}

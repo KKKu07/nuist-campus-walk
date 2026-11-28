@@ -1,0 +1,14 @@
+{
+  "bbox": {
+    "south": 32.194,
+    "west": 118.6895,
+    "north": 32.2115,
+    "east": 118.7245
+  },
+  "zoom": 18,
+  "size": [
+    6525,
+    3855
+  ],
+  "source": "Esri World Imagery (prototype only)"
+}

@@ -1,0 +1,41 @@
+# 云游南信大 · 不进仓库的内容（怎么重新生成见 CONTRIBUTING.md「不在仓库里的东西」）
+
+# 依赖与环境：npm install / uv 重新装
+web/node_modules/
+.venv/
+__pycache__/
+*.pyc
+
+# 构建产物：npm run build
+web/dist/
+
+# 本机工具：COLMAP 二进制（765 MB），需要时自己下载
+tools/colmap/
+
+# 原始素材和三维重建工作区（几个 GB，单独保存，不进 Git）
+data/source/
+data/recon/
+
+# 下载缓存：对应脚本会自动重新下载
+data/official/tiles/
+data/raw/tiles/
+data/raw/terrain/
+data/assets/ambientcg/
+data/assets/polyhaven/
+
+# Blender 自动备份
+*.blend1
+
+# 本机的 Claude Code 配置（含本机路径）
+.claude/
+
+# 系统和编辑器杂项
+Thumbs.db
+Desktop.ini
+.DS_Store
+*.swp
+.vscode/
+.idea/
+
+# 发给同学的离线展示文件（由 campus-showcase 分支导出，不进 Git）
+release/

@@ -1,0 +1,258 @@
+{
+ "box": [
+  -500.0,
+  -400.0,
+  -300.0,
+  -200.0
+ ],
+ "buildings": [
+  {
+   "id": 862959369,
+   "name": "文园7栋",
+   "h": 18.7,
+   "lv": 6,
+   "kind": "dorm",
+   "style": null,
+   "color": "#d9e3e8",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": 862959370,
+   "name": "文园6栋",
+   "h": 18.7,
+   "lv": 6,
+   "kind": "dorm",
+   "style": null,
+   "color": "#d9e3e8",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": 862959371,
+   "name": "文园5栋",
+   "h": 19.6,
+   "lv": 6,
+   "kind": "dorm",
+   "style": null,
+   "color": "#dae2e7",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": 862959372,
+   "name": "文园10栋",
+   "h": 11.9,
+   "lv": 4,
+   "kind": "dorm",
+   "style": null,
+   "color": "#d9e3e6",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": 862959373,
+   "name": "文园9栋",
+   "h": 18.9,
+   "lv": 6,
+   "kind": "dorm",
+   "style": null,
+   "color": "#d3dae0",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": 862959374,
+   "name": "文园8栋",
+   "h": 19.3,
+   "lv": 6,
+   "kind": "dorm",
+   "style": null,
+   "color": "#d2dbe1",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": 862959384,
+   "name": "文园11栋",
+   "h": 20.2,
+   "lv": 5,
+   "kind": "dorm",
+   "style": null,
+   "color": "#dde1e5",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": 862959385,
+   "name": "文园18栋",
+   "h": 19.4,
+   "lv": 5,
+   "kind": "dorm",
+   "style": null,
+   "color": "#cdd6d6",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": 862959386,
+   "name": "文园4栋",
+   "h": 18.5,
+   "lv": 6,
+   "kind": "dorm",
+   "style": null,
+   "color": "#c6d5db",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": 862959388,
+   "name": "文园3栋",
+   "h": 18.7,
+   "lv": 6,
+   "kind": "dorm",
+   "style": null,
+   "color": "#dbe2e7",
+   "replaced": null,
+   "fixed": null
+  }
+ ],
+ "roads": [
+  {
+   "id": 422681307,
+   "name": "",
+   "kind": "tertiary",
+   "w": 11,
+   "sw": 3.0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 588006878,
+   "name": "",
+   "kind": "tertiary",
+   "w": 11,
+   "sw": 3.0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 656927781,
+   "name": "龙山北路",
+   "kind": "tertiary",
+   "w": 11.5,
+   "sw": 3.0,
+   "pave": "grey",
+   "audited": true
+  },
+  {
+   "id": 682188146,
+   "name": "",
+   "kind": "service",
+   "w": 5.5,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 682188149,
+   "name": "",
+   "kind": "service",
+   "w": 9.5,
+   "sw": 2.4,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 682188173,
+   "name": "",
+   "kind": "service",
+   "w": 8.0,
+   "sw": 2.4,
+   "pave": "red",
+   "audited": null
+  },
+  {
+   "id": 971602090,
+   "name": "",
+   "kind": "service",
+   "w": 7.0,
+   "sw": 2.4,
+   "pave": "red",
+   "audited": null
+  },
+  {
+   "id": 971602092,
+   "name": "",
+   "kind": "service",
+   "w": 9,
+   "sw": 2.4,
+   "pave": "red",
+   "audited": true
+  },
+  {
+   "id": 971602093,
+   "name": "",
+   "kind": "service",
+   "w": 6.0,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 971606043,
+   "name": "正气路",
+   "kind": "service",
+   "w": 12.5,
+   "sw": 2.5,
+   "pave": "red",
+   "audited": true
+  },
+  {
+   "id": 971606044,
+   "name": "正气路",
+   "kind": "service",
+   "w": 10,
+   "sw": 2.0,
+   "pave": "grey",
+   "audited": true
+  },
+  {
+   "id": 1114843845,
+   "name": "",
+   "kind": "service",
+   "w": 6.5,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  }
+ ],
+ "sports": [
+  {
+   "kind": "basketball",
+   "name": "",
+   "obb": [
+    -439.72,
+    -375.04,
+    76.05,
+    53.03,
+    -1.4983
+   ]
+  }
+ ],
+ "markers": [
+  {
+   "name": "滨江服务楼停车场",
+   "cat": "停车场",
+   "x": -454.3,
+   "z": -338.0
+  },
+  {
+   "name": "文园5栋AED",
+   "cat": "AED",
+   "x": -449.1,
+   "z": -219.5
+  }
+ ],
+ "models": []
+}

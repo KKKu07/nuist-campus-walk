@@ -1,0 +1,259 @@
+{
+ "box": [
+  100.0,
+  -200.0,
+  300.0,
+  0.0
+ ],
+ "buildings": [
+  {
+   "id": 862959352,
+   "name": "沁园27栋",
+   "h": 20.7,
+   "lv": 5,
+   "kind": "dorm",
+   "style": null,
+   "color": "#e1b899",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": 862959353,
+   "name": "沁园28栋",
+   "h": 19.6,
+   "lv": 5,
+   "kind": "dorm",
+   "style": null,
+   "color": "#a6bcc0",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": 862959354,
+   "name": "沁园29栋",
+   "h": 20.1,
+   "lv": 5,
+   "kind": "dorm",
+   "style": null,
+   "color": null,
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": 862959355,
+   "name": "沁园34栋",
+   "h": 21.5,
+   "lv": 6,
+   "kind": "dorm",
+   "style": null,
+   "color": "#cdd9da",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": 862959356,
+   "name": "沁园35栋",
+   "h": 21.8,
+   "lv": 6,
+   "kind": "dorm",
+   "style": null,
+   "color": null,
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": 862959357,
+   "name": "沁园36栋",
+   "h": 21.1,
+   "lv": 6,
+   "kind": "dorm",
+   "style": null,
+   "color": null,
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": 862959358,
+   "name": "沁园37栋",
+   "h": 21.0,
+   "lv": 6,
+   "kind": "dorm",
+   "style": null,
+   "color": null,
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": 1316148865,
+   "name": "沁园35栋",
+   "h": 21.0,
+   "lv": 6,
+   "kind": "dorm",
+   "style": null,
+   "color": "#d4dad9",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": 1316148866,
+   "name": "沁园32栋",
+   "h": 20.3,
+   "lv": 5,
+   "kind": "dorm",
+   "style": null,
+   "color": "#dbe4dc",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": 1316148867,
+   "name": "新园31栋",
+   "h": 17.6,
+   "lv": 6,
+   "kind": "dorm",
+   "style": null,
+   "color": "#dfe3da",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": 1316148868,
+   "name": "沁园40栋",
+   "h": 16.8,
+   "lv": 5,
+   "kind": "dorm",
+   "style": null,
+   "color": null,
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": 1316148869,
+   "name": "沁园41栋",
+   "h": 19.3,
+   "lv": 5,
+   "kind": "dorm",
+   "style": null,
+   "color": "#847966",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": 1316307762,
+   "name": "青教公寓6幢",
+   "h": 8.7,
+   "lv": 3,
+   "kind": "dorm",
+   "style": null,
+   "color": "#c1c9ac",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": "tower-3",
+   "name": "",
+   "h": 18.1,
+   "lv": 5,
+   "kind": "dorm",
+   "style": "modern",
+   "color": "#cf6358",
+   "replaced": null,
+   "fixed": null
+  }
+ ],
+ "roads": [
+  {
+   "id": 586028697,
+   "name": "万象路",
+   "kind": "service",
+   "w": 8,
+   "sw": 2.5,
+   "pave": "red",
+   "audited": true
+  },
+  {
+   "id": 656927781,
+   "name": "龙山北路",
+   "kind": "tertiary",
+   "w": 11.5,
+   "sw": 3.0,
+   "pave": "grey",
+   "audited": true
+  },
+  {
+   "id": 682188174,
+   "name": "",
+   "kind": "footway",
+   "w": 3,
+   "sw": 0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 682188178,
+   "name": "",
+   "kind": "footway",
+   "w": 3,
+   "sw": 0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 971602080,
+   "name": "",
+   "kind": "service",
+   "w": 5.5,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 971602082,
+   "name": "",
+   "kind": "service",
+   "w": 5.5,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 971602083,
+   "name": "",
+   "kind": "service",
+   "w": 7.0,
+   "sw": 2.4,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 971602084,
+   "name": "",
+   "kind": "service",
+   "w": 5.5,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 971602085,
+   "name": "",
+   "kind": "service",
+   "w": 5.5,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 971602086,
+   "name": "",
+   "kind": "service",
+   "w": 8.0,
+   "sw": 2.4,
+   "pave": "red",
+   "audited": null
+  }
+ ],
+ "sports": [],
+ "markers": [],
+ "models": []
+}

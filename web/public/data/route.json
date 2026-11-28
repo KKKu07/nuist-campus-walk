@@ -1,0 +1,66 @@
+{
+  "title": "云游南信大 · 校园一日游",
+  "note": "路线与讲解文字为游戏内容；楼名、站名来自学校官网地图",
+  "steps": [
+    {
+      "type": "intro",
+      "target": "图书馆",
+      "mode": "walk",
+      "title": "从图书馆出发",
+      "show": "enter",
+      "photo": "photos/tushuguan_0.jpg",
+      "card": "这是南信大图书馆。今天这条路线：步行去钟楼 → 到「逸夫楼」站坐校园小公交 → 在滨江楼下车 → 扫码骑 7ma 去气象楼。跟着橙色光柱和顶部箭头走。"
+    },
+    {
+      "type": "walk",
+      "target": "钟楼",
+      "mode": "walk",
+      "title": "步行去钟楼",
+      "card": "钟楼是学校官网地图标注的校园文化景点。下一步：走到旁边的「逸夫楼」公交站。"
+    },
+    {
+      "type": "stop",
+      "stop": "逸夫楼",
+      "mode": "walk",
+      "title": "走到「逸夫楼」公交站",
+      "photo": "photos/yifulou_0.jpg",
+      "card": "校园小公交按官网环线运行，一圈 12 站。站在站牌旁等车，车停稳后按 E 上车，用手机乘车码付 1 元（游戏内价格）。"
+    },
+    {
+      "type": "bus",
+      "to": "滨江楼",
+      "mode": "bus",
+      "title": "坐小公交到「滨江楼」站"
+    },
+    {
+      "type": "walk",
+      "target": "信息科技大楼（临江楼）",
+      "mode": "walk",
+      "title": "步行去信息科技大楼（临江楼）",
+      "photo": "photos/xinxikeji_0.jpg",
+      "card": "信息科技大楼，也叫临江楼，北端高塔约 75 m（航拍三维重建实测）。楼边停着蓝色的 7ma 共享电动车，下一步扫码骑车。"
+    },
+    {
+      "type": "ebike",
+      "mode": "ebike",
+      "title": "走到 7ma 旁按 E 扫码解锁"
+    },
+    {
+      "type": "ride",
+      "target": "气象楼",
+      "mode": "ebike",
+      "title": "骑 7ma 到气象楼旁的停车点",
+      "card": "7ma 起步 1.5 元含 5 分钟（游戏内价格）。跟着箭头骑到气象楼旁的 7ma 停车点再还车；停车点外还车要加 2 元调度费。",
+      "show": "enter"
+    },
+    {
+      "type": "walk",
+      "target": "气象楼",
+      "mode": "walk",
+      "title": "走到气象楼前",
+      "photo": "photos/qixianglou_2.jpg",
+      "card": "气象楼：主楼 15 层、两翼 3 层，楼顶白色雷达球。南信大的前身是南京气象学院，气象楼是学校的标志之一。"
+    }
+  ],
+  "summary": "图书馆 → 钟楼 → 坐小公交 → 临江楼 → 骑 7ma → 气象楼"
+}

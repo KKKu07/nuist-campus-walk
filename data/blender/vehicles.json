@@ -1,0 +1,52 @@
+[
+ {
+  "name": "校园小公交",
+  "file": "models/bus.glb",
+  "length": 6.2,
+  "width": 2.1,
+  "height": 2.9,
+  "front": "-z",
+  "origin": "ground, centre of the body",
+  "tris": 904,
+  "materials": 8
+ },
+ {
+  "name": "公交候车亭",
+  "file": "models/bus_shelter.glb",
+  "length": 1.7,
+  "width": 4.2,
+  "height": 2.62,
+  "front": "-z",
+  "origin": "ground, centre of the body",
+  "tris": 106,
+  "materials": 6,
+  "kind": "prop",
+  "note": "公交候车亭：开口朝 -z，背板在 +z，原点地面中心"
+ },
+ {
+  "name": "7ma共享电动车",
+  "file": "models/ebike_7ma.glb",
+  "length": 1.75,
+  "width": 0.66,
+  "height": 1.1,
+  "front": "-z",
+  "origin": "ground, centre of the body",
+  "tris": 262,
+  "materials": 3,
+  "kind": "vehicle",
+  "note": "7ma 共享电动车：3 个材质，车头朝 -z，原点地面"
+ },
+ {
+  "name": "门卫岗亭",
+  "file": "models/gatehouse.glb",
+  "length": 4.6,
+  "width": 10.0,
+  "height": 6.0,
+  "front": "-z",
+  "origin": "ground, centre of the body",
+  "tris": 92,
+  "materials": 3,
+  "kind": "prop",
+  "note": "门卫岗亭：长边沿 x（10 m），窗和门朝 -z，白色竖鳍在 -x 端，原点地面中心"
+ }
+]

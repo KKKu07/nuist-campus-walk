@@ -1,0 +1,155 @@
+{
+ "box": [
+  150.0,
+  -380.0,
+  300.0,
+  -240.0
+ ],
+ "buildings": [
+  {
+   "id": 862952701,
+   "name": "图书馆",
+   "h": 22.8,
+   "lv": 6,
+   "kind": "hall",
+   "style": "classical",
+   "color": "#eadcc3",
+   "replaced": true,
+   "fixed": true
+  },
+  {
+   "id": "manual-17",
+   "name": "",
+   "h": 13.0,
+   "lv": 3,
+   "kind": "teach",
+   "style": null,
+   "color": "#a0adad",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": "manual-18",
+   "name": "第十三栋宿舍",
+   "h": 12.3,
+   "lv": 3,
+   "kind": "teach",
+   "style": null,
+   "color": "#b5ccd2",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": "manual-19",
+   "name": "第十二栋宿舍",
+   "h": 14.6,
+   "lv": 4,
+   "kind": "teach",
+   "style": null,
+   "color": "#b2e3ff",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": "manual-20",
+   "name": "第十一栋宿舍",
+   "h": 13.3,
+   "lv": 3,
+   "kind": "teach",
+   "style": null,
+   "color": "#a2a8a9",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": "manual-21",
+   "name": "第八栋宿舍",
+   "h": 11.5,
+   "lv": 3,
+   "kind": "teach",
+   "style": null,
+   "color": "#dce3e1",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": "wall-1-8",
+   "name": "",
+   "h": 2.6,
+   "lv": null,
+   "kind": "wall",
+   "style": null,
+   "color": null,
+   "replaced": null,
+   "fixed": null
+  }
+ ],
+ "roads": [
+  {
+   "id": 404874360,
+   "name": "正气路",
+   "kind": "service",
+   "w": 8.5,
+   "sw": 2.5,
+   "pave": "grey",
+   "audited": true
+  },
+  {
+   "id": 586028697,
+   "name": "万象路",
+   "kind": "service",
+   "w": 8,
+   "sw": 2.5,
+   "pave": "red",
+   "audited": true
+  },
+  {
+   "id": 586028701,
+   "name": "正气路",
+   "kind": "service",
+   "w": 7.5,
+   "sw": 2.0,
+   "pave": "grey",
+   "audited": true
+  },
+  {
+   "id": 682188154,
+   "name": "",
+   "kind": "service",
+   "w": 7.0,
+   "sw": 2.4,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 682188178,
+   "name": "",
+   "kind": "footway",
+   "w": 3,
+   "sw": 0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 971602102,
+   "name": "",
+   "kind": "service",
+   "w": 5.0,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 1245446547,
+   "name": "正气路",
+   "kind": "service",
+   "w": 5.5,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  }
+ ],
+ "sports": [],
+ "markers": [],
+ "models": []
+}

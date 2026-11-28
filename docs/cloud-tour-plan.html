@@ -1,0 +1,812 @@
+<title>云游南信大制作方案</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+<style>
+/* Layout: a survey-sheet page. Hero on a faint grid, then sections read top to bottom; lane colours run through map, pipeline and details. */
+:root{
+  --bg:#F2F4F1; --surface:#FFFFFF; --sunken:#E7ECE8; --ink:#14201B; --muted:#56645E; --line:#D3DBD6;
+  --accent:#C2440E; --accent-soft:#F6E2D6;
+  --ext:#33557F; --ext-soft:#DEE6F0;
+  --splat:#0B6F7A; --splat-soft:#D5ECEE;
+  --env:#476F36; --env-soft:#E0EBD8;
+  --tierc:#A9B3AE; --water:#BCD6E0; --road:#D9DFDA; --campus:#FAFBF9; --grid:rgba(20,32,27,.06);
+  --font-body:"Noto Sans SC","PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,sans-serif;
+  --font-mono:"JetBrains Mono","Cascadia Mono",Consolas,ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1412; --surface:#151D1A; --sunken:#1B2521; --ink:#E4EBE7; --muted:#98A6A0; --line:#2A3632;
+    --accent:#FF8450; --accent-soft:#3A2217;
+    --ext:#8BADD9; --ext-soft:#1B2736;
+    --splat:#54C8D0; --splat-soft:#12302F;
+    --env:#96C283; --env-soft:#1B2918;
+    --tierc:#4E5A55; --water:#1E3946; --road:#26312D; --campus:#17201D; --grid:rgba(228,235,231,.05);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1412; --surface:#151D1A; --sunken:#1B2521; --ink:#E4EBE7; --muted:#98A6A0; --line:#2A3632;
+  --accent:#FF8450; --accent-soft:#3A2217;
+  --ext:#8BADD9; --ext-soft:#1B2736;
+  --splat:#54C8D0; --splat-soft:#12302F;
+  --env:#96C283; --env-soft:#1B2918;
+  --tierc:#4E5A55; --water:#1E3946; --road:#26312D; --campus:#17201D; --grid:rgba(228,235,231,.05);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.75;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1060px;margin-inline:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3,h4{line-height:1.3;text-wrap:balance;margin:0}
+p{margin:0}
+a{color:inherit}
+code,.mono{font-family:var(--font-mono);font-size:.85em}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+
+/* hero */
+.hero{margin-top:calc(-1 * env(safe-area-inset-top,0px));padding-top:calc(env(safe-area-inset-top,0px) + 3.5rem);padding-bottom:2.5rem;
+  background-color:var(--bg);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:32px 32px;border-bottom:1px solid var(--line)}
+.sheet-meta{display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;font-family:var(--font-mono);font-size:.78rem;color:var(--muted);letter-spacing:.04em;margin-bottom:1.4rem}
+.sheet-meta b{color:var(--accent);font-weight:600}
+.hero h1{font-size:clamp(2.3rem,6.4vw,3.9rem);font-weight:900;letter-spacing:.02em}
+.hero h1 small{display:block;font-size:.42em;font-weight:500;color:var(--muted);letter-spacing:.08em;margin-top:.5rem}
+.lede{max-width:40em;margin-top:1.2rem;font-size:1.06rem;color:var(--muted)}
+
+/* sections */
+section{padding-block:3rem;border-bottom:1px solid var(--line)}
+section:last-of-type{border-bottom:0}
+.eyebrow{font-family:var(--font-mono);font-size:.75rem;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem}
+.eyebrow i{display:inline-block;width:.7rem;height:.7rem;border-radius:2px;background:var(--c,var(--accent))}
+h2{font-size:clamp(1.45rem,3.2vw,1.8rem);font-weight:800}
+.sec-intro{max-width:42em;color:var(--muted);margin-top:.6rem}
+.sec-body{margin-top:1.8rem}
+
+/* verdict */
+.verdict{margin-top:-1.6rem;background:var(--surface);border:1.5px solid var(--ink);border-radius:8px;overflow:hidden;position:relative}
+.verdict-head{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding:.55rem 1.1rem;background:var(--ink);color:var(--bg);font-family:var(--font-mono);font-size:.78rem;letter-spacing:.1em}
+.verdict ul{list-style:none;margin:0;padding:1.1rem 1.2rem 1.3rem;display:grid;gap:.75rem}
+.verdict li{display:grid;grid-template-columns:5.2rem minmax(0,1fr);gap:.9rem;align-items:baseline}
+.verdict li b.k{font-size:.85rem;color:var(--accent);font-weight:700;letter-spacing:.04em}
+.verdict li strong{font-weight:700}
+@media (max-width:560px){.verdict li{grid-template-columns:1fr;gap:.1rem}}
+
+/* reference facts */
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.9rem}
+@media (max-width:860px){.facts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.facts{grid-template-columns:1fr}}
+.fact{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:1rem 1.1rem;display:flex;flex-direction:column;gap:.35rem}
+.fact .lab{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.08em;color:var(--accent)}
+.fact h3{font-size:1rem}
+.fact p{font-size:.9rem;color:var(--muted)}
+.copy{margin-top:1.2rem;border:1.5px dashed var(--accent);border-radius:8px;background:var(--accent-soft);padding:1.1rem 1.2rem}
+.copy h3{font-size:1.02rem;margin-bottom:.6rem}
+.copy ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem 1.4rem}
+@media (max-width:680px){.copy ul{grid-template-columns:1fr}}
+.copy li{display:grid;grid-template-columns:1.2rem minmax(0,1fr);gap:.3rem;font-size:.93rem}
+.copy li::before{content:"✓";color:var(--accent);font-weight:700}
+.copy .plus{margin-top:.8rem;font-size:.9rem}
+.copy .plus b{color:var(--accent)}
+
+/* layered map */
+.idea{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:1.5rem;align-items:start}
+@media (max-width:860px){.idea{grid-template-columns:1fr}}
+.map-card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:.8rem;margin:0}
+.map-scroll{overflow-x:auto}
+.map-scroll svg{display:block;width:100%;min-width:540px;height:auto}
+.seg{display:flex;flex-wrap:wrap;gap:.4rem;padding:.1rem .1rem .7rem}
+.seg button{font:inherit;font-size:.85rem;padding:.3rem .75rem;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.legend{display:flex;flex-wrap:wrap;gap:.3rem 1rem;padding:.6rem .3rem .1rem;font-size:.8rem;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:.35rem}
+.legend i{display:inline-block;width:.8rem;height:.8rem;border-radius:2px;background:var(--k)}
+.legend i.dia{transform:rotate(45deg) scale(.8)}
+svg .bg{fill:var(--sunken)}
+svg .hatch{stroke:var(--line);stroke-width:2}
+svg .contour{fill:none;stroke:var(--tierc);stroke-width:1;opacity:.8}
+svg .campus{fill:var(--campus);stroke:var(--muted);stroke-width:1.2;stroke-dasharray:6 4}
+svg .road{fill:none;stroke:var(--road);stroke-width:10;stroke-linecap:round;stroke-linejoin:round}
+svg .lake{fill:var(--water)}
+svg .lbl{fill:var(--ink);font-family:var(--font-body);font-size:12px;font-weight:700}
+svg .lbl-m{fill:var(--muted);font-family:var(--font-body);font-size:11px}
+#campusMap .bld{fill:var(--tierc);transition:fill .35s ease}
+#campusMap.stage-2 .bld.r,#campusMap.stage-2 .bld.lm{fill:var(--ext)}
+#campusMap.stage-3 .bld{fill:var(--ext)}
+#campusMap.stage-3 .bld.lm{fill:var(--accent)}
+#campusMap .s3{display:none}
+#campusMap.stage-3 .s3{display:inline}
+#campusMap .gs{fill:var(--splat);stroke:var(--campus);stroke-width:2}
+@media (prefers-reduced-motion: reduce){#campusMap .bld{transition:none}}
+.layers{display:grid;gap:.75rem}
+.layer{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:.9rem 1rem;transition:border-color .2s ease}
+.layer.on{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.layer .when{font-family:var(--font-mono);font-size:.72rem;color:var(--muted);letter-spacing:.05em}
+.layer h3{font-size:1rem;margin:.1rem 0 .25rem}
+.layer p{font-size:.88rem;color:var(--muted)}
+
+/* table */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:.92rem}
+th,td{text-align:left;padding:.7rem .9rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;color:var(--muted);font-weight:600;background:var(--sunken)}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:700;white-space:nowrap}
+.cmp td:nth-child(2){color:var(--muted)}
+.cmp td:nth-child(3){font-weight:500}
+.ai-tbl td:last-child{color:var(--muted)}
+
+/* pipeline */
+.pipe{display:grid;gap:.85rem}
+.pipe-row{display:grid;grid-template-columns:7.2rem repeat(4,minmax(0,1fr));gap:1rem;align-items:stretch}
+.pipe-heads span{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.12em;color:var(--muted);padding-left:.2rem}
+.lane-name{display:flex;flex-direction:column;justify-content:center;font-weight:700;font-size:.95rem;color:var(--c);line-height:1.35}
+.lane-name small{font-weight:400;font-size:.75rem;color:var(--muted)}
+.node{position:relative;display:block;text-decoration:none;background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--c);border-radius:6px;padding:.6rem .75rem .7rem;transition:transform .15s ease,box-shadow .15s ease}
+.node:hover{transform:translateY(-2px);box-shadow:0 4px 14px -6px var(--c)}
+.node b{display:block;font-size:.92rem;line-height:1.4}
+.node span{display:block;font-size:.78rem;color:var(--muted);line-height:1.45;margin-top:.15rem}
+.node:not(:last-child)::after{content:"→";position:absolute;right:-.5rem;top:50%;transform:translate(50%,-50%);color:var(--muted);font-size:.9rem;pointer-events:none}
+.merge{margin-top:.4rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .8rem;padding:.9rem 1.1rem;border:1.5px dashed var(--accent);border-radius:8px;background:var(--accent-soft);font-size:.92rem}
+.merge b{font-weight:700}
+.merge .to{color:var(--accent);font-weight:700}
+@media (max-width:760px){
+  .pipe-heads{display:none}
+  .pipe-row{grid-template-columns:1fr;gap:.9rem}
+  .lane-name{flex-direction:row;align-items:baseline;gap:.5rem;padding-top:.6rem}
+  .node::before{content:attr(data-stage);display:block;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.1em;color:var(--muted)}
+  .node:not(:last-child)::after{content:"↓";right:auto;left:1.1rem;top:auto;bottom:-.45rem;transform:translateY(50%)}
+}
+
+/* lane details */
+.lane-sec{--c:var(--accent)}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:.9rem;counter-reset:st}
+.step{counter-increment:st;display:grid;grid-template-columns:2.4rem minmax(0,1fr);gap:.9rem;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:1rem 1.1rem;scroll-margin-top:1.2rem}
+.step::before{content:counter(st);width:2.2rem;height:2.2rem;border-radius:50%;display:grid;place-items:center;font-family:var(--font-mono);font-weight:600;color:var(--c);border:1.5px solid var(--c)}
+.step:target{outline:2.5px solid var(--c);outline-offset:3px}
+.step h3{font-size:1.04rem;margin-bottom:.3rem}
+.step p{font-size:.95rem}
+.step p + p{margin-top:.35rem}
+.meta{display:flex;flex-wrap:wrap;gap:.35rem .5rem;margin-top:.6rem;align-items:center;font-size:.82rem}
+.meta .lab{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.08em;color:var(--muted);margin-right:.1rem}
+.chip{display:inline-block;padding:.05rem .5rem;border-radius:4px;background:var(--sunken);font-size:.8rem;line-height:1.6}
+.ai{margin-top:.6rem;padding:.5rem .7rem;border-radius:6px;background:var(--c-soft,var(--sunken));font-size:.88rem}
+.ai::before{content:"AI";font-family:var(--font-mono);font-weight:600;font-size:.72rem;color:var(--c);border:1px solid var(--c);border-radius:3px;padding:0 .3rem;margin-right:.5rem;vertical-align:1px}
+.out{margin-top:.5rem;font-family:var(--font-mono);font-size:.78rem;color:var(--muted);overflow-wrap:anywhere}
+.out::before{content:"交付 → ";color:var(--c)}
+
+/* checklist */
+.check{margin-top:1.4rem;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+@media (max-width:680px){.check{grid-template-columns:1fr}}
+.check > div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:1rem 1.1rem}
+.check h3{font-size:1rem;margin-bottom:.5rem}
+.check ul{list-style:none;margin:0;padding:0;display:grid;gap:.45rem;font-size:.93rem}
+.check li{display:grid;grid-template-columns:1.3rem minmax(0,1fr);gap:.3rem}
+.check .yes li::before{content:"✓";color:var(--env);font-weight:700}
+.check .no li::before{content:"✕";color:var(--accent);font-weight:700}
+
+/* team */
+.team{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.9rem}
+@media (max-width:860px){.team{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.team{grid-template-columns:1fr}}
+.member{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:1rem 1.1rem;display:flex;flex-direction:column;gap:.35rem}
+.member .who{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.06em;color:var(--c)}
+.member h3{font-size:1.02rem}
+.member p{font-size:.9rem;color:var(--muted)}
+
+/* phases */
+.phases{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+@media (max-width:860px){.phases{grid-template-columns:1fr}}
+.phase{padding:1.1rem 1.1rem 1.2rem;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:.45rem}
+.phase:last-child{border-right:0}
+@media (max-width:860px){.phase{border-right:0;border-bottom:1px solid var(--line)}.phase:last-child{border-bottom:0}}
+.phase .when{font-family:var(--font-mono);font-size:.74rem;color:var(--muted);letter-spacing:.05em}
+.phase .num{font-family:var(--font-mono);font-weight:600;color:var(--accent);font-size:.82rem}
+.phase h3{font-size:1.05rem}
+.phase p{font-size:.9rem}
+.phase .got{margin-top:auto;padding-top:.5rem;font-size:.84rem;color:var(--muted);border-top:1px dashed var(--line)}
+.phase .got b{color:var(--ink)}
+.phase.first{background:var(--accent-soft)}
+.fineprint{margin-top:.7rem;font-size:.8rem;color:var(--muted)}
+
+/* rules */
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+@media (max-width:760px){.two{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:1.1rem 1.2rem;min-width:0}
+.panel h3{font-size:1.02rem;margin-bottom:.6rem}
+.panel ul{margin:0;padding-left:1.1rem;display:grid;gap:.45rem;font-size:.93rem}
+pre{margin:.2rem 0 0;padding:.9rem 1rem;background:var(--sunken);border-radius:6px;overflow-x:auto;font-family:var(--font-mono);font-size:.8rem;line-height:1.7}
+
+/* next */
+.next{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;counter-reset:nx}
+@media (max-width:760px){.next{grid-template-columns:1fr}}
+.next li{counter-increment:nx;background:var(--surface);border:1.5px solid var(--ink);border-radius:8px;padding:1rem 1.1rem}
+.next li::before{content:"0" counter(nx);display:block;font-family:var(--font-mono);font-weight:600;color:var(--accent);font-size:.85rem;margin-bottom:.3rem}
+.next h3{font-size:1.02rem;margin-bottom:.3rem}
+.next p{font-size:.9rem;color:var(--muted)}
+footer{padding-block:2rem 3rem;font-size:.8rem;color:var(--muted);border-top:1px solid var(--line)}
+footer ul{margin:.4rem 0 0;padding-left:1.1rem;display:grid;gap:.2rem}
+footer a{overflow-wrap:anywhere}
+</style>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="sheet-meta">
+      <span><b>方案 v0.2</b></span>
+      <span>对标《网上南宁》</span>
+      <span>云游南信大 · 三维校园项目</span>
+    </div>
+    <h1>云游南信大<small>全校 1:1 三维还原 · 每栋楼都建、都能进</small></h1>
+    <p class="lede">目标不降：每栋楼、每条路、每片水面都建出来，楼也能走进去。做法学《网上南宁》：先用数据和脚本把整个学校一次铺满，再一栋一栋换成精修模型。</p>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="verdict" role="note" aria-label="结论">
+    <div class="verdict-head"><span>结论</span><span>先看这五条</span></div>
+    <ul>
+      <li><b class="k">核心做法</b><span>学网上南宁的<strong>先铺满、再替换</strong>：先用数据和脚本把全校每栋楼、每条路一次生成出来，然后成员认领楼栋，一栋栋换成精修模型。第一个月就能走遍全校，之后质量一直往上走。</span></li>
+      <li><b class="k">数据</b><span>我们的数据比网上南宁准。它用开源地图和全球建筑数据估算；我们有<strong>无人机航拍</strong>（轮廓、高度、地形）、<strong>消防逃生图</strong>（每层布局）和<strong>实拍照片</strong>（立面）。</span></li>
+      <li><b class="k">外观</b><span>每栋楼都做成干净的游戏模型，按实拍还原窗户、颜色、屋顶和招牌。航拍出的实景三维只用来量尺寸、做异形地标，不直接放进游戏。</span></li>
+      <li><b class="k">室内</b><span><strong>所有楼都能进</strong>：用消防图批量生成每层的墙、门、窗、楼梯，再按教室、宿舍、实验室等房间类型套家具；大厅、图书馆这类重点空间用 3DGS 实拍。</span></li>
+      <li><b class="k">技术路线</b><span>首选和网上南宁一样做<strong>网页游戏</strong>（Three.js + Blender，代码用 Claude Code 写），手机电脑点链接就能玩。模型统一导出 GLB，以后想做 UE5 高画质版也能直接复用。</span></li>
+    </ul>
+  </div>
+
+  <section id="reference">
+    <p class="eyebrow">参考</p>
+    <h2>《网上南宁》是怎么做的</h2>
+    <p class="sec-intro">游戏还在封闭测试，要邀请码才能登录，所以没能实际进去玩。下面的信息来自中国日报网报道、官方 B 站宣传视频和一个公开的地图工坊仓库（来源在页面底部）。</p>
+    <div class="sec-body">
+      <div class="facts">
+        <div class="fact"><span class="lab">运行方式</span><h3>浏览器里直接玩</h3><p>Three.js 做网页 3D，Blender 做模型，AI（Claude Opus）写代码。作者在视频简介里说已经用掉 250 亿 token。</p></div>
+        <div class="fact"><span class="lab">底图数据</span><h3>开源数据铺底</h3><p>道路、水面、绿地来自 OpenStreetMap；建筑轮廓和高度来自全球建筑数据集 3D-GloBFP；地形来自 SRTM 高程。</p></div>
+        <div class="fact"><span class="lab">覆盖范围</span><h3>全城铺满、分块加载</h3><p>约 30.8 × 24.5 公里，切成 806 个街景分块，走到哪儿加载哪儿；远处用合并后的远景模型。</p></div>
+        <div class="fact"><span class="lab">建筑</span><h3>普通楼程序生成，地标单独做</h3><p>普通楼用通用立面材质和店招图集；17 个地标单独建模，靠近加载全模，远处用简模。宣传视频里是干净的游戏画风，不是扫描出来的照片级模型。</p></div>
+        <div class="fact"><span class="lab">工坊投稿</span><h3>玩家按地块交模型</h3><p>提交模型包（GLB + 摆放说明 + 实景照片），AI 先初审，人工再对照审核，通过后替换底图里的楼。</p></div>
+        <div class="fact"><span class="lab">玩法</span><h3>剧情、联机、载具</h3><p>单人剧情一章、多人小游戏，能开车、骑共享电单车。目前 0.8 版封测，按版本号持续更新。</p></div>
+      </div>
+      <div class="copy">
+        <h3>我们可以照搬的四点</h3>
+        <ul>
+          <li><span><b>先铺满再替换</b>：完整度靠程序生成，精细度靠逐栋替换</span></li>
+          <li><span><b>数据驱动</b>：楼的位置、轮廓、高度都来自数据，不靠目测</span></li>
+          <li><span><b>分块加载 + 远近两套模型</b>：场景再大，网页也带得动</span></li>
+          <li><span><b>投稿制</b>：统一的楼栋包规范，社团里谁都能认领一栋楼</span></li>
+        </ul>
+        <p class="plus"><b>我们还要多做一项：</b>所有楼都能进去。消防逃生图正好让室内也能批量生成。</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="layers">
+    <p class="eyebrow">核心思路</p>
+    <h2>全校先铺满，再一层层变精细</h2>
+    <p class="sec-intro">不按片区一块块做完，而是整个学校一起往上提质量。每一层做完都能发一个可玩的版本。</p>
+    <div class="sec-body idea">
+      <figure class="map-card">
+        <div class="seg" role="group" aria-label="切换阶段">
+          <button type="button" id="stage1" data-stage="1" aria-pressed="false">① 全覆盖白模</button>
+          <button type="button" id="stage2" data-stage="2" aria-pressed="true">② 逐栋精修</button>
+          <button type="button" id="stage3" data-stage="3" aria-pressed="false">③ 地标与室内</button>
+        </div>
+        <div class="map-scroll">
+          <svg id="campusMap" class="stage-2" viewBox="0 0 640 420" role="img" aria-labelledby="mapTitle mapDesc">
+            <title id="mapTitle">校园建设阶段示意图</title>
+            <desc id="mapDesc">所有楼从第一阶段起就在地图上。第一阶段全是灰色白模，第二阶段一部分楼变成蓝色精修模型，第三阶段全部精修，地标变为橙色并带 3DGS 室内标记。</desc>
+            <defs>
+              <pattern id="hatch" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                <line x1="0" y1="0" x2="0" y2="9" class="hatch"/>
+              </pattern>
+            </defs>
+            <rect class="bg" width="640" height="420"/>
+            <rect width="640" height="420" fill="url(#hatch)"/>
+            <g>
+              <ellipse class="contour" cx="612" cy="18" rx="54" ry="30"/>
+              <ellipse class="contour" cx="612" cy="18" rx="84" ry="48"/>
+              <ellipse class="contour" cx="612" cy="18" rx="116" ry="66"/>
+            </g>
+            <path class="campus" d="M70,60 L515,38 L598,118 L606,330 L470,392 L96,378 L36,222 Z"/>
+            <g>
+              <path class="road" d="M300,390 L300,136"/>
+              <path class="road" d="M44,200 L602,200"/>
+              <path class="road" d="M80,322 L600,322"/>
+            </g>
+            <path class="lake" d="M352,236 C368,214 428,212 458,232 C486,252 474,292 440,300 C404,309 344,296 340,268 C337,254 343,244 352,236 Z"/>
+            <text class="lbl-m" x="405" y="264" text-anchor="middle">湖</text>
+            <g>
+              <rect class="bld r" x="80" y="80" width="28" height="24" rx="2"/>
+              <rect class="bld" x="440" y="58" width="36" height="24" rx="2"/>
+              <rect class="bld" x="520" y="88" width="30" height="24" rx="2"/>
+              <rect class="bld r" x="52" y="236" width="28" height="28" rx="2"/>
+              <rect class="bld" x="560" y="236" width="30" height="40" rx="2"/>
+              <rect class="bld" x="400" y="346" width="40" height="22" rx="2"/>
+              <rect class="bld r" x="208" y="96" width="40" height="36" rx="2"/>
+              <rect class="bld r" x="352" y="96" width="44" height="36" rx="2"/>
+              <rect class="bld" x="410" y="110" width="40" height="32" rx="2"/>
+              <rect class="bld r" x="214" y="226" width="50" height="28" rx="2"/>
+              <rect class="bld" x="214" y="276" width="44" height="30" rx="2"/>
+              <rect class="bld r" x="500" y="226" width="46" height="30" rx="2"/>
+              <rect class="bld" x="505" y="268" width="40" height="30" rx="2"/>
+              <rect class="bld r" x="190" y="340" width="44" height="26" rx="2"/>
+              <rect class="bld" x="330" y="336" width="44" height="26" rx="2"/>
+              <rect class="bld lm" x="262" y="88" width="76" height="46" rx="2"/>
+              <rect class="bld lm" x="112" y="120" width="84" height="40" rx="2"/>
+              <rect class="bld lm" x="520" y="140" width="52" height="42" rx="2"/>
+              <rect class="bld lm" x="110" y="250" width="62" height="36" rx="2"/>
+            </g>
+            <g class="s3">
+              <rect class="gs" x="-5" y="-5" width="10" height="10" transform="translate(300 111) rotate(45)"/>
+              <rect class="gs" x="-5" y="-5" width="10" height="10" transform="translate(154 140) rotate(45)"/>
+              <rect class="gs" x="-5" y="-5" width="10" height="10" transform="translate(546 161) rotate(45)"/>
+              <rect class="gs" x="-5" y="-5" width="10" height="10" transform="translate(141 268) rotate(45)"/>
+            </g>
+            <g>
+              <text class="lbl" x="300" y="80" text-anchor="middle">图书馆</text>
+              <text class="lbl" x="154" y="112" text-anchor="middle">教学楼</text>
+              <text class="lbl" x="546" y="132" text-anchor="middle">实验楼</text>
+              <text class="lbl" x="141" y="242" text-anchor="middle">食堂</text>
+              <text class="lbl" x="312" y="386">校门</text>
+              <text class="lbl-m" x="560" y="40">山 · 校外</text>
+              <text class="lbl-m" x="14" y="410">示意图，不是真实校园平面</text>
+            </g>
+          </svg>
+        </div>
+        <div class="legend">
+          <span><i style="--k:var(--tierc)"></i>程序生成的白模</span>
+          <span><i style="--k:var(--ext)"></i>已精修</span>
+          <span><i style="--k:var(--accent)"></i>地标精品</span>
+          <span><i class="dia" style="--k:var(--splat)"></i>3DGS 实拍室内</span>
+        </div>
+      </figure>
+      <div class="layers">
+        <div class="layer" data-stage="1">
+          <span class="when">第一层 · 约第 1 个月 · v0.1</span>
+          <h3>全覆盖白模</h3>
+          <p>每栋楼按真实轮廓和高度自动生成，带楼层线和通用窗户；道路、湖、地形、树全部到位。这时已经能走遍全校。</p>
+        </div>
+        <div class="layer on" data-stage="2">
+          <span class="when">第二层 · 第 2–4 个月 · v0.2–0.5</span>
+          <h3>逐栋精修</h3>
+          <p>成员认领楼栋，照着实拍做屋顶、立面、入口、招牌，做好就替换白模。同时用消防图批量生成所有楼的室内。</p>
+        </div>
+        <div class="layer" data-stage="3">
+          <span class="when">第三层 · 持续 · v0.6 起</span>
+          <h3>地标与室内精品</h3>
+          <p>所有楼精修完；地标楼加细节；大厅、阅览区、报告厅等重点空间换成 3DGS 实拍。剧情、载具、联机陆续上线。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="data">
+    <p class="eyebrow">数据</p>
+    <h2>同样的思路，我们的数据更准</h2>
+    <p class="sec-intro">网上南宁要覆盖整座城市，只能用公开数据估算。一个校园的范围，我们可以全部自己实测。</p>
+    <div class="sec-body tbl-wrap">
+      <table class="cmp">
+        <thead><tr><th>需要什么</th><th>网上南宁用的</th><th>我们用的</th></tr></thead>
+        <tbody>
+          <tr><td>道路、水面、绿地</td><td>OpenStreetMap</td><td>无人机正射影像上描，误差在几厘米</td></tr>
+          <tr><td>建筑轮廓</td><td>3D-GloBFP 全球建筑轮廓</td><td>正射影像描外轮廓，消防图对照</td></tr>
+          <tr><td>建筑高度</td><td>数据集估算的高度</td><td>实景三维实测檐口高度，再核对层数 × 层高</td></tr>
+          <tr><td>地形</td><td>SRTM 高程</td><td>航拍生成的高程图</td></tr>
+          <tr><td>立面</td><td>通用立面材质 + 店招图集</td><td>每栋楼四个面实拍，按照片还原</td></tr>
+          <tr><td>室内</td><td>少量手工场景</td><td>消防图生成所有楼层 + 重点空间 3DGS</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="pipeline">
+    <p class="eyebrow">总流程</p>
+    <h2>四条生产线，汇进同一个网页游戏</h2>
+    <p class="sec-intro">四条线由不同小组同时推进。点任意一格，跳到那一步的具体做法。</p>
+    <div class="sec-body pipe">
+      <div class="pipe-row pipe-heads" aria-hidden="true">
+        <span></span><span>采集</span><span>处理</span><span>生成 · 精修</span><span>进游戏</span>
+      </div>
+      <div class="pipe-row" style="--c:var(--env)">
+        <div class="lane-name">底图·地形<small>航拍测绘组</small></div>
+        <a class="node" data-stage="采集" href="#map-2"><b>全校航拍</b><span>五向飞行 + 像控点</span></a>
+        <a class="node" data-stage="处理" href="#map-3"><b>实景三维·正射·高程</b><span>RealityScan</span></a>
+        <a class="node" data-stage="生成 · 精修" href="#map-4"><b>描轮廓·路网·湖岸·树</b><span>QGIS，量每栋楼高度</span></a>
+        <a class="node" data-stage="进游戏" href="#map-5"><b>地形·道路·水面·树</b><span>脚本批量生成</span></a>
+      </div>
+      <div class="pipe-row" style="--c:var(--ext)">
+        <div class="lane-name">建筑外观<small>采集组 + 建模组</small></div>
+        <a class="node" data-stage="采集" href="#bld-1"><b>每栋楼拍四个立面</b><span>加入口、招牌特写</span></a>
+        <a class="node" data-stage="处理" href="#bld-2"><b>批量生成白模</b><span>Blender 脚本，全校一次出</span></a>
+        <a class="node" data-stage="生成 · 精修" href="#bld-3"><b>认领精修</b><span>构件库 + 照片</span></a>
+        <a class="node" data-stage="进游戏" href="#bld-4"><b>楼栋包替换白模</b><span>近处精模，远处简模</span></a>
+      </div>
+      <div class="pipe-row" style="--c:var(--splat)">
+        <div class="lane-name">建筑室内<small>采集组 + 建模组</small></div>
+        <a class="node" data-stage="采集" href="#in-1"><b>拍下每层消防图</b><span>量几间房校准比例</span></a>
+        <a class="node" data-stage="处理" href="#in-2"><b>描墙线</b><span>AI 出草稿，人来修</span></a>
+        <a class="node" data-stage="生成 · 精修" href="#in-3"><b>生成墙门窗 + 套家具</b><span>按房间类型</span></a>
+        <a class="node" data-stage="进游戏" href="#in-4"><b>重点空间 3DGS</b><span>进门才加载</span></a>
+      </div>
+      <div class="pipe-row" style="--c:var(--accent)">
+        <div class="lane-name">游戏程序<small>程序组 + Claude Code</small></div>
+        <a class="node" data-stage="采集" href="#game-1"><b>搭网页框架</b><span>Three.js，角色能走</span></a>
+        <a class="node" data-stage="处理" href="#game-2"><b>分块加载·远近模型</b><span>手机也要带得动</span></a>
+        <a class="node" data-stage="生成 · 精修" href="#game-3"><b>剧情·载具·联机</b><span>新生报到、共享单车</span></a>
+        <a class="node" data-stage="进游戏" href="#game-5"><b>发布与迭代</b><span>按版本号持续更新</span></a>
+      </div>
+      <div class="merge">
+        <b>四条线汇合</b><span class="to">→</span><span>网页游戏（手机、电脑点链接就能玩）</span><span class="to">+</span><span>同一批 GLB 模型以后可复用做 UE5 高画质版</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="map" class="lane-sec" style="--c:var(--env);--c-soft:var(--env-soft)">
+    <p class="eyebrow"><i></i>生产线 · 底图与地形</p>
+    <h2>一次航拍，给全校打底</h2>
+    <div class="sec-body">
+      <ol class="steps">
+        <li class="step" id="map-1">
+          <div>
+            <h3>飞前准备：登记、报备、铺像控点</h3>
+            <p>无人机按规定在民航局 UOM 平台实名登记；飞前在 App 里查限飞区，并向学校保卫处报备。</p>
+            <p>在校园各处铺 6–10 个像控点（A4 打印的黑白靶标），请测绘同学用 RTK 测出坐标。之后所有数据都靠这些点对齐到同一套坐标。</p>
+            <p class="out">像控点坐标表 gcp.csv</p>
+          </div>
+        </li>
+        <li class="step" id="map-2">
+          <div>
+            <h3>全校航拍</h3>
+            <p>高度 60–100 m，网格往返正拍一遍，再斜 45° 前后左右各一遍（五向飞行）；前后重叠 80%，左右重叠 70%。每栋楼都要被斜拍到四个面，高度和屋顶靠这批照片量。选阴天或上午，影子少。</p>
+            <div class="meta"><span class="lab">工具</span><span class="chip">无人机测绘航线 App</span><span class="chip">没有航线功能就手动按网格飞</span></div>
+          </div>
+        </li>
+        <li class="step" id="map-3">
+          <div>
+            <h3>处理出三样东西</h3>
+            <p>照片和像控点导入 <b>RealityScan</b>（原 RealityCapture，学生个人免费，需要 NVIDIA 显卡），导出：实景三维（量尺寸用）、正射影像（描图用）、高程图（地形用）。备选：测绘学院机房的大疆智图、ContextCapture，或免费的 WebODM。</p>
+            <p class="out">mesh/ 分块模型 · ortho.tif · dem.tif</p>
+          </div>
+        </li>
+        <li class="step" id="map-4">
+          <div>
+            <h3>描全校底图，量每栋楼</h3>
+            <p>在正射影像上给每栋楼编号、描外轮廓；描道路边线、湖岸、广场、绿地和每棵大树的位置。在实景三维上量每栋楼的檐口高度，记下层数。推荐用免费的 QGIS，导出 GeoJSON。</p>
+            <div class="ai">让 Claude Code 写脚本，从实景三维里自动量每栋楼的高度、算屋顶形状，人工抽查改错。</div>
+            <p class="out">buildings.geojson（楼号、轮廓、层数、高度）· roads · water · trees</p>
+          </div>
+        </li>
+        <li class="step" id="map-5">
+          <div>
+            <h3>批量生成地形和环境</h3>
+            <p>脚本读上面的文件，一次生成地形、路面（带路沿、斑马线）、湖面、草地；树按点位摆放，几种素材树轮换。校外远景用正射影像加低模，再加一张航拍 360° 全景当天空。</p>
+            <div class="ai">生成器代码让 Claude Code 写。路灯、长椅、垃圾桶、雕塑拍几张照片，用混元3D、Tripo、Meshy 生成模型再修。</div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="bld" class="lane-sec" style="--c:var(--ext);--c-soft:var(--ext-soft)">
+    <p class="eyebrow"><i></i>生产线 · 建筑外观</p>
+    <h2>先全校白模，再逐栋精修</h2>
+    <div class="sec-body">
+      <ol class="steps">
+        <li class="step" id="bld-1">
+          <div>
+            <h3>每栋楼拍立面</h3>
+            <p>每栋楼东南西北四个面各拍一组，尽量正对、避开树；再拍入口、楼名招牌、特殊构件的特写。全校楼多，按片区分给不同人，资产表上打勾。</p>
+            <p class="out">photos/B03/ N E S W entrance sign</p>
+          </div>
+        </li>
+        <li class="step" id="bld-2">
+          <div>
+            <h3>批量生成白模（第一层）</h3>
+            <p>一个 Blender 脚本读 buildings.geojson，按轮廓拉高、按层数画楼层线、贴通用窗户材质、生成平屋顶或坡屋顶，全校一次出完。这就是网上南宁“程序化铺满”的做法。</p>
+            <div class="ai">这是 AI 最该干的活：说清楚输入和输出，让 Claude Code 写脚本，你们负责测试和挑错。</div>
+            <p class="out">B001–Bxxx 全校白模 GLB</p>
+          </div>
+        </li>
+        <li class="step" id="bld-3">
+          <div>
+            <h3>认领精修（第二层）</h3>
+            <p>成员在资产表上认领楼栋，以白模为起点、照片为参照，做出真实的窗户分布、墙面材质和颜色、屋顶设备、入口雨棚、楼名招牌。</p>
+            <p>普通楼用构件库拼（几种窗户、墙面、檐口），风格统一、速度快；地标楼再加手工细节和照片贴图。</p>
+            <div class="ai">PS 生成式填充去掉照片里的树和人；Substance 3D Sampler 或免费的 Materialize 把照片变成可平铺的墙面材质。</div>
+          </div>
+        </li>
+        <li class="step" id="bld-4">
+          <div>
+            <h3>交楼栋包，替换白模</h3>
+            <p>每栋楼按下方“楼栋包规范”交付：近处精模、远处简模、摆放说明、对照照片。审核通过后直接替换白模，网上南宁的工坊也是这个流程。</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="in" class="lane-sec" style="--c:var(--splat);--c-soft:var(--splat-soft)">
+    <p class="eyebrow"><i></i>生产线 · 建筑室内</p>
+    <h2>消防图批量生成，重点空间 3DGS 实拍</h2>
+    <p class="sec-intro">每栋楼每层都贴着消防逃生图，这是全校室内布局最完整的现成资料。拿它批量生成，就能让所有楼都进得去。</p>
+    <div class="sec-body">
+      <ol class="steps">
+        <li class="step" id="in-1">
+          <div>
+            <h3>收集消防图</h3>
+            <p>逐栋逐层正对着拍下消防逃生图，拍平、拍清。每栋楼再用激光测距仪量 2–3 个房间的实际尺寸，用来校准比例（消防图本身不一定按比例画）。</p>
+            <p class="out">floorplans/B03/F1.jpg …</p>
+          </div>
+        </li>
+        <li class="step" id="in-2">
+          <div>
+            <h3>描墙线</h3>
+            <p>消防图拉正后当底图，描出墙、门、窗、楼梯，标上房间类型（教室、办公、实验、宿舍、卫生间、走廊）。用楼的外轮廓和量好的房间尺寸校准比例。</p>
+            <div class="ai">先让 AI 识别出墙线草稿，人再修；也可以让 Claude Code 做一个网页描图小工具，点几下就能描完一层，导出 JSON。</div>
+            <p class="out">B03_F1_plan.json</p>
+          </div>
+        </li>
+        <li class="step" id="in-3">
+          <div>
+            <h3>批量生成室内</h3>
+            <p>脚本读墙线文件，生成墙、门洞、窗洞、楼梯、地面和天花，再按房间类型自动摆家具：教室摆桌椅讲台，宿舍摆上床下桌。家具模板由建模组照实拍做几套，全校复用。</p>
+          </div>
+        </li>
+        <li class="step" id="in-4">
+          <div>
+            <h3>重点空间换成 3DGS 实拍</h3>
+            <p>大厅、图书馆阅览区、报告厅、标志性实验室，用 3D 高斯实拍替换生成的室内。流程：<b>Postshot</b>（或开源的 Brush）训练 → <b>SuperSplat</b> 清理压缩 → 网页里用 <b>Spark</b>（Three.js 的高斯渲染库）加载。拍摄要点见下方口诀。</p>
+          </div>
+        </li>
+        <li class="step" id="in-5">
+          <div>
+            <h3>进门才加载</h3>
+            <p>室内按楼、按层拆成单独文件，玩家进门才加载，出来就卸载，手机也带得动。宿舍、实验室等区域先问学校能不能公开，宿舍可以只做一间样板间。</p>
+          </div>
+        </li>
+      </ol>
+
+      <div class="check" id="shoot-rules">
+        <div class="yes">
+          <h3>3DGS 拍摄口诀 · 要</h3>
+          <ul>
+            <li>相机用手动模式，锁定曝光、白平衡、对焦，整间不变</li>
+            <li>慢慢走，一小步拍一张，相邻照片重叠七成以上</li>
+            <li>沿墙走一圈朝里拍，在中间走一圈朝外拍，高处低处各补一遍</li>
+            <li>开所有灯；有阳光的房间选光线稳定的时段一次拍完</li>
+            <li>每间放 2–3 个标记，用卷尺量好间距，用来定比例</li>
+          </ul>
+        </div>
+        <div class="no">
+          <h3>3DGS 拍摄口诀 · 不要</h3>
+          <ul>
+            <li>拍到走动的人：选假期、清早，或请大家暂时离开</li>
+            <li>对着大面积镜子、玻璃、电子屏一直拍</li>
+            <li>只站在房间中间原地转圈（会缺深度，结果发糊）</li>
+            <li>开手机的夜景、HDR、美颜（每张处理不一样，前后对不上）</li>
+            <li>拍到一半换镜头或调焦距</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="game" class="lane-sec" style="--c:var(--accent);--c-soft:var(--accent-soft)">
+    <p class="eyebrow"><i></i>生产线 · 游戏程序</p>
+    <h2>网页游戏，代码交给 AI 写</h2>
+    <div class="sec-body">
+      <ol class="steps">
+        <li class="step" id="game-1">
+          <div>
+            <h3>搭网页框架</h3>
+            <p>Three.js 网页项目：角色行走、第一和第三人称切换、碰撞、小地图。先用正射影像和地形跑通，角色能在全校底图上走。代码全部用 Claude Code 写，网上南宁的作者也是这么做的。</p>
+          </div>
+        </li>
+        <li class="step" id="game-2">
+          <div>
+            <h3>分块加载 + 远近模型</h3>
+            <p>校园按网格切块：玩家附近的块加载精模，远处换简模或合并模型；贴图压缩成 KTX2，模型用 Meshopt 压缩；树、路灯、长椅这类重复物件用实例化一次画完。这是网页版能在手机上跑起来的关键。</p>
+          </div>
+        </li>
+        <li class="step" id="game-3">
+          <div>
+            <h3>玩法</h3>
+            <p><b>剧情：</b>“新生报到”一章，领校园卡 → 找宿舍 → 吃第一顿食堂 → 上第一节课，顺路把校园逛一遍。</p>
+            <p><b>载具：</b>共享单车、电动车、校车。<b>地图：</b>俯视正射图，点地点快速传送。<b>联机（后期）：</b>同学一起逛、合影、校园定向越野小游戏。</p>
+          </div>
+        </li>
+        <li class="step" id="game-4">
+          <div>
+            <h3>内容</h3>
+            <div class="ai">讲解词和剧情对白让 AI 起草、同学改；配音用 AI 语音合成（如 CosyVoice）；UI 和图标由设计同学出图。</div>
+          </div>
+        </li>
+        <li class="step" id="game-5">
+          <div>
+            <h3>发布与迭代</h3>
+            <p>网页版需要服务器和域名，国内服务器要做 ICP 备案，可以请学校信息化部门挂在学校域名下。像网上南宁一样按版本号持续更新：v0.1 全覆盖，v0.2 起逐批替换精修楼。</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="package">
+    <p class="eyebrow">投稿规范</p>
+    <h2>楼栋包：谁做的楼都能直接替换进游戏</h2>
+    <div class="sec-body two">
+      <div class="panel">
+        <h3>一栋楼交一个文件夹</h3>
+        <pre>B03_tushuguan/           楼号_拼音
+  model_LOD0.glb         近处精模
+  model_LOD1.glb         远处简模
+  interior/F1.glb …      室内，按层拆
+  manifest.json          楼号、位置、朝向、轮廓、层数、层高
+  photos/                实景对照照片</pre>
+        <ul style="margin-top:.9rem">
+          <li>精模建议 ≤ 3 万三角面、贴图 ≤ 2K；简模 ≤ 3 千三角面。试点后按手机帧数调整。</li>
+          <li>模型原点放在楼的地面中心，位置写在 manifest 里，不要把模型挪到世界坐标上。</li>
+          <li>Blender 里 Z 朝上，导出 GLB 时会自动转换，不要手动旋转。</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>审核看四件事</h3>
+        <ul>
+          <li><b>像不像：</b>和实景照片并排对比。</li>
+          <li><b>准不准：</b>叠在白模上，看位置、轮廓、高度有没有偏。</li>
+          <li><b>超没超：</b>面数、贴图尺寸、文件大小在不在规范内。</li>
+          <li><b>卡不卡：</b>放进游戏，在手机上看帧数。</li>
+        </ul>
+        <div class="ai" style="--c:var(--accent);--c-soft:var(--accent-soft)">后三项可以让 Claude Code 写自动检查脚本，人只看“像不像”。网上南宁也是 AI 初审、人工终审。</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="ai">
+    <p class="eyebrow">AI 辅助</p>
+    <h2>AI 在哪儿帮忙</h2>
+    <p class="sec-intro">网上南宁能一个人做出整座城，靠的就是 AI 写代码。我们也一样：所有批量、重复、要写程序的活交给 AI；像不像、对不对由人把关。</p>
+    <div class="sec-body tbl-wrap">
+      <table class="ai-tbl">
+        <thead><tr><th>环节</th><th>AI 能干什么</th><th>工具举例</th></tr></thead>
+        <tbody>
+          <tr><td>游戏代码</td><td>网页框架、分块加载、玩法、联机</td><td>Claude Code（网上南宁用的是 Claude Opus）</td></tr>
+          <tr><td>生成器</td><td>白模、路网、地形、室内的批量生成脚本</td><td>Claude Code</td></tr>
+          <tr><td>量数据</td><td>从实景三维量楼高、识别消防图墙线草稿</td><td>Claude Code 写脚本，人工抽查</td></tr>
+          <tr><td>审核</td><td>自动检查楼栋包的面数、尺寸、坐标</td><td>Claude Code 写检查脚本</td></tr>
+          <tr><td>照片处理</td><td>去掉行人、车辆、树木遮挡，提升清晰度</td><td>PS 生成式填充、Upscayl</td></tr>
+          <tr><td>材质</td><td>一张照片变成可平铺的材质</td><td>Substance 3D Sampler、Materialize</td></tr>
+          <tr><td>小物件</td><td>几张照片生成 3D 模型</td><td>混元3D、Tripo、Meshy</td></tr>
+          <tr><td>室内实拍</td><td>3DGS 本身就是 AI 训练</td><td>Postshot、Brush</td></tr>
+          <tr><td>内容</td><td>剧情、讲解词、配音</td><td>大模型 + AI 语音合成</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="team">
+    <p class="eyebrow">分工</p>
+    <h2>六个小组，楼栋认领制</h2>
+    <div class="sec-body team">
+      <div class="member" style="--c:var(--env)"><span class="who">无人机手 + 测绘同学 · 2–3 人</span><h3>航拍测绘组</h3><p>航拍、像控点、实景三维和正射高程；描全校底图，量每栋楼高度。</p></div>
+      <div class="member" style="--c:var(--ext)"><span class="who">摄影同学 · 3–5 人</span><h3>采集组</h3><p>每栋楼的立面照片、每层消防图、房间尺寸，重点空间的 3DGS。</p></div>
+      <div class="member" style="--c:var(--ext)"><span class="who">有设计基础的同学 · 4–8 人</span><h3>建模组</h3><p>认领楼栋精修；做构件库、家具模板和地标楼。人越多，精修越快。</p></div>
+      <div class="member" style="--c:var(--accent)"><span class="who">1–2 人 + Claude Code</span><h3>程序组</h3><p>网页框架、各种生成器、加载优化、玩法和联机。</p></div>
+      <div class="member" style="--c:var(--accent)"><span class="who">文案 / 平面设计 · 1–2 人</span><h3>内容组</h3><p>剧情、讲解词、配音、UI、宣传和版本更新公告。</p></div>
+      <div class="member" style="--c:var(--muted)"><span class="who">1–2 人</span><h3>总管与审核</h3><p>资产表、楼栋认领、楼栋包审核、版本发布。</p></div>
+    </div>
+  </section>
+
+  <section id="phases">
+    <p class="eyebrow">阶段</p>
+    <h2>每个阶段结束都有一个能玩的版本</h2>
+    <div class="sec-body">
+      <div class="phases">
+        <div class="phase first">
+          <span class="num">阶段 0</span><span class="when">2–3 周</span>
+          <h3>数据与框架</h3>
+          <p>全校航拍出正射和高程；开始拍消防图和立面；网页框架里角色能在地形上走。</p>
+          <p class="got"><b>产出：</b>在网页里能俯瞰、走遍全校底图</p>
+        </div>
+        <div class="phase">
+          <span class="num">阶段 1</span><span class="when">约 1 个月</span>
+          <h3>全覆盖 v0.1</h3>
+          <p>描完全校楼轮廓和路网，脚本生成所有白模、道路、湖、树。</p>
+          <p class="got"><b>产出：</b>每栋楼都在，每个角落都能走到</p>
+        </div>
+        <div class="phase">
+          <span class="num">阶段 2</span><span class="when">2–4 个月</span>
+          <h3>精修 v0.2–0.5</h3>
+          <p>认领精修所有楼外观；消防图批量生成室内；地标精做。</p>
+          <p class="got"><b>产出：</b>每栋楼像实物，都能进去</p>
+        </div>
+        <div class="phase">
+          <span class="num">阶段 3</span><span class="when">持续</span>
+          <h3>精品与玩法 v0.6+</h3>
+          <p>重点空间 3DGS、新生报到剧情、载具、联机；赶迎新、校庆节点发布。</p>
+          <p class="got"><b>产出：</b>公开发布版</p>
+        </div>
+      </div>
+      <p class="fineprint">时间按课余时间粗估。阶段 0 做完后，按实际速度和楼栋总数重新排。</p>
+    </div>
+  </section>
+
+  <section id="rules">
+    <p class="eyebrow">规范与条件</p>
+    <h2>开工前先定好的规矩</h2>
+    <div class="sec-body two">
+      <div class="panel">
+        <h3>统一规范（不定好，后面拼不上）</h3>
+        <ul>
+          <li><b>同一个原点：</b>全队约定一个点为 (0, 0, 0)，比如某个校门中心；单位米。</li>
+          <li><b>全校楼统一编号：</b>从正射影像上数出所有楼，B001 起编，资产表每栋一行。</li>
+          <li><b>文件名只用英文、拼音、数字：</b>不要中文和空格，很多 3D 软件会报错。</li>
+          <li><b>原片永远留一份备份</b>，处理只在副本上做。</li>
+        </ul>
+        <pre>00_ref/       消防图、立面照片、资产表
+10_capture/   航拍、3DGS 原片
+20_process/   实景三维、正射、高程、GeoJSON
+30_blender/   白模、精修模型、构件库
+40_web/       网页游戏项目</pre>
+      </div>
+      <div class="panel">
+        <h3>电脑与存储</h3>
+        <ul>
+          <li>RealityScan、Postshot 要 <b>NVIDIA 显卡</b>，显存 8 GB 起；全校航拍建模内存最好 64 GB。优先借学院机房电脑。</li>
+          <li>写网页游戏和做建模用普通电脑就行；但要拿中低端手机测帧数，按最差的那台定规范。</li>
+          <li>原片加中间文件很快到几百 GB，准备移动硬盘或 NAS。</li>
+        </ul>
+        <h3 style="margin-top:1.2rem">合规</h3>
+        <ul>
+          <li>无人机实名登记，飞前查空域，向学校报备。</li>
+          <li>照片和高斯里拍到的人脸、车牌要打码或删掉。</li>
+          <li>宿舍、实验室、机房先问学校能不能拍、能不能公开。</li>
+          <li>游戏里用自己的局部坐标，不带真实经纬度；高精度测绘成果不公开上传。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="next">
+    <p class="eyebrow">下一步</p>
+    <h2>这周就能开始的三件事</h2>
+    <div class="sec-body">
+      <ol class="next">
+        <li><h3>全校航拍一次</h3><p>先出一张全校正射影像。有了它，楼的编号、轮廓、路网都能开始描。</p></li>
+        <li><h3>建资产表，给全校楼编号</h3><p>从正射图上数出所有楼，每栋一行，标上负责人，开放认领拍照。</p></li>
+        <li><h3>用 Claude Code 搭网页框架</h3><p>让角色能在正射底图上走，顺便写第一版白模生成脚本，拿一栋楼试。</p></li>
+      </ol>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>方案 v0.2 · 2026 年 11 月。文中软件和插件更新很快，正式采用前先在阶段 0 里验证一遍。</p>
+    <p style="margin-top:.6rem">《网上南宁》资料来源：</p>
+    <ul>
+      <li><a href="https://cnews.chinadaily.com.cn/a/202611/18/WS6afd0659e4b0e14252fcbc3c.html">中国日报网：南宁也有自己的“GTA”？广西南宁小伙用AI开发《网上南宁》游戏</a></li>
+      <li><a href="https://www.bilibili.com/video/BV1AVWX6mEiS/">B 站 · 网上南宁official：200亿token把我的家乡南宁做成多人开放世界</a></li>
+      <li><a href="https://github.com/ziyan2006/nnol-map-workshop">GitHub · nnol-map-workshop：0.8.2 地图查看器与工坊投稿原型</a></li>
+      <li><a href="https://nanningol.com/">官网 nanningol.com（封测，需邀请码）</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var svg = document.getElementById('campusMap');
+  var btns = document.querySelectorAll('.seg button');
+  var cards = document.querySelectorAll('.layer');
+  function setStage(n){
+    if (svg) svg.setAttribute('class', 'stage-' + n);
+    btns.forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-stage') === String(n) ? 'true' : 'false'); });
+    cards.forEach(function(c){ c.classList.toggle('on', c.getAttribute('data-stage') === String(n)); });
+  }
+  btns.forEach(function(b){ b.addEventListener('click', function(){ setStage(b.getAttribute('data-stage')); }); });
+  cards.forEach(function(c){ c.addEventListener('click', function(){ setStage(c.getAttribute('data-stage')); }); });
+})();
+</script>

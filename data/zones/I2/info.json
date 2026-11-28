@@ -1,0 +1,215 @@
+{
+ "box": [
+  900.0,
+  -600.0,
+  1100.0,
+  -400.0
+ ],
+ "buildings": [
+  {
+   "id": 478390591,
+   "name": "气象楼",
+   "h": 12.0,
+   "lv": 3,
+   "kind": "teach",
+   "style": null,
+   "color": "#f1f0ec",
+   "replaced": true,
+   "fixed": true
+  },
+  {
+   "id": 478391048,
+   "name": "行政楼",
+   "h": 22.5,
+   "lv": 6,
+   "kind": "teach",
+   "style": null,
+   "color": "#dce2e2",
+   "replaced": true,
+   "fixed": null
+  },
+  {
+   "id": 860503919,
+   "name": "硕园1栋",
+   "h": 18.5,
+   "lv": 6,
+   "kind": "dorm",
+   "style": null,
+   "color": "#d1e5f1",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": 860503920,
+   "name": "硕园2栋",
+   "h": 18.4,
+   "lv": 6,
+   "kind": "dorm",
+   "style": null,
+   "color": "#dce2e4",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": 1114843834,
+   "name": "硕园6栋",
+   "h": 10.4,
+   "lv": 3,
+   "kind": "dorm",
+   "style": null,
+   "color": "#d3e5ed",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": "manual-29",
+   "name": "",
+   "h": 71.5,
+   "lv": 20,
+   "kind": "teach",
+   "style": "modern",
+   "color": "#f1f0ec",
+   "replaced": true,
+   "fixed": null
+  }
+ ],
+ "roads": [
+  {
+   "id": 404874359,
+   "name": "",
+   "kind": "cycleway",
+   "w": 3,
+   "sw": 0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 682188143,
+   "name": "",
+   "kind": "service",
+   "w": 5.5,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 682188147,
+   "name": "",
+   "kind": "service",
+   "w": 5.5,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 682188159,
+   "name": "",
+   "kind": "service",
+   "w": 5.5,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 682188177,
+   "name": "",
+   "kind": "service",
+   "w": 4.5,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 682188372,
+   "name": "正气东路",
+   "kind": "service",
+   "w": 8,
+   "sw": 2.0,
+   "pave": "grey",
+   "audited": true
+  },
+  {
+   "id": 971606037,
+   "name": "正气东路",
+   "kind": "service",
+   "w": 8,
+   "sw": 2.0,
+   "pave": "grey",
+   "audited": true
+  },
+  {
+   "id": 971606038,
+   "name": "正气东路",
+   "kind": "service",
+   "w": 8,
+   "sw": 2.0,
+   "pave": "grey",
+   "audited": true
+  },
+  {
+   "id": 1057158539,
+   "name": "",
+   "kind": "footway",
+   "w": 3,
+   "sw": 0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 1057168422,
+   "name": "",
+   "kind": "service",
+   "w": 3.5,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 1174938484,
+   "name": "六合大道",
+   "kind": "primary",
+   "w": 6.0,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 1229233990,
+   "name": "",
+   "kind": "footway",
+   "w": 3,
+   "sw": 0,
+   "pave": "red",
+   "audited": null
+  },
+  {
+   "id": 1316175149,
+   "name": "",
+   "kind": "footway",
+   "w": 3,
+   "sw": 0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 1316175150,
+   "name": "",
+   "kind": "service",
+   "w": 5.5,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  }
+ ],
+ "sports": [],
+ "markers": [],
+ "models": [
+  {
+   "name": "气象楼",
+   "file": "models/qixianglou.glb",
+   "x": 970.3,
+   "z": -437.92,
+   "rotY": 0
+  }
+ ]
+}

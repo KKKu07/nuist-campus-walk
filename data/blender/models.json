@@ -1,0 +1,1171 @@
+[
+ {
+  "name": "气象楼",
+  "file": "models/qixianglou.glb",
+  "x": 970.3,
+  "z": -437.92,
+  "rotY": 0,
+  "replaces": [
+   478390591,
+   "manual-29"
+  ],
+  "replaces_names": [
+   "气象楼",
+   "气象楼主楼(extra_buildings)"
+  ],
+  "height": 76.6,
+  "tris": 1840
+ },
+ {
+  "name": "图书馆",
+  "file": "models/tushuguan.glb",
+  "x": 125.95,
+  "z": -271.26,
+  "rotY": 0,
+  "replaces": [
+   862952701,
+   "tower-1"
+  ],
+  "replaces_names": [
+   "图书馆",
+   "图书馆实测塔(tower-1)"
+  ],
+  "height": 29.3,
+  "tris": 1150
+ },
+ {
+  "name": "逸夫楼",
+  "file": "models/yifulou.glb",
+  "x": -87.34,
+  "z": -140.04,
+  "rotY": 0,
+  "replaces": [
+   862959368
+  ],
+  "replaces_names": [
+   "学科4号楼（逸夫楼，钟楼）"
+  ],
+  "height": 51.8,
+  "tris": 1723,
+  "campus_name": "学科4号楼"
+ },
+ {
+  "name": "临江楼（信息科技大楼）",
+  "file": "models/linjianglou.glb",
+  "x": -249.12,
+  "z": 89.92,
+  "rotY": 0,
+  "replaces": [
+   1245445293,
+   "tower-2"
+  ],
+  "replaces_names": [
+   "信息科技大楼",
+   "临江楼实测塔(tower-2)"
+  ],
+  "height": 81.2,
+  "tris": 328
+ },
+ {
+  "name": "东苑体育馆",
+  "file": "models/dongyuan_tiyuguan.glb",
+  "x": 1176.15,
+  "z": -654.03,
+  "rotY": 0,
+  "replaces": [
+   478388467
+  ],
+  "replaces_names": [
+   "东苑体育馆"
+  ],
+  "height": 30.6,
+  "tris": 1058
+ },
+ {
+  "name": "见山园",
+  "file": "models/jianshanyuan.glb",
+  "x": -158.41,
+  "z": 33.65,
+  "rotY": 0,
+  "replaces": [
+   862959362,
+   "jianshan-east"
+  ],
+  "replaces_names": [
+   "见山园",
+   "见山园东侧主楼"
+  ],
+  "height": 21.0,
+  "tris": 104
+ },
+ {
+  "name": "老校门",
+  "file": "models/laoxiaomen.glb",
+  "x": 626.0,
+  "z": -262.0,
+  "rotY": 0,
+  "replaces": [],
+  "replaces_names": [
+   "老校门(poi 装饰)"
+  ],
+  "height": 8.8,
+  "tris": 100,
+  "replaces_poi": "老校门"
+ },
+ {
+  "name": "文德楼",
+  "file": "models/wendelou.glb",
+  "x": 835.61,
+  "z": -336.27,
+  "rotY": 0,
+  "replaces": [
+   478391045
+  ],
+  "replaces_names": [
+   "文德楼"
+  ],
+  "height": 33.0,
+  "tris": 3219
+ },
+ {
+  "name": "尚贤楼",
+  "file": "models/shangxianlou.glb",
+  "x": 593.14,
+  "z": -387.63,
+  "rotY": 0,
+  "replaces": [
+   862952687
+  ],
+  "replaces_names": [
+   "尚贤楼"
+  ],
+  "height": 58.3,
+  "tris": 1434
+ },
+ {
+  "name": "行政楼",
+  "file": "models/xingzhenglou.glb",
+  "x": 1128.79,
+  "z": -382.28,
+  "rotY": 0,
+  "replaces": [
+   478391048
+  ],
+  "replaces_names": [
+   "行政楼"
+  ],
+  "height": 26.2,
+  "tris": 782
+ },
+ {
+  "name": "国际教育学院（培训楼）",
+  "file": "models/guojijiaoyu.glb",
+  "x": 1211.6,
+  "z": -422.97,
+  "rotY": 0,
+  "replaces": [
+   1316175146
+  ],
+  "replaces_names": [
+   "培训楼（国际教育学院）"
+  ],
+  "height": 21.0,
+  "tris": 524
+ },
+ {
+  "name": "升旗广场（旗阵）",
+  "file": "models/shengqi_guangchang.glb",
+  "x": 1211.0,
+  "z": -380.0,
+  "rotY": 0,
+  "replaces": [],
+  "replaces_names": [
+   "升旗广场(poi 装饰)"
+  ],
+  "height": 14.5,
+  "tris": 1390,
+  "replaces_poi": "升旗广场"
+ },
+ {
+  "name": "藕舫楼",
+  "file": "models/oufanglou.glb",
+  "x": 586.18,
+  "z": -524.29,
+  "rotY": 0,
+  "replaces": [
+   1114839562
+  ],
+  "replaces_names": [
+   "藕舫楼"
+  ],
+  "height": 37.2,
+  "tris": 619
+ },
+ {
+  "name": "滨江楼",
+  "file": "models/binjianglou.glb",
+  "x": -339.76,
+  "z": 125.09,
+  "rotY": 0,
+  "replaces": [
+   862959375
+  ],
+  "replaces_names": [
+   "滨江楼"
+  ],
+  "height": 27.6,
+  "tris": 1390
+ },
+ {
+  "name": "东大门",
+  "file": "models/dongdamen.glb",
+  "x": 1405.5,
+  "z": -520.8,
+  "rotY": 0,
+  "replaces": [],
+  "replaces_names": [
+   "东大门(poi 装饰)"
+  ],
+  "height": 15.6,
+  "tris": 14403,
+  "replaces_poi": "东大门"
+ },
+ {
+  "name": "雷丁学院",
+  "file": "models/leidingxueyuan.glb",
+  "x": 1197.07,
+  "z": -478.22,
+  "rotY": 0,
+  "replaces": [
+   478391050
+  ],
+  "replaces_names": [
+   "雷丁学院"
+  ],
+  "height": 21.0,
+  "tris": 1434
+ },
+ {
+  "name": "水云方（游泳馆）",
+  "file": "models/shuiyunfang.glb",
+  "x": -122.58,
+  "z": 164.27,
+  "rotY": 0,
+  "replaces": [
+   1114843838
+  ],
+  "replaces_names": [
+   "水云方（游泳馆）"
+  ],
+  "height": 12.6,
+  "tris": 226
+ },
+ {
+  "name": "气象谷美食城",
+  "file": "models/qixianggu.glb",
+  "x": 584.29,
+  "z": -179.5,
+  "rotY": 0,
+  "replaces": [
+   1316305740
+  ],
+  "replaces_names": [
+   "气象谷美食城"
+  ],
+  "height": 25.5,
+  "tris": 170
+ },
+ {
+  "name": "雷达塔",
+  "file": "models/leidata.glb",
+  "x": 419.0,
+  "z": -538.0,
+  "rotY": 0,
+  "replaces": [],
+  "replaces_names": [
+   "雷达塔(poi 装饰)"
+  ],
+  "height": 40.5,
+  "tris": 1042,
+  "replaces_poi": "雷达塔"
+ },
+ {
+  "name": "明德楼",
+  "file": "models/mingdelou.glb",
+  "x": 591.08,
+  "z": -459.58,
+  "rotY": 0,
+  "replaces": [
+   862952692
+  ],
+  "replaces_names": [
+   "明德楼"
+  ],
+  "height": 29.0,
+  "tris": 720
+ },
+ {
+  "name": "大学生活动中心",
+  "file": "models/huodongzhongxin.glb",
+  "x": 693.63,
+  "z": -301.02,
+  "rotY": 0,
+  "replaces": [
+   862952689
+  ],
+  "replaces_names": [
+   "大学生活动中心"
+  ],
+  "height": 17.0,
+  "tris": 382
+ },
+ {
+  "name": "东苑食堂",
+  "file": "models/dongyuan_shitang.glb",
+  "x": 715.02,
+  "z": -638.94,
+  "rotY": 0,
+  "replaces": [
+   862952691
+  ],
+  "replaces_names": [
+   "东苑食堂"
+  ],
+  "height": 17.0,
+  "tris": 708
+ },
+ {
+  "name": "中苑老食堂",
+  "file": "models/zhongyuan_laoshitang.glb",
+  "x": 389.84,
+  "z": -167.72,
+  "rotY": 0,
+  "replaces": [
+   1308936469
+  ],
+  "replaces_names": [
+   "中苑老食堂"
+  ],
+  "height": 8.5,
+  "tris": 114
+ },
+ {
+  "name": "启明楼",
+  "file": "models/qiminglou.glb",
+  "x": 391.8,
+  "z": -570.61,
+  "rotY": 0,
+  "replaces": [
+   1114839563
+  ],
+  "replaces_names": [
+   "启明楼"
+  ],
+  "height": 21.5,
+  "tris": 288
+ },
+ {
+  "name": "长望楼",
+  "file": "models/changwanglou.glb",
+  "x": 451.87,
+  "z": -479.88,
+  "rotY": 0,
+  "replaces": [
+   1114839561
+  ],
+  "replaces_names": [
+   "长望楼"
+  ],
+  "height": 20.2,
+  "tris": 282
+ },
+ {
+  "name": "风云剧场",
+  "file": "models/fengyun_juchang.glb",
+  "x": 478.2,
+  "z": -255.47,
+  "rotY": 0,
+  "replaces": [
+   862952697
+  ],
+  "replaces_names": [
+   "风云剧场"
+  ],
+  "height": 12.2,
+  "tris": 88
+ },
+ {
+  "name": "北辰楼",
+  "file": "models/beichenlou.glb",
+  "x": 487.55,
+  "z": -575.68,
+  "rotY": 0,
+  "replaces": [
+   862959350
+  ],
+  "replaces_names": [
+   "北辰楼"
+  ],
+  "height": 18.9,
+  "tris": 706
+ },
+ {
+  "name": "揽江楼",
+  "file": "models/lanjianglou.glb",
+  "x": -380.32,
+  "z": 257.6,
+  "rotY": 0,
+  "replaces": [
+   685183294
+  ],
+  "replaces_names": [
+   "揽江楼"
+  ],
+  "height": 26.2,
+  "tris": 284
+ },
+ {
+  "name": "阅江楼",
+  "file": "models/yuejianglou.glb",
+  "x": -437.21,
+  "z": 155.45,
+  "rotY": 0,
+  "replaces": [
+   1114843833
+  ],
+  "replaces_names": [
+   "阅江楼"
+  ],
+  "height": 20.099999999999998,
+  "tris": 216
+ },
+ {
+  "name": "学科1号楼",
+  "file": "models/xueke1.glb",
+  "x": -14.19,
+  "z": -290.54,
+  "rotY": 0,
+  "replaces": [
+   1114843831
+  ],
+  "replaces_names": [
+   "学科1号楼"
+  ],
+  "height": 22.1,
+  "tris": 802
+ },
+ {
+  "name": "学科2号楼",
+  "file": "models/xueke2.glb",
+  "x": -1.21,
+  "z": -199.35,
+  "rotY": 0,
+  "replaces": [
+   1114843832
+  ],
+  "replaces_names": [
+   "学科2号楼"
+  ],
+  "height": 25.3,
+  "tris": 872
+ },
+ {
+  "name": "学科3号楼",
+  "file": "models/xueke3.glb",
+  "x": -87.84,
+  "z": -236.95,
+  "rotY": 0,
+  "replaces": [
+   862959367
+  ],
+  "replaces_names": [
+   "学科3号楼"
+  ],
+  "height": 24.8,
+  "tris": 878
+ },
+ {
+  "name": "中苑美食城",
+  "file": "models/zhongyuan_meishicheng.glb",
+  "x": 343.46,
+  "z": -162.18,
+  "rotY": 0,
+  "replaces": [
+   1316305741
+  ],
+  "replaces_names": [
+   "中苑美食城"
+  ],
+  "height": 14.6,
+  "tris": 96
+ },
+ {
+  "name": "中苑新食堂",
+  "file": "models/zhongyuan_xinshitang.glb",
+  "x": 175.31,
+  "z": 26.16,
+  "rotY": 0,
+  "replaces": [
+   862959361
+  ],
+  "replaces_names": [
+   "中苑新食堂"
+  ],
+  "height": 16.5,
+  "tris": 163
+ },
+ {
+  "name": "南阶教室",
+  "file": "models/nanjie_jiaoshi.glb",
+  "x": 537.6,
+  "z": -381.5,
+  "rotY": 0,
+  "replaces": [
+   862952688
+  ],
+  "replaces_names": [
+   "南阶教室"
+  ],
+  "height": 9.1,
+  "tris": 44
+ },
+ {
+  "name": "科创1号楼",
+  "file": "models/kechuang1.glb",
+  "x": 920.72,
+  "z": -712.77,
+  "rotY": 0,
+  "replaces": [
+   862952684
+  ],
+  "replaces_names": [
+   "科创1号楼"
+  ],
+  "height": 10.5,
+  "tris": 134
+ },
+ {
+  "name": "科创2号楼",
+  "file": "models/kechuang2.glb",
+  "x": 1048.16,
+  "z": -739.45,
+  "rotY": 0,
+  "replaces": [
+   862952683
+  ],
+  "replaces_names": [
+   "科创2号楼"
+  ],
+  "height": 14.2,
+  "tris": 228
+ },
+ {
+  "name": "科创3号楼",
+  "file": "models/kechuang3.glb",
+  "x": 1170.13,
+  "z": -759.6,
+  "rotY": 0,
+  "replaces": [
+   862952681
+  ],
+  "replaces_names": [
+   "科创3号楼"
+  ],
+  "height": 14.2,
+  "tris": 366
+ },
+ {
+  "name": "科创4号楼",
+  "file": "models/kechuang4.glb",
+  "x": 1270.64,
+  "z": -771.76,
+  "rotY": 0,
+  "replaces": [
+   862952679
+  ],
+  "replaces_names": [
+   "科创4号楼"
+  ],
+  "height": 7.5,
+  "tris": 42
+ },
+ {
+  "name": "基嘉楼",
+  "file": "models/jijialou.glb",
+  "x": 523.21,
+  "z": -442.51,
+  "rotY": 0,
+  "replaces": [
+   862952700
+  ],
+  "replaces_names": [
+   "基嘉楼"
+  ],
+  "height": 14.3,
+  "tris": 372
+ },
+ {
+  "name": "教工活动中心",
+  "file": "models/jiaogong_huodong.glb",
+  "x": 678.37,
+  "z": -366.09,
+  "rotY": 0,
+  "replaces": [
+   862952690
+  ],
+  "replaces_names": [
+   "教工活动中心"
+  ],
+  "height": 9.2,
+  "tris": 460
+ },
+ {
+  "name": "南气宾馆",
+  "file": "models/nanqi_binguan.glb",
+  "x": 1064.39,
+  "z": -698.54,
+  "rotY": 0,
+  "replaces": [
+   862952682
+  ],
+  "replaces_names": [
+   "南气宾馆"
+  ],
+  "height": 22.9,
+  "tris": 440
+ },
+ {
+  "name": "西苑新食堂",
+  "file": "models/xiyuan_xinshitang.glb",
+  "x": -573.95,
+  "z": -389.39,
+  "rotY": 0,
+  "replaces": [
+   862959377
+  ],
+  "replaces_names": [
+   "西苑新食堂"
+  ],
+  "height": 13.2,
+  "tris": 498
+ },
+ {
+  "name": "中苑主席台",
+  "file": "models/zhongyuan_zhuxitai.glb",
+  "x": -64.4,
+  "z": 13.75,
+  "rotY": 0,
+  "replaces": [
+   "zhongyuan-stand"
+  ],
+  "replaces_names": [
+   "中苑田径场西看台+主席台"
+  ],
+  "height": 10.1,
+  "tris": 702
+ },
+ {
+  "name": "西苑文创街区",
+  "file": "models/xiyuan_wenchuang.glb",
+  "x": -460.64,
+  "z": -62.7,
+  "rotY": 0,
+  "replaces": [
+   "xywc-1",
+   "xywc-2",
+   "xywc-3",
+   "xywc-4",
+   "xywc-5"
+  ],
+  "replaces_names": [
+   "西苑文创街区 5 栋"
+  ],
+  "height": 7.6,
+  "tris": 129
+ },
+ {
+  "name": "文园宿舍 A2",
+  "file": "models/dorm_wenyuan_a2.glb",
+  "x": -526.62,
+  "z": -478.82,
+  "rotY": 0,
+  "replaces": [
+   862959378,
+   1245446262,
+   1245446261
+  ],
+  "replaces_names": [
+   "文园17栋",
+   "文园20栋",
+   "文园21栋"
+  ],
+  "height": 26.8,
+  "tris": 862
+ },
+ {
+  "name": "文园宿舍 A3",
+  "file": "models/dorm_wenyuan_a3.glb",
+  "x": -508.9,
+  "z": -311.52,
+  "rotY": 0,
+  "replaces": [
+   862959384,
+   862959386
+  ],
+  "replaces_names": [
+   "文园11栋",
+   "文园4栋"
+  ],
+  "height": 26.8,
+  "tris": 488
+ },
+ {
+  "name": "文园宿舍 A4",
+  "file": "models/dorm_wenyuan_a4.glb",
+  "x": -554.55,
+  "z": -169.46,
+  "rotY": 0,
+  "replaces": [
+   862959390,
+   862959389,
+   862959387,
+   862959388
+  ],
+  "replaces_names": [
+   "文园19栋",
+   "文园1栋",
+   "文园2栋",
+   "文园3栋"
+  ],
+  "height": 26.8,
+  "tris": 976
+ },
+ {
+  "name": "文园宿舍 B2",
+  "file": "models/dorm_wenyuan_b2.glb",
+  "x": -367.06,
+  "z": -485.05,
+  "rotY": 0,
+  "replaces": [
+   862959383,
+   862959382,
+   862959380,
+   862959381,
+   862959379
+  ],
+  "replaces_names": [
+   "文园12栋",
+   "文园13栋",
+   "文园14栋",
+   "文园15栋",
+   "文园16栋"
+  ],
+  "height": 26.8,
+  "tris": 1220
+ },
+ {
+  "name": "文园宿舍 B3",
+  "file": "models/dorm_wenyuan_b3.glb",
+  "x": -367.59,
+  "z": -241.1,
+  "rotY": 0,
+  "replaces": [
+   862959372,
+   862959385,
+   862959371,
+   862959370,
+   862959369,
+   862959374,
+   862959373
+  ],
+  "replaces_names": [
+   "文园10栋",
+   "文园18栋",
+   "文园5栋",
+   "文园6栋",
+   "文园7栋",
+   "文园8栋",
+   "文园9栋"
+  ],
+  "height": 28.5,
+  "tris": 1708
+ },
+ {
+  "name": "沁园宿舍 D4",
+  "file": "models/dorm_qinyuan_d4.glb",
+  "x": 97.27,
+  "z": -79.4,
+  "rotY": 0,
+  "replaces": [
+   862959356,
+   862959357
+  ],
+  "replaces_names": [
+   "沁园35栋",
+   "沁园36栋"
+  ],
+  "height": 24.3,
+  "tris": 678
+ },
+ {
+  "name": "沁园宿舍 E4",
+  "file": "models/dorm_qinyuan_e4.glb",
+  "x": 241.8,
+  "z": -112.77,
+  "rotY": 0,
+  "replaces": [
+   1316148867,
+   862959352,
+   862959353,
+   862959354,
+   1316148866,
+   862959355,
+   1316148865,
+   862959358,
+   1316148868,
+   1316307762,
+   "tower-3"
+  ],
+  "replaces_names": [
+   "新园31栋",
+   "沁园27栋",
+   "沁园28栋",
+   "沁园29栋",
+   "沁园32栋",
+   "沁园34栋",
+   "沁园35栋",
+   "沁园37栋",
+   "沁园40栋",
+   "青教公寓6幢"
+  ],
+  "height": 23.5,
+  "tris": 2522
+ },
+ {
+  "name": "沁园宿舍 E5",
+  "file": "models/dorm_qinyuan_e5.glb",
+  "x": 167.81,
+  "z": 36.48,
+  "rotY": 0,
+  "replaces": [
+   862959359,
+   862959360,
+   1316148869
+  ],
+  "replaces_names": [
+   "沁园38栋",
+   "沁园39栋",
+   "沁园41栋"
+  ],
+  "height": 22.6,
+  "tris": 1176
+ },
+ {
+  "name": "沁园宿舍 F3",
+  "file": "models/dorm_qinyuan_f3.glb",
+  "x": 461.3,
+  "z": -280.79,
+  "rotY": 0,
+  "replaces": [
+   862952696,
+   862952694,
+   862952695,
+   1114843835
+  ],
+  "replaces_names": [
+   "862952696",
+   "沁园22栋",
+   "沁园23栋",
+   "沁园25栋"
+  ],
+  "height": 20.1,
+  "tris": 1180
+ },
+ {
+  "name": "沁园宿舍 F4",
+  "file": "models/dorm_qinyuan_f4.glb",
+  "x": 365.92,
+  "z": -61.81,
+  "rotY": 0,
+  "replaces": [
+   1316307763,
+   "tower-4"
+  ],
+  "replaces_names": [
+   "沁园30栋"
+  ],
+  "height": 23.7,
+  "tris": 176
+ },
+ {
+  "name": "东苑宿舍 G1",
+  "file": "models/dorm_dongyuan_g1.glb",
+  "x": 665.01,
+  "z": -749.78,
+  "rotY": 0,
+  "replaces": [
+   1425305061,
+   1425305062,
+   1425305063,
+   1425305064,
+   1425504864,
+   1425504865
+  ],
+  "replaces_names": [
+   "1425305061",
+   "1425305062",
+   "1425305063",
+   "1425305064",
+   "1425504864",
+   "1425504865"
+  ],
+  "height": 19.4,
+  "tris": 1434
+ },
+ {
+  "name": "东苑宿舍 H1",
+  "file": "models/dorm_dongyuan_h1.glb",
+  "x": 775.99,
+  "z": -721.45,
+  "rotY": 0,
+  "replaces": [
+   1425305071,
+   1425305074,
+   1425305075,
+   1425504863,
+   862952674,
+   862952686
+  ],
+  "replaces_names": [
+   "1425305071",
+   "1425305074",
+   "1425305075",
+   "1425504863",
+   "东苑晖园14",
+   "硕园5栋-云中信大"
+  ],
+  "height": 25.9,
+  "tris": 1626
+ },
+ {
+  "name": "东苑宿舍 H2",
+  "file": "models/dorm_dongyuan_h2.glb",
+  "x": 748.11,
+  "z": -515.08,
+  "rotY": 0,
+  "replaces": [
+   862952677,
+   862952676,
+   862952675
+  ],
+  "replaces_names": [
+   "东苑晖园11",
+   "东苑晖园12",
+   "东苑晖园13"
+  ],
+  "height": 24.4,
+  "tris": 1734
+ },
+ {
+  "name": "东苑宿舍 I1",
+  "file": "models/dorm_dongyuan_i1.glb",
+  "x": 922.41,
+  "z": -692.66,
+  "rotY": 0,
+  "replaces": [
+   1425305080,
+   860503921,
+   862952685
+  ],
+  "replaces_names": [
+   "1425305080",
+   "硕园3栋",
+   "硕园4栋"
+  ],
+  "height": 24.5,
+  "tris": 842
+ },
+ {
+  "name": "东苑宿舍 I2",
+  "file": "models/dorm_dongyuan_i2.glb",
+  "x": 951.81,
+  "z": -548.65,
+  "rotY": 0,
+  "replaces": [
+   860503919,
+   860503920,
+   1114843834
+  ],
+  "replaces_names": [
+   "硕园1栋",
+   "硕园2栋",
+   "硕园6栋"
+  ],
+  "height": 24.8,
+  "tris": 1734
+ },
+ {
+  "name": "沁园26栋",
+  "file": "models/dorm_qinyuan_g3.glb",
+  "x": 507.24,
+  "z": -208.03,
+  "rotY": 0,
+  "replaces": [
+   1114843836
+  ],
+  "replaces_names": [
+   "沁园26栋"
+  ],
+  "height": 21.2,
+  "tris": 236
+ },
+ {
+  "name": "第八栋宿舍",
+  "file": "models/dorm_e3_no8.glb",
+  "x": 283.5,
+  "z": -296.0,
+  "rotY": 0,
+  "replaces": [
+   "manual-21"
+  ],
+  "replaces_names": [
+   "第八栋宿舍"
+  ],
+  "height": 11.5,
+  "tris": 156
+ },
+ {
+  "name": "东苑集装箱美食街",
+  "file": "models/dongyuan_jzx.glb",
+  "x": 826.33,
+  "z": -693.51,
+  "rotY": 0,
+  "replaces": [
+   "jzx-w",
+   "jzx-g1",
+   "jzx-g2",
+   "jzx-g3",
+   "jzx-g4",
+   "jzx-g5",
+   "jzx-g6",
+   "jzx-u1",
+   "jzx-u2",
+   "jzx-u3",
+   "jzx-u4",
+   "jzx-u5",
+   "jzx-u6",
+   "jzx-e"
+  ],
+  "replaces_names": [
+   "东苑集装箱美食街（信藕空间·文创街区）"
+  ],
+  "height": 8.6,
+  "tris": 1114
+ },
+ {
+  "name": "东苑美食街街面",
+  "file": "models/jzx_street.glb",
+  "x": 825.58,
+  "z": -683.94,
+  "rotY": 0,
+  "replaces": [],
+  "replaces_names": [],
+  "height": 3.0,
+  "tris": 8408
+ },
+ {
+  "name": "E3 老居民楼",
+  "file": "models/e3_old_residential.glb",
+  "x": 216.13,
+  "z": -341.03,
+  "rotY": 0,
+  "replaces": [
+   "old-res-1",
+   "old-res-2",
+   "old-res-2a",
+   "old-res-3",
+   "old-res-4",
+   "res-p1"
+  ],
+  "replaces_names": [
+   "E3 老居民楼 4 栋 + 平房 + res-p1"
+  ],
+  "height": 20.0,
+  "tris": 2604
+ },
+ {
+  "name": "理政楼",
+  "file": "models/bake/1057168414.glb",
+  "x": 545.86,
+  "z": -304.97,
+  "rotY": 0,
+  "replaces": [
+   1057168414
+  ],
+  "replaces_names": [
+   "理政楼"
+  ],
+  "height": 17.5,
+  "tris": 156
+ },
+ {
+  "name": "气象谷 南排东楼",
+  "file": "models/bake/1424945036.glb",
+  "x": 649.53,
+  "z": -157.79,
+  "rotY": 0,
+  "replaces": [
+   1424945036
+  ],
+  "replaces_names": [
+   "气象谷 南排东楼"
+  ],
+  "height": 37.7,
+  "tris": 244
+ },
+ {
+  "name": "气象谷 南排中楼",
+  "file": "models/bake/1424945037.glb",
+  "x": 561.39,
+  "z": -123.25,
+  "rotY": 0,
+  "replaces": [
+   1424945037
+  ],
+  "replaces_names": [
+   "气象谷 南排中楼"
+  ],
+  "height": 38.6,
+  "tris": 257
+ },
+ {
+  "name": "气象谷 南排西楼",
+  "file": "models/bake/1424945039.glb",
+  "x": 476.36,
+  "z": -96.32,
+  "rotY": 0,
+  "replaces": [
+   1424945039
+  ],
+  "replaces_names": [
+   "气象谷 南排西楼"
+  ],
+  "height": 38.5,
+  "tris": 271
+ },
+ {
+  "name": "气象谷 北排西楼",
+  "file": "models/bake/1424945040.glb",
+  "x": 485.55,
+  "z": -162.79,
+  "rotY": 0,
+  "replaces": [
+   1424945040
+  ],
+  "replaces_names": [
+   "气象谷 北排西楼"
+  ],
+  "height": 26.3,
+  "tris": 251
+ }
+]

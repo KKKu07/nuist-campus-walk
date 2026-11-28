@@ -1,0 +1,96 @@
+{
+ "box": [
+  -280.0,
+  -420.0,
+  -110.0,
+  -320.0
+ ],
+ "buildings": [
+  {
+   "id": 1114843846,
+   "name": "气象观测基地",
+   "h": 15.6,
+   "lv": 4,
+   "kind": "other",
+   "style": null,
+   "color": null,
+   "replaced": null,
+   "fixed": null
+  }
+ ],
+ "roads": [
+  {
+   "id": 682188145,
+   "name": "",
+   "kind": "footway",
+   "w": 3,
+   "sw": 0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 682188146,
+   "name": "",
+   "kind": "service",
+   "w": 5.5,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 682188163,
+   "name": "",
+   "kind": "footway",
+   "w": 3,
+   "sw": 0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 971606033,
+   "name": "正气路",
+   "kind": "service",
+   "w": 8.5,
+   "sw": 2.0,
+   "pave": "red",
+   "audited": true
+  },
+  {
+   "id": 971606034,
+   "name": "正气路",
+   "kind": "service",
+   "w": 8.5,
+   "sw": 2.0,
+   "pave": "red",
+   "audited": true
+  },
+  {
+   "id": 971606044,
+   "name": "正气路",
+   "kind": "service",
+   "w": 10,
+   "sw": 2.0,
+   "pave": "grey",
+   "audited": true
+  },
+  {
+   "id": 1057168423,
+   "name": "",
+   "kind": "footway",
+   "w": 3,
+   "sw": 0,
+   "pave": "grey",
+   "audited": null
+  }
+ ],
+ "sports": [],
+ "markers": [
+  {
+   "name": "王鹏飞雕像",
+   "cat": "文化风景",
+   "x": -124.0,
+   "z": -325.2
+  }
+ ],
+ "models": []
+}

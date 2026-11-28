@@ -1,0 +1,177 @@
+{
+ "box": [
+  -600.0,
+  -140.0,
+  -400.0,
+  80.0
+ ],
+ "buildings": [
+  {
+   "id": 862959375,
+   "name": "滨江楼",
+   "h": 19.2,
+   "lv": 5,
+   "kind": "teach",
+   "style": null,
+   "color": "#ededea",
+   "replaced": true,
+   "fixed": true
+  },
+  {
+   "id": 862959389,
+   "name": "文园1栋",
+   "h": 18.9,
+   "lv": 6,
+   "kind": "dorm",
+   "style": null,
+   "color": "#e0cdcd",
+   "replaced": null,
+   "fixed": null
+  }
+ ],
+ "roads": [
+  {
+   "id": 185559532,
+   "name": "",
+   "kind": "path",
+   "w": 2.5,
+   "sw": 0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 422681307,
+   "name": "",
+   "kind": "tertiary",
+   "w": 11,
+   "sw": 3.0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 588006878,
+   "name": "",
+   "kind": "tertiary",
+   "w": 11,
+   "sw": 3.0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 656927781,
+   "name": "龙山北路",
+   "kind": "tertiary",
+   "w": 11.5,
+   "sw": 3.0,
+   "pave": "grey",
+   "audited": true
+  },
+  {
+   "id": 682188149,
+   "name": "",
+   "kind": "service",
+   "w": 9.5,
+   "sw": 2.4,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 971602093,
+   "name": "",
+   "kind": "service",
+   "w": 6.0,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 971606036,
+   "name": "万象路",
+   "kind": "service",
+   "w": 8,
+   "sw": 2.4,
+   "pave": "grey",
+   "audited": true
+  },
+  {
+   "id": 1057165398,
+   "name": "",
+   "kind": "footway",
+   "w": 3,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 1057165399,
+   "name": "",
+   "kind": "footway",
+   "w": 3,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  }
+ ],
+ "sports": [
+  {
+   "kind": "basketball",
+   "name": "西苑篮球场",
+   "obb": [
+    -522.17,
+    -78.88,
+    97.4,
+    65.17,
+    -0.5021
+   ]
+  },
+  {
+   "kind": "tennis",
+   "name": "西苑网球场",
+   "obb": [
+    -505.5,
+    -31.79,
+    75.56,
+    31.48,
+    2.6379
+   ]
+  },
+  {
+   "kind": "volleyball",
+   "name": "西苑排球场",
+   "obb": [
+    -476.24,
+    22.02,
+    84.74,
+    77.97,
+    4.1912
+   ]
+  }
+ ],
+ "markers": [
+  {
+   "name": "西苑文创街区",
+   "cat": "商业服务",
+   "x": -449.8,
+   "z": -53.5
+  },
+  {
+   "name": "西苑排球场",
+   "cat": "体育场馆",
+   "x": -486.4,
+   "z": -20.4
+  },
+  {
+   "name": "西苑网球场",
+   "cat": "体育场馆",
+   "x": -458.6,
+   "z": 27.9
+  },
+  {
+   "name": "西苑篮球场",
+   "cat": "体育场馆",
+   "x": -499.5,
+   "z": -66.0
+  }
+ ],
+ "models": []
+}

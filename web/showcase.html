@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>南信大校园三维场景</title>
+  <meta name="description" content="南京信息工程大学校园三维场景展示：全校建筑、道路、水系、绿化的整体模型，可自由俯瞰浏览。">
+  <style>
+    :root { --panel: rgba(16, 24, 22, .66); --ink: #eef3f0; --muted: #b3c1bb; --accent: #ffb070; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #cfdbe3; color: var(--ink);
+      font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif; }
+    #app canvas { display: block; touch-action: none; }
+    #loading { position: fixed; inset: 0; display: grid; place-items: center; background: #142019; z-index: 50; }
+    .ld-box { display: grid; gap: .6rem; text-align: center; padding: 0 16px; }
+    .ld-box b { font-size: clamp(1.4rem, 5vw, 2rem); letter-spacing: .08em; }
+    .ld-box span { color: var(--muted); }
+    #title { position: fixed; top: 12px; left: 12px; max-width: calc(100vw - 24px); background: var(--panel); border-radius: 8px;
+      padding: 8px 14px; backdrop-filter: blur(6px); pointer-events: none; }
+    #title b { display: block; font-size: 16px; letter-spacing: .04em; }
+    #stats { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+    #viewName { position: fixed; top: 14px; left: 50%; transform: translateX(-50%); padding: 6px 18px; border-radius: 999px;
+      background: var(--panel); font-size: 15px; pointer-events: none; transition: opacity .8s; white-space: nowrap; }
+    #viewName.fade { opacity: 0; }
+    #presets { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); display: flex; gap: 6px; padding: 6px;
+      max-width: calc(100vw - 24px); overflow-x: auto; background: var(--panel); border-radius: 10px; backdrop-filter: blur(6px);
+      scrollbar-width: thin; }
+    #presets button { flex: none; border: 0; border-radius: 6px; padding: 7px 12px; background: rgba(255,255,255,.12); color: var(--ink);
+      font: inherit; font-size: 13px; cursor: pointer; white-space: nowrap; }
+    #presets button:hover { background: rgba(255,255,255,.24); }
+    #presets button.orbit { color: var(--accent); }
+    #presets button.orbit.on { background: rgba(255,176,112,.28); color: #fff; }
+    #hint { position: fixed; right: 12px; top: 12px; background: var(--panel); border-radius: 8px; padding: 8px 12px; font-size: 12px;
+      line-height: 1.7; color: var(--muted); pointer-events: none; transition: opacity 1.2s; max-width: 260px; }
+    #hint.fade { opacity: 0; }
+    #hint b { color: var(--ink); font-weight: 600; }
+    #credit { position: fixed; right: 12px; bottom: 66px; font-size: 11px; color: rgba(255,255,255,.88); text-shadow: 0 1px 2px #000; pointer-events: none; text-align: right; }
+    @media (max-width: 720px) {
+      #hint { display: none; }
+      #viewName { top: auto; bottom: 70px; }
+      #credit { bottom: 110px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <div id="loading"><div class="ld-box"><b>南京信息工程大学 · 校园三维场景</b><span id="loadMsg">准备中…</span></div></div>
+  <div id="title"><b>南京信息工程大学 · 校园三维场景</b><span id="stats"></span></div>
+  <div id="viewName"></div>
+  <div id="hint">
+    <b>左键拖动</b> 平移 · <b>右键拖动</b> 旋转<br>
+    <b>滚轮</b> 拉远拉近 · <b>WASD</b> 移动 · <b>Q/E</b> 转向<br>
+    <b>H</b> 回到全景 · <b>O</b> 自动环绕<br>
+    手机：单指平移，双指旋转 / 缩放
+  </div>
+  <div id="credit">地图数据 © OpenStreetMap · 外围影像 Esri · 地形 SRTM · 制作 钢铁大管子</div>
+  <div id="presets"></div>
+  <script type="module" src="./src/showcase.js"></script>
+</body>
+</html>

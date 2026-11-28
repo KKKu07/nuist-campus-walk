@@ -1,0 +1,379 @@
+{
+ "box": [
+  290.0,
+  -80.0,
+  440.0,
+  40.0
+ ],
+ "buildings": [
+  {
+   "id": 862959354,
+   "name": "沁园29栋",
+   "h": 20.1,
+   "lv": 5,
+   "kind": "dorm",
+   "style": null,
+   "color": null,
+   "replaced": true,
+   "fixed": null
+  },
+  {
+   "id": 1316148869,
+   "name": "沁园41栋",
+   "h": 19.3,
+   "lv": 5,
+   "kind": "dorm",
+   "style": null,
+   "color": "#847966",
+   "replaced": true,
+   "fixed": null
+  },
+  {
+   "id": 1316305739,
+   "name": "1960街区",
+   "h": 15.6,
+   "lv": 4,
+   "kind": "other",
+   "style": null,
+   "color": null,
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": 1316307762,
+   "name": "青教公寓6幢",
+   "h": 8.7,
+   "lv": 3,
+   "kind": "dorm",
+   "style": null,
+   "color": "#c1c9ac",
+   "replaced": true,
+   "fixed": null
+  },
+  {
+   "id": 1316307763,
+   "name": "沁园30栋",
+   "h": 20.8,
+   "lv": 5,
+   "kind": "dorm",
+   "style": null,
+   "color": "#e7e2c8",
+   "replaced": true,
+   "fixed": null
+  },
+  {
+   "id": 1424945039,
+   "name": "",
+   "h": 35.1,
+   "lv": 9,
+   "kind": "other",
+   "style": null,
+   "color": "#87b5f4",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": "manual-23",
+   "name": "",
+   "h": 15.6,
+   "lv": 4,
+   "kind": "teach",
+   "style": null,
+   "color": null,
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": "manual-24",
+   "name": "",
+   "h": 8.3,
+   "lv": 2,
+   "kind": "teach",
+   "style": null,
+   "color": "#d9e3e4",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": "manual-28-17",
+   "name": "",
+   "h": 4.6,
+   "lv": 1,
+   "kind": "hall",
+   "style": null,
+   "color": null,
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": "manual-28-18",
+   "name": "",
+   "h": 15,
+   "lv": null,
+   "kind": "hall",
+   "style": null,
+   "color": null,
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": "tower-4",
+   "name": "",
+   "h": 19.7,
+   "lv": 5,
+   "kind": "dorm",
+   "style": "modern",
+   "color": "#e86e63",
+   "replaced": true,
+   "fixed": null
+  }
+ ],
+ "roads": [
+  {
+   "id": 586028697,
+   "name": "万象路",
+   "kind": "service",
+   "w": 8,
+   "sw": 2.5,
+   "pave": "red",
+   "audited": true
+  },
+  {
+   "id": 656927781,
+   "name": "龙山北路",
+   "kind": "tertiary",
+   "w": 11.5,
+   "sw": 3.0,
+   "pave": "grey",
+   "audited": true
+  },
+  {
+   "id": 971602079,
+   "name": "1960街区",
+   "kind": "service",
+   "w": 8,
+   "sw": 2.4,
+   "pave": "grey",
+   "audited": true
+  },
+  {
+   "id": 971602081,
+   "name": "",
+   "kind": "service",
+   "w": 7.0,
+   "sw": 2.4,
+   "pave": "red",
+   "audited": null
+  },
+  {
+   "id": 971602083,
+   "name": "",
+   "kind": "service",
+   "w": 7.0,
+   "sw": 2.4,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 1316305736,
+   "name": "",
+   "kind": "service",
+   "w": 6.0,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 1316305738,
+   "name": "",
+   "kind": "service",
+   "w": 5.5,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 1424986316,
+   "name": "",
+   "kind": "service",
+   "w": 5.5,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  }
+ ],
+ "sports": [],
+ "markers": [
+  {
+   "name": "独味叉骨",
+   "cat": "食堂餐厅",
+   "x": 432.9,
+   "z": -45.3
+  },
+  {
+   "name": "手撕烤鸭",
+   "cat": "食堂餐厅",
+   "x": 432.6,
+   "z": -35.3
+  },
+  {
+   "name": "汉堡王",
+   "cat": "食堂餐厅",
+   "x": 360.8,
+   "z": 9.7
+  },
+  {
+   "name": "深井烧腊",
+   "cat": "食堂餐厅",
+   "x": 430.7,
+   "z": -75.7
+  },
+  {
+   "name": "川味小馆",
+   "cat": "食堂餐厅",
+   "x": 418.3,
+   "z": -18.3
+  },
+  {
+   "name": "必胜客",
+   "cat": "食堂餐厅",
+   "x": 349.7,
+   "z": -11.5
+  },
+  {
+   "name": "金姐螺狮粉",
+   "cat": "食堂餐厅",
+   "x": 394.6,
+   "z": -8.6
+  },
+  {
+   "name": "奶油华夫饼",
+   "cat": "食堂餐厅",
+   "x": 362.5,
+   "z": -9.4
+  },
+  {
+   "name": "烤冷面",
+   "cat": "食堂餐厅",
+   "x": 436.4,
+   "z": -61.1
+  },
+  {
+   "name": "跳面工坊",
+   "cat": "食堂餐厅",
+   "x": 398.0,
+   "z": -12.0
+  },
+  {
+   "name": "青禾食光",
+   "cat": "食堂餐厅",
+   "x": 377.7,
+   "z": -2.3
+  },
+  {
+   "name": "烤鸭浇汁拌饭",
+   "cat": "食堂餐厅",
+   "x": 435.9,
+   "z": -62.8
+  },
+  {
+   "name": "现炒浇头面",
+   "cat": "食堂餐厅",
+   "x": 411.5,
+   "z": -17.7
+  },
+  {
+   "name": "兰州牛肉面",
+   "cat": "食堂餐厅",
+   "x": 357.2,
+   "z": -20.5
+  },
+  {
+   "name": "喜茶",
+   "cat": "商业服务",
+   "x": 368.9,
+   "z": 1.9
+  },
+  {
+   "name": "学生家长水果店",
+   "cat": "商业服务",
+   "x": 374.2,
+   "z": 0.2
+  },
+  {
+   "name": "澳洁干洗店",
+   "cat": "商业服务",
+   "x": 433.3,
+   "z": -44.7
+  },
+  {
+   "name": "永民手作",
+   "cat": "商业服务",
+   "x": 360.5,
+   "z": -13.4
+  },
+  {
+   "name": "行至鲜果",
+   "cat": "商业服务",
+   "x": 429.5,
+   "z": -42.6
+  },
+  {
+   "name": "启航自习室",
+   "cat": "商业服务",
+   "x": 390.2,
+   "z": -7.4
+  },
+  {
+   "name": "中苑“长望街区”1号楼",
+   "cat": "商业服务",
+   "x": 382.3,
+   "z": -29.5
+  },
+  {
+   "name": "好宜佳校园超市",
+   "cat": "商业服务",
+   "x": 352.5,
+   "z": -32.6
+  },
+  {
+   "name": "中苑“长望街区”2号楼",
+   "cat": "商业服务",
+   "x": 350.0,
+   "z": -13.6
+  },
+  {
+   "name": "友谊照相馆",
+   "cat": "商业服务",
+   "x": 430.3,
+   "z": -53.1
+  },
+  {
+   "name": "幸运咖",
+   "cat": "商业服务",
+   "x": 406.1,
+   "z": -15.0
+  },
+  {
+   "name": "老百姓大药房",
+   "cat": "校内医疗",
+   "x": 436.1,
+   "z": -66.4
+  },
+  {
+   "name": "中国邮政",
+   "cat": "邮寄快递",
+   "x": 386.3,
+   "z": -5.3
+  }
+ ],
+ "models": [
+  {
+   "name": "沁园宿舍 F4",
+   "file": "models/dorm_qinyuan_f4.glb",
+   "x": 365.92,
+   "z": -61.81,
+   "rotY": 0
+  }
+ ]
+}

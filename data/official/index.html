@@ -1,0 +1,580 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>南京信息工程大学校园地图|三维校园GIS|虚拟校园|可视化校园|数字孪生校园</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="南京信息工程大学校园地图,三维校园GIS可视化平台,可视化校园,数字孪生校园,校园地图,三维虚拟校园,校园 3D GIS,三维校园地理信息系统,校园一张图,可视化位置服务,南信大" />
+    <meta name="description" content="南京信息工程大学3D校园地图，三维虚拟校园GIS可视化平台，数字孪生校园平台，智慧校园可视化平台，三维校园地理信息系统，校园位置服务平台。 技术支持：北京迅邦科技开发有限公司 WWW.YOU800.COM" />
+    <meta name="author" content="WWW.YOU800.COM" />
+    <link rel="stylesheet" href="/skin/iconfont2/iconfont.jvlodv6mwz.css" />
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.46ein0sx1k.css" />
+    <link rel="stylesheet" href="/skin/styleui.znxpukbrjq.css" />
+    <link rel="stylesheet" href="/lib/ps/ps.fvlrtcgq9w.css" />
+    <link rel="stylesheet" href="/lib/ts/ts.fuwkiubrsj.css" />
+    <link rel="stylesheet" href="/lib/ps/default-skin/ds.650nfs9bim.css" />
+
+
+    <!--[if lt IE 9]>
+        <script src="~/js/inc/html5shiv.min.js"></script>
+    <![endif]-->
+    <script>
+            var _hmt = _hmt || [];
+            (function () {
+                var hm = document.createElement("script");
+                hm.src = "https://hm.baidu.com/hm.js?81ce06a7297281ae30ecaa643c7799ef";
+                var s = document.getElementsByTagName("script")[0];
+                s.parentNode.insertBefore(hm, s);
+            })();
+    </script>
+
+</head>
+<body style="overflow: hidden !important;">
+
+    <nav class="navbar fixed-top  navbar-expand-lg navbar-dark campus-navbar py-0">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><img src="/images/themes/logo.uwk07rzgt1.png" alt="南京信息工程大学可视化校园,数字孪生校园,校园地图" /></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNavbar">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item dropdown nav-block">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="iconfont">&#xe6dc;</span> <span id="campus">校本部</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" id="campus1">校本部</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="campus2">金牛湖</a></li>
+
+                        </ul>
+                    </li>
+
+                    <li class="nav-item dropdown nav-block">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="iconfont">&#xe6a2;</span> 机构设置
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li id="b_xbjg"><a class="dropdown-item" href="#">综合管理机构</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li id="b_zsdw"><a class="dropdown-item" href="#">教辅机构</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li id="b_jtltjg"><a class="dropdown-item" href="#">群团离退机关</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li id="b_jjjcjg"><a class="dropdown-item" href="#">纪检监察机构</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li id="b_jxyx"><a class="dropdown-item" href="#">教学机构</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li id="b_qita"><a class="dropdown-item" href="#">其他机构</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item dropdown nav-block">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="iconfont">&#xe62f;</span> 校内建筑
+                        </a>
+                        <ul class="dropdown-menu">
+
+                            <li id="l_xzly"><a class="dropdown-item" href="#">行政办公</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li id="l_jxky"><a class="dropdown-item" href="#">教学科研</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li id="l_xncg"><a class="dropdown-item" href="#">校内场馆</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li id="l_xsss"><a class="dropdown-item" href="#">学生宿舍</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li id="l_xyfj"><a class="dropdown-item" href="#">文化风景</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li id="l_jszz"><a class="dropdown-item" href="#">家属住宅</a></li>
+
+                        </ul>
+                    </li>
+
+                    <li id="s_shss" class="nav-item nav-block">
+                        <a class="nav-link" aria-current="page" href="#"><span class="iconfont">&#xe8a4;</span> 资源设施</a>
+                    </li>
+
+                    <li class="nav-item dropdown nav-block">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="iconfont">&#xe78a;</span> VR校园
+                        </a>
+                        <ul class="dropdown-menu">
+
+                            <li id="l_vr1"><a class="dropdown-item" href="#">校本部</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li id="l_vr3"><a class="dropdown-item" href="#">校本部夜景</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li id="l_vr2"><a class="dropdown-item" href="#">金牛湖</a></li>
+                            
+                        </ul>
+                    </li>
+
+                    <li class="nav-item dropdown nav-block">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="iconfont">&#xe618;</span> 导航路线
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li id="b_xndh"><a class="dropdown-item" href="#"><span class="iconfont">&#xe60a;</span> 校内导航</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li id="b_lxdh"><a class="dropdown-item" href="#"><span class="iconfont">&#xe618;</span> 到校路线</a></li>
+                        </ul>
+                    </li>
+
+
+                    <li class="nav-item dropdown nav-block">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="iconfont">&#xe755;</span> 工具
+                        </a>
+                        <ul class="dropdown-menu">
+
+                            <li><a class="dropdown-item" href="#" onclick="javascript:vMap.dM();$('.nav.navbar-nav').find('li').removeClass('active');">地图下载</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" onclick="javascript:vMap.kH(6);$('.nav.navbar-nav').find('li').removeClass('active');">地图测距</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" onclick="javascript:vMap.kH(5);$('.nav.navbar-nav').find('li').removeClass('active');">地图纠错</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/maps/index.html" target="_blank">2D/3D地图</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item dropdown nav-block">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="iconfont">&#xe65f;</span>移动版
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end qr-menu">
+                            <li>
+                                <img class="qr-img" src="/images/themes/qrcode.sz6adx2cbk.png" alt="智慧校园GIS可视化移动版" />
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+
+    <div class="card-bar">
+        <div class="row" >
+            <div class="col col-card">
+                <div class="card thumbnail" data-campus="校本部">
+                    <img src="/images/themes/xbb.vs2wqh1p5w.png" class="card-img-top" style="width:60px;" />
+                    <div class="card-body card-body-txt text-center">
+                        校本部
+                    </div>
+                </div>
+            </div>
+
+            <div class="col col-card">
+                <div class="card thumbnail" data-campus="金牛湖">
+                    <img src="/images/themes/jnh.p2bq2v618v.png" class="card-img-top" style="width:60px;" />
+                    <div class="card-body card-body-txt text-center">
+                        金牛湖
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <form runat="server">
+        <div id="map" class="cmap">
+
+            <div id="popwindow">
+                <div class="w_title">
+                    <div class="w_t_content"></div>
+                    <div id="w_max" class="w_max"><span class="iconfont" style="font-size: 22px;">&#xe650;</span></div>
+                    <div id="w_min" class="w_min"><span class="iconfont" style="font-size: 22px;">&#xe655;</span></div>
+                    <div class="w_close"><span class="iconfont" style="font-size: 22px;">&#xe658;</span></div>
+                </div>
+                <div class="w_content">
+                    <iframe id="ifr" name="ifr" src="" frameborder="0" width="100%" height="100%" style="overflow: hidden"></iframe>
+                </div>
+            </div>
+
+            <div id="naviwindow">
+                <div class="navi_title">
+                    <div class="navi_t_content"></div>
+                    <div class="navi_close"><span class="iconfont" style="font-size: 24px;">&#xe658;</span></div>
+                </div>
+                <div class="navi_content">
+                    <ul id="myTabs" class="nav nav-tabs nav-justified" role="tablist">
+                        <li id="walk" class="nav-item" role="presentation">
+                            <button class="nav-link active"
+                                    type="button"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#navihome"
+                                    role="tab"
+                                    aria-controls="navihome"
+                                    aria-selected="true">
+                                <span class="iconfont">&#xe614;</span>&nbsp;步行
+                            </button>
+                        </li>
+                        <li id="cycling" class="nav-item" role="presentation">
+                            <button class="nav-link"
+                                    type="button"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#navihome"
+                                    role="tab"
+                                    aria-controls="navihome"
+                                    aria-selected="false">
+                                <span class="iconfont">&#xe6f2;</span>&nbsp;骑行
+                            </button>
+                        </li>
+                        <li id="drive" class="nav-item" role="presentation">
+                            <button class="nav-link"
+                                    type="button"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#navihome"
+                                    role="tab"
+                                    aria-controls="navihome"
+                                    aria-selected="false">
+                                <span class="iconfont">&#xe638;</span>&nbsp;驾车
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="navihome" role="tabpanel">
+                            <div class="navi_fromto">
+                                <div class="navi_from">
+                                    <div class="input-group">
+                                        <span class="input-group-text" id="basic-addon1">
+                                            <img src="/images/startnavi.rs2r8iscka.png" alt="起点" />
+                                        </span>
+                                        <input id="navifrom" type="text" class="form-control" placeholder="起点..." aria-describedby="basic-addon1" />
+                                    </div>
+                                    <input id="navifrom_v" type="hidden" />
+                                </div>
+                                <div class="navi_from">
+                                    <div class="input-group">
+                                        <span class="input-group-text" id="basic-addon2">
+                                            <img src="/images/endnavi.6ar4ev9fib.png" alt="终点" />
+                                        </span>
+                                        <input id="navito" type="text" class="form-control" placeholder="终点..." aria-describedby="basic-addon2" />
+                                    </div>
+                                    <input id="navito_v" type="text" style="display: none" />
+                                </div>
+                            </div>
+
+                            <div class="navi_search">
+                                <button id="navisearch" type="button" class="btn btn-primary">导 航</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="mapLoading">
+                <div class="spinner-border" role="status">
+                </div>
+                <span>智慧校园GIS可视化平台加载中，请稍候...</span>
+            </div>
+
+            <script>
+                window.appBasePath = '/';
+                window.__appBase = window.appBasePath;
+            </script>
+            <script id="mapjs" type="text/javascript" src="/js/inc/api/maps.8vsadw4csb.js"></script>
+            <div class="cmapmask"></div>
+
+        </div>
+
+        <div id="exitfs" style="display: none">
+            <div class="fun_option2">
+                <img src="/images/exitfs.p9pb1vztpp.png" />
+            </div>
+            <a href="javascript:void(0);" onclick="exitFullScreen();" class="barLink">&nbsp;恢复&nbsp;</a>
+        </div>
+        <div id="panowin">
+            <div class="pano_close"></div>
+            <div>
+                <iframe id="panopage" style="width: 100%; height: 100%;" src=""></iframe>
+            </div>
+        </div>
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="myModalLabel"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div id="myModalBody" class="modal-body">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="pswp__bg"></div>
+        <div class="pswp__scroll-wrap">
+            <div class="pswp__container">
+                <div class="pswp__item"></div>
+                <div class="pswp__item"></div>
+                <div class="pswp__item"></div>
+            </div>
+            <div class="pswp__ui pswp__ui--hidden">
+                <div class="pswp__top-bar">
+                    <div class="pswp__counter"></div>
+                    <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                    <button class="pswp__button pswp__button--share" title="Share" style="display: none;"></button>
+                    <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                    <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                    <div class="pswp__preloader">
+                        <div class="pswp__preloader__icn">
+                            <div class="pswp__preloader__cut">
+                                <div class="pswp__preloader__donut"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                    <div class="pswp__share-tooltip"></div>
+                </div>
+                <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+                </button>
+                <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+                </button>
+                <div class="pswp__caption">
+                    <div class="pswp__caption__center"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="calendar"></div>
+    <form autocomplete="off">
+        <div class="g-linkx3" role="checkbox">
+
+            <label class="li5 btn-shadow">
+                <input id="g7" name="g7" type="checkbox" class="inp" value="" checked />
+                <span class="color"></span>
+                <span class="tit">标签</span>
+            </label>
+
+            <label class="li9 btn-shadow">
+                <input id="schoolbus" name="schoolbus" type="checkbox" class="inp" value="schoolbus"/>
+                <span class="color"></span>
+                <span class="tit">公交</span>
+            </label>
+
+
+            <label class="li8 btn-shadow">
+                <input id="fj" type="checkbox" class="inp" value="fj" />
+                <span class="color"></span>
+                <span class="tit">文化</span>
+            </label>
+
+            <label class="li18 btn-shadow">
+                <input id="fj" type="checkbox" class="inp" value="flower" />
+                <span class="color"></span>
+                <span class="tit">百花</span>
+            </label>
+
+
+            <label class="li2 btn-shadow">
+                <input id="g1" name="g1" type="checkbox" class="inp" value="" />
+                <span class="color"></span>
+                <span class="tit">道路</span>
+            </label>
+
+            <label class="li1 btn-shadow">
+                <input id="g4" name="g4" type="checkbox" class="inp" value="" />
+                <span class="color"></span>
+                <span class="tit">实景</span>
+            </label>
+
+
+            <label class="li11 btn-shadow">
+                <input id="aed" name="aed" type="checkbox" class="inp" value="aed" />
+                <span class="color"></span>
+                <span class="tit">AED</span>
+            </label>
+
+            <label class="li12 btn-shadow">
+                <input id="g3" name="g3" type="checkbox" class="inp" value="" />
+                <span class="color"></span>
+                <span class="tit">停车</span>
+            </label>
+
+            <label class="li6 btn-shadow">
+                <input id="accesspoint" name="accesspoint" type="checkbox" class="inp" value="accesspoint" />
+                <span class="color"></span>
+                <span class="tit">出入</span>
+            </label>
+        </div>
+    </form>
+
+    <div class="help-layer">
+        <div class="close-help"><span class="iconfont" style="font-size: 24px;">&#xe658;</span></div>
+        <div class="container" style=" padding: 35px 30px 30px 30px">
+            <div class="row g-0">
+                <div class="col-3"><button id="s_ssfw" type="button" class="btn btn-primary help-btn" style="border-top-left-radius: 4px !important;"><span class="iconfont help-icon">&#xe72e;</span><span class="help-text">师生服务</span></button></div>
+                <div class="col-3"><button id="s_gwcs" type="button" class="btn btn-primary help-btn"><span class="iconfont help-icon">&#xe687;</span><span class="help-text">商业服务</span></button></div>
+                <div class="col-3"><button id="s_stct" type="button" class="btn btn-primary help-btn"><span class="iconfont help-icon">&#xe690;</span><span class="help-text">食堂餐厅</span></button></div>
+                <div class="col-3"><button id="s_xnyl" type="button" class="btn btn-primary help-btn" style="border-top-right-radius: 4px !important;"><span class="iconfont help-icon">&#xe68a;</span><span class="help-text">校内医疗</span></button></div>
+                
+            </div>
+
+            <div class="row g-0">
+                <div class="col-3"><button id="s_tycg" type="button" class="btn btn-primary help-btn"><span class="iconfont help-icon">&#xea1d;</span><span class="help-text">体育场馆</span></button></div>
+                <div class="col-3"><button id="s_space" type="button" class="btn btn-primary help-btn"><span class="iconfont help-icon">&#xe6dd;</span><span class="help-text">活动场地</span></button></div>
+                <div class="col-3"><button id="s_aed" type="button" class="btn btn-primary help-btn"><span class="iconfont help-icon">&#xe717;</span><span class="help-text">AED</span></button></div>
+                <div class="col-3"><button id="s_qcj" type="button" class="btn btn-primary help-btn"><span class="iconfont help-icon">&#xe67a;</span><span class="help-text">一卡通补卡机</span></button></div>
+                
+            </div>
+
+            <div class="row g-0">
+                <div class="col-3"><button id="s_bmfw" type="button" class="btn btn-primary help-btn"><span class="iconfont help-icon">&#xe79e;</span><span class="help-text">便民服务</span></button></div>
+                <div class="col-3"><button id="s_dzfy" type="button" class="btn btn-primary help-btn"><span class="iconfont help-icon">&#xe688;</span><span class="help-text">打字复印</span></button></div>
+                <div class="col-3"><button id="s_yjkd" type="button" class="btn btn-primary help-btn"><span class="iconfont help-icon">&#xe68f;</span><span class="help-text">邮寄快递</span></button></div>
+                <div class="col-3"><button id="s_txyyt" type="button" class="btn btn-primary help-btn"><span class="iconfont help-icon">&#xe686;</span><span class="help-text">通信营业厅</span></button></div>
+            </div>
+
+            <div class="row g-0">
+                <div class="col-3"><button id="s_yhwd" type="button" class="btn btn-primary help-btn" style="border-bottom-left-radius: 4px !important;"><span class="iconfont help-icon">&#xe67c;</span><span class="help-text">银行网点</span></button></div>
+                <div class="col-3"><button id="s_tcc" type="button" class="btn btn-primary help-btn"><span class="iconfont help-icon">&#xe67d;</span><span class="help-text">停车场</span></button></div>
+                <div class="col-3"><button id="s_qtss" type="button" class="btn btn-primary help-btn"><span class="iconfont help-icon">&#xe79e;</span><span class="help-text">充电桩</span></button></div>
+                <div class="col-3"><button id="s_crk" type="button" class="btn btn-primary help-btn" style="border-bottom-right-radius: 4px !important;"><span class="iconfont help-icon">&#xe676;</span><span class="help-text">出入口</span></button></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="p_left" class="card border-danger shadow c_p_left">
+        <form name="p-search-ai" id="p-search-ai" method="get" role="search" action="search" target="ifr">
+            <div class="input-group">
+                <input id="aikeyword" name="aikeyword" type="text" class="form-control" placeholder="校园搜索..." />
+                <button id="p_navi" class="btn btn-outline-secondary" type="button"><span class="iconfont c_p_navi">&#xe6c2;</span></button>
+                <button id="p_search" class="btn btn-primary" type="button"><span class="iconfont c_p_search">&#xe6ab;</span></button>
+            </div>
+        </form>
+        <div id="p_left_content" class="c_p_left_content">
+            <div class="row c_p_row_f">
+                <div class="col-md-4">
+                    <div id="p_xbjg" class="p-expand-group">
+                        <span class="iconfont icon-yuanxitubiao_dangqunbumen c_p_dqjg p-group-icon"></span>
+                        <span class="p-group-txt">综合管理</span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div id="p_zsdw" class="p-expand-group">
+                        <span class="iconfont c_p_zsdw p-group-icon">&#xe6ac;</span>
+                        <span class="p-group-txt">教辅机构</span>
+                    </div>
+
+                </div>
+                <div class="col-md-4">
+                    <div id="p_jxyx" class="p-expand-group">
+                        <span class="iconfont c_p_jxyx p-group-icon">&#xe710;</span>
+                        <span class="p-group-txt">教学机构</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row c_p_row">
+                <div class="col-md-4">
+                    <div id="p_kyjg" class="p-expand-group">
+                        <span class="iconfont c_p_znbc p-group-icon">&#xe7a7;</span>
+                        <span class="p-group-txt">研究机构</span>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div id="p_xzbg" class="p-expand-group">
+                        <span class="iconfont c_p_xzbg p-group-icon">&#xe6bc;</span>
+                        <span class="p-group-txt">行政办公</span>
+                    </div>
+
+
+                </div>
+                <div class="col-md-4">
+                    <div id="p_xncg" class="p-expand-group">
+                        <span class="iconfont c_p_xncg p-group-icon" style="">&#xe6ad;</span>
+                        <span class="p-group-txt">校内场馆</span>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="row c_p_row">
+                <div class="col-md-4">
+                    <div id="p_jxky" class="p-expand-group">
+                        <span class="iconfont c_p_jxky p-group-icon">&#xe6cc;</span>
+                        <span class="p-group-txt">教学科研</span>
+                    </div>
+
+                </div>
+                <div class="col-md-4">
+                    <div id="p_xsss" class="p-expand-group">
+                        <span class="iconfont c_p_xsss p-group-icon">&#xe6b3;</span>
+                        <span class="p-group-txt">学生宿舍</span>
+                    </div>
+
+
+                </div>
+                <div class="col-md-4">
+                    <div id="p_xyfj" class="p-expand-group">
+                        <span class="iconfont c_p_xyfj p-group-icon">&#xe6af;</span>
+                        <span class="p-group-txt">文化风景</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row c_p_row">
+                <div class="col-md-4">
+                    <div id="p_shss" class="p-expand-group">
+                        <span class="iconfont c_p_shss p-group-icon">&#xe6b6;</span>
+                        <span class="p-group-txt">生活设施</span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div id="p_jszz" class="p-expand-group">
+                        <span class="iconfont c_p_jszz p-group-icon">&#xeb0b;</span>
+                        <span class="p-group-txt">家属住宅</span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div id="p_sjmy" class="p-expand-group">
+                        <span class="iconfont c_p_vr p-group-icon">&#xe733;</span>
+                        <span class="p-group-txt">V R 校园</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lbl-his-hot"><span class="iconfont lbl-txt-his-hot">&#xe6b0;</span>&nbsp;&nbsp;历史记录</div>
+            <div id="hisdiv" style="margin-top: 20px; margin-left: 20px;">暂无记录</div>
+
+            <div class="lbl-his-hot"><span class="iconfont lbl-txt-his-hot">&#xe6b5;</span>&nbsp;&nbsp;热门搜索</div>
+            <div style="margin-top: 10px; margin-left: 20px;">
+                <a id="hots0" class="btn btn-sm hot-search" href="#" role="button">行政楼</a>
+                <a id="hots1" class="btn btn-sm hot-search" href="#" role="button">气象楼</a>
+                <a id="hots2" class="btn btn-sm hot-search" href="#" role="button">图书馆</a>
+                <a id="hots3" class="btn btn-sm hot-search" href="#" role="button">临江楼</a>
+                <a id="hots4" class="btn btn-sm hot-search" href="#" role="button">体育馆</a>
+                <a id="hots5" class="btn btn-sm hot-search" href="#" role="button">藕舫楼</a>
+
+            </div>
+        </div>
+
+    </div>
+    <div class="visitor">访问人次：319432</div>
+
+    <script src="/lib/jquery/dist/jquery.min.o1o13a6vjx.js"></script>
+    <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.493y06b0oq.js"></script>
+    <script src="/js/inc/axios.min.o9maxcg3ji.js"></script>
+    <script src="/skin/iconfont/iconfont.6kf4jz2tmd.js"></script>
+    <script src="/js/inc/his.5x0rgity6f.js"></script>
+    <script src="/js/inc/autocomp.0tpebyj9bi.js"></script>
+    <script src="/js/inc/qrcode.min.h5gslb8p3n.js"></script>
+    <script src="/lib/ps/ps.min.urfcoewxbb.js"></script>
+    <script src="/lib/ps/pd.min.d2bt32nec8.js"></script>
+    <script src="/lib/ts/ts.cv7sbcsikv.js"></script>
+    <script src="/js/inc/webUI.a14iqjmlow.js"></script>
+
+</body>
+</html>

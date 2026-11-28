@@ -1,0 +1,14 @@
+{
+ "_note": "Position corrections for Blender landmark models (data/blender/models.json is written by the modelling session; corrections live here so the two never overwrite each other). x, z = new model origin in game coordinates.",
+ "南阶教室": {
+  "x": 537.6,
+  "z": -381.5,
+  "note": "模型底面中心 (-1.23, 0.23) 对齐 OSM 轮廓中心 (536.4, -381.3)；建模会话按 DSM 放在 (543.5, -391.5)，但那里是树冠，航拍和官网图的楼在 OSM 轮廓处（data/raw/wp2/nanjie_check.jpg）"
+ },
+ "中苑主席台": {
+  "x": -56.85,
+  "z": 22.5,
+  "rotY": 6.5,
+  "note": "看台和跑道不是正南北向：模型原点（主席台楼中心）放到正射照片里主席台中段 (-56.85, 22.5)，绕原点转 6.5°（南端偏东），与 sports_manual 里转正后的跑道平行；原位置 (-64.4, 13.75) 南半段压到看台西侧的路 682188171 上。依据 DJI_20241202162807_0058。"
+ }
+}

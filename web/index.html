@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>云游南信大 · 原型</title>
+  <style>
+    :root { --panel: rgba(16, 24, 22, .72); --ink: #eef3f0; --muted: #a9b8b2; --accent: #ff8450; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #cfdbe3; color: var(--ink);
+      font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif; }
+    #app canvas { display: block; }
+    #loading { position: fixed; inset: 0; display: grid; place-items: center; background: #142019; z-index: 50; }
+    .ld-box { display: grid; gap: .6rem; text-align: center; }
+    .ld-box b { font-size: 2rem; letter-spacing: .1em; }
+    .ld-box span { color: var(--muted); }
+    #hud { position: fixed; top: 12px; left: 12px; max-width: 360px; background: var(--panel); border-radius: 8px;
+      padding: 10px 14px; font-size: 13px; line-height: 1.7; backdrop-filter: blur(6px); }
+    #hud .title { font-weight: 700; font-size: 15px; }
+    #hud .title span { font-weight: 400; color: var(--accent); font-size: 12px; margin-left: .4em; }
+    #help kbd { display: inline-block; min-width: 1.6em; padding: 0 .35em; border-radius: 3px; background: rgba(255,255,255,.14);
+      font-family: Consolas, monospace; font-size: 12px; text-align: center; }
+    #status { color: var(--muted); font-size: 12px; margin-top: 4px; font-variant-numeric: tabular-nums; }
+    #nearby { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); background: var(--panel); padding: 6px 16px;
+      border-radius: 999px; font-size: 15px; pointer-events: none; transition: opacity .3s; }
+    #nearby:empty { opacity: 0; }
+    #labels { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+    .label.mlabel { font-size: 11px; background: rgba(255,255,255,.82); color: #1b2622; display: flex; align-items: center; gap: 4px; }
+    .mlabel i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .label { position: absolute; left: 0; top: 0; padding: 2px 8px; border-radius: 4px; background: rgba(16,24,22,.6);
+      font-size: 12px; white-space: nowrap; }
+    #minimap { position: fixed; right: 12px; bottom: 12px; width: 190px; height: 190px; border-radius: 50%;
+      border: 3px solid rgba(255,255,255,.85); box-shadow: 0 4px 16px rgba(0,0,0,.35); cursor: pointer; background: #333; }
+    #bigmap { position: fixed; inset: 0; z-index: 40; display: grid; grid-template-columns: 280px minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); background: rgba(10,16,14,.92); }
+    #bigmap[hidden] { display: none; }
+    .bm-side { padding: 18px; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+    .bm-side h2 { margin: 0; font-size: 18px; }
+    #search { width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid #44524c; background: #1b2622; color: var(--ink); font-size: 14px; }
+    #results { overflow-y: auto; display: grid; gap: 4px; align-content: start; min-height: 0; flex: 1; }
+    #results button { text-align: left; padding: 6px 10px; border: 0; border-radius: 5px; background: #1f2b27; color: var(--ink);
+      font: inherit; font-size: 13px; cursor: pointer; }
+    #results button:hover { background: #2c3c36; }
+    .tip { color: var(--muted); font-size: 12px; margin: 0; }
+    #mapCanvas { display: block; width: 100%; height: 100%; min-height: 0; cursor: crosshair; }
+    #credit { position: fixed; left: 12px; bottom: 8px; font-size: 11px; color: rgba(255,255,255,.85); text-shadow: 0 1px 2px #000; }
+    #card { position: fixed; left: 12px; bottom: 30px; width: 300px; background: var(--panel); border-radius: 8px; overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,.35); backdrop-filter: blur(6px); }
+    #card[hidden], #lightbox[hidden] { display: none; }
+    #card img { display: block; width: 100%; height: 170px; object-fit: cover; cursor: zoom-in; background: #222; }
+    .card-cap { display: flex; align-items: center; gap: 8px; padding: 6px 10px; font-size: 12px; }
+    .card-cap b { font-size: 13px; white-space: nowrap; }
+    .card-cap span { color: var(--muted); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .card-cap button { border: 0; border-radius: 4px; padding: 3px 8px; background: rgba(255,255,255,.16); color: var(--ink); font: inherit; font-size: 12px; cursor: pointer; }
+    #lightbox { position: fixed; inset: 0; z-index: 60; background: rgba(0,0,0,.9); display: grid; place-items: center; align-content: center; gap: 10px; cursor: zoom-out; }
+    #lightbox img { max-width: 94vw; max-height: 86vh; }
+    #lbCap { color: var(--muted); font-size: 14px; }
+    #tour { position: fixed; left: 50%; bottom: 40px; transform: translateX(-50%); display: flex; gap: 12px; align-items: center; background: var(--panel);
+      border-radius: 10px; padding: 10px 14px; max-width: min(560px, calc(100vw - 24px)); box-shadow: 0 6px 24px rgba(0,0,0,.35); }
+    #tour[hidden] { display: none; }
+    #tour img { width: 150px; height: 96px; object-fit: cover; border-radius: 6px; flex: none; }
+    #tour div { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    #tour b { font-size: 22px; letter-spacing: 1px; }
+    #tour span { font-size: 13px; color: var(--muted); }
+    #tour em { font-style: normal; font-size: 11px; color: var(--muted); opacity: .8; }
+    #questbar { position: fixed; left: 50%; top: 12px; transform: translateX(-50%); background: var(--panel); border-radius: 999px; padding: 6px 16px;
+      font-size: 14px; display: flex; gap: 10px; align-items: center; cursor: pointer; backdrop-filter: blur(6px); }
+    #questbar b { color: #ffcf4a; }
+    #questArrow { display: inline-block; width: 18px; text-align: center; color: #ffcf4a; font-weight: 700; }
+    #book { position: fixed; inset: 0; z-index: 45; background: rgba(10,16,14,.9); display: grid; place-items: center; }
+    #book[hidden] { display: none; }
+    .book-card { width: min(760px, 94vw); max-height: 90vh; overflow: auto; background: #f6f1e4; color: #2b2418; border-radius: 12px; padding: 20px 22px; }
+    .book-card h2 { margin: 0 0 4px; font-size: 22px; } .book-card p { margin: 0 0 14px; color: #6b5d45; font-size: 13px; }
+    #stampGrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .stamp { display: grid; gap: 6px; justify-items: center; font-size: 13px; text-align: center; }
+    .stamp-img { width: 100%; aspect-ratio: 1; max-width: 140px; border-radius: 50%; border: 3px dashed #c9b994; display: grid; place-items: center;
+      font-size: 28px; color: #c9b994; background: center / cover no-repeat #efe6d0; }
+    .stamp.got .stamp-img { border: 3px solid #b5422e; box-shadow: 0 0 0 3px #f6f1e4, 0 0 0 5px #b5422e; filter: sepia(.25) saturate(1.1); }
+    #postcard { margin-top: 16px; border-radius: 8px; overflow: hidden; position: relative; }
+    #postcard img { display: block; width: 100%; }
+    #postcard span { position: absolute; left: 16px; bottom: 12px; color: #fff; font-size: 22px; font-weight: 700; text-shadow: 0 2px 8px #000; }
+    .book-actions { display: flex; justify-content: space-between; margin-top: 14px; }
+    .book-actions button { border: 0; border-radius: 6px; padding: 7px 14px; background: #2b2418; color: #f6f1e4; font: inherit; cursor: pointer; }
+    @media (max-width: 700px) { #stampGrid { grid-template-columns: repeat(3, minmax(0, 1fr)); } #questbar { top: auto; bottom: 182px; font-size: 12px; } }
+    /* touch controls (phones / tablets) */
+    #touch[hidden] { display: none; }
+    #joy { position: fixed; left: max(20px, env(safe-area-inset-left, 0px)); bottom: 36px; width: 130px; height: 130px; border-radius: 50%;
+      background: rgba(255,255,255,.14); border: 2px solid rgba(255,255,255,.45); touch-action: none; }
+    #knob { position: absolute; left: 50%; top: 50%; width: 56px; height: 56px; margin: -28px 0 0 -28px; border-radius: 50%; background: rgba(255,255,255,.75); pointer-events: none; }
+    #tbtns { position: fixed; right: max(12px, env(safe-area-inset-right, 0px)); bottom: 36px; display: grid; grid-template-columns: repeat(3, 56px); gap: 8px; }
+    #tbtns button { height: 46px; border-radius: 12px; border: 0; background: rgba(16,24,22,.62); color: #fff; font: inherit; font-size: 14px; touch-action: manipulation; }
+    #tbtns button.on { background: rgba(255,132,80,.9); }
+    body.touch canvas { touch-action: none; }
+    body.touch #help { display: none; }
+    body.touch #hud { max-width: 58vw; padding: 6px 10px; }
+    body.touch #minimap { top: 12px; bottom: auto; width: 96px; height: 96px; }
+    body.touch #card { left: 12px; top: 106px; bottom: auto; width: 170px; }
+    body.touch #card img { height: 96px; }
+    body.touch #nearby { bottom: 296px; }
+    body.touch #questbar { top: auto; bottom: 256px; font-size: 12px; }
+    body.touch #credit { left: 50%; transform: translateX(-50%); bottom: 4px; font-size: 9px; text-align: center; width: 62vw; }
+    #start { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--panel); padding: 14px 22px;
+      border-radius: 8px; font-size: 16px; pointer-events: none; }
+    #start[hidden] { display: none; }
+    @media (max-width: 700px) { #card { width: 200px; } #card img { height: 112px; } #hud { max-width: calc(100vw - 24px); } #minimap { width: 120px; height: 120px; } #bigmap { grid-template-columns: 1fr; grid-template-rows: 40% minmax(0, 1fr); } }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <div id="loading"><div class="ld-box"><b>云游南信大</b><span id="loadMsg">准备中…</span></div></div>
+  <div id="hud">
+    <div class="title">云游南信大<span>原型 v0.4</span></div>
+    <div id="help">
+      <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 移动　<kbd>Shift</kbd> 跑　<kbd>空格</kbd> 跳<br>
+      鼠标 转视角（点画面锁定，<kbd>Esc</kbd> 解锁）　滚轮 远近<br>
+      <kbd>E</kbd> 上下校园小公交 / 骑 7ma 电动车　<kbd>B</kbd> 自行车<br>
+      <kbd>F</kbd> 飞行俯瞰　<kbd>V</kbd> 第一/第三人称　<kbd>Y</kbd> 云游导览（自动飞览全部地标）<br>
+      <kbd>M</kbd> 地图与传送　<kbd>J</kbd> 打卡册　<kbd>T</kbd> 夜景　<kbd>P</kbd> 看实拍大图　<kbd>H</kbd> 隐藏说明<br>
+      <kbd>Tab</kbd> 手机（消息接单 / 扫码 / 钱包 / 相机 / 路线游览）
+    </div>
+    <div id="status"></div>
+  </div>
+  <div id="labels"></div>
+  <div id="nearby"></div>
+  <canvas id="minimap" width="380" height="380" title="点击打开地图"></canvas>
+  <div id="bigmap" hidden>
+    <div class="bm-side">
+      <h2>地图与传送</h2>
+      <input id="search" type="search" placeholder="搜楼名或地点，如 图书馆、KFC、AED" autocomplete="off">
+      <div id="results"></div>
+      <p class="tip">黄点是有实拍照片的楼，彩色小点是官网地图上的食堂、商店、AED、停车场等。点地图任意位置也能传送。按 M 或 Esc 关闭。</p>
+    </div>
+    <canvas id="mapCanvas"></canvas>
+  </div>
+  <div id="card" hidden>
+    <img id="cardImg" alt="这栋楼的实拍照片" title="点击看大图（P）">
+    <div class="card-cap"><b id="cardName"></b><span id="cardCap"></span><button id="cardNext" type="button">下一张 N</button></div>
+  </div>
+  <div id="lightbox" hidden><img id="lbImg" alt="实拍大图"><span id="lbCap"></span></div>
+  <div id="touch" hidden>
+    <div id="joy" aria-label="移动摇杆"><div id="knob"></div></div>
+    <div id="tbtns">
+      <button type="button" data-act="use">上车/骑</button>
+      <button type="button" data-act="jump">跳</button>
+      <button type="button" data-act="run">跑</button>
+      <button type="button" data-act="bike">骑车</button>
+      <button type="button" data-act="fly">飞行</button>
+      <button type="button" data-act="view">视角</button>
+      <button type="button" data-act="map">地图</button>
+      <button type="button" data-act="book">打卡册</button>
+      <button type="button" data-act="night">夜景</button>
+      <button type="button" data-act="tour">导览</button>
+      <button type="button" data-act="phone">手机</button>
+    </div>
+  </div>
+  <div id="tour" hidden><img id="tourImg" alt="" hidden><div><b id="tourTitle"></b><span id="tourSub"></span><em>按 Y 或 Esc 结束导览</em></div></div>
+  <div id="questbar" title="打开打卡册（J）"><span>云游打卡 <b id="questCount">0/12</b></span><span id="questNext">走到发光的光柱下打卡</span><span id="questArrow"></span></div>
+  <div id="book" hidden><div class="book-card">
+    <h2>云游南信大 · 打卡册</h2><p>走到地图上发光的光柱下就会自动盖章。集齐全部印章，解锁一张南信大明信片。 已收集 <b id="bookCount"></b></p>
+    <div id="stampGrid"></div>
+    <div id="postcard" hidden><img src="photos/qixianglou_2.jpg" alt="气象楼晚霞明信片"><span>集齐啦！来自南信大的问候</span></div>
+    <div class="book-actions"><button id="bookReset" type="button">重新开始</button><button id="bookClose" type="button">关闭（J）</button></div>
+  </div></div>
+  <div id="start" hidden>点击画面开始游览</div>
+  <div id="credit">地图数据 © OpenStreetMap · 外围影像 Esri · 地形 SRTM · 制作 钢铁大管子</div>
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

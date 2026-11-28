@@ -1,0 +1,715 @@
+// World builders: ground, roads, water, buildings (styled facades, hip roofs, parapets), trees, lamps, landmarks.
+import * as THREE from 'three';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+
+export class GeoBuf {
+  constructor() { this.p = []; this.n = []; this.u = []; this.c = []; }
+  v(x, y, z, nx, ny, nz, u, w, col) { this.p.push(x, y, z); this.n.push(nx, ny, nz); this.u.push(u, w); this.c.push(col.r, col.g, col.b); }
+  // triangle with its true normal, flipped to face up (roofs, ground-like surfaces); uv(x, z) -> [u, v]
+  triFace(a, b, c, col, uv) {
+    let ux = b[0] - a[0], uy = b[1] - a[1], uz = b[2] - a[2], vx = c[0] - a[0], vy = c[1] - a[1], vz = c[2] - a[2];
+    let nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx;
+    if (ny < 0) { [b, c] = [c, b]; nx = -nx; ny = -ny; nz = -nz; }
+    const l = Math.hypot(nx, ny, nz) || 1;
+    for (const q of [a, b, c]) { const [u, w] = uv(q[0], q[2]); this.v(q[0], q[1], q[2], nx / l, ny / l, nz / l, u, w, col); }
+  }
+  // vertical quad a-b at bottom, height range [y0, y1], normal (nx, nz)
+  wall(ax, az, bx, bz, y0, y1, nx, nz, u0, u1, v0, v1, col) {
+    this.v(ax, y0, az, nx, 0, nz, u0, v0, col); this.v(ax, y1, az, nx, 0, nz, u0, v1, col); this.v(bx, y0, bz, nx, 0, nz, u1, v0, col);
+    this.v(bx, y0, bz, nx, 0, nz, u1, v0, col); this.v(ax, y1, az, nx, 0, nz, u0, v1, col); this.v(bx, y1, bz, nx, 0, nz, u1, v1, col);
+  }
+  box(cx, cz, y0, sx, sy, sz, ang, col) {      // axis = rotation about y
+    const c = Math.cos(ang), s = Math.sin(ang);
+    const P = (u, w) => [cx + u * c - w * s, cz + u * s + w * c];
+    const hx = sx / 2, hz = sz / 2, y1 = y0 + sy;
+    const pts = [P(-hx, -hz), P(hx, -hz), P(hx, hz), P(-hx, hz)];
+    for (let i = 0; i < 4; i++) {
+      const [ax, az] = pts[i], [bx, bz] = pts[(i + 1) % 4];
+      const dx = bx - ax, dz = bz - az, l = Math.hypot(dx, dz) || 1;
+      this.wall(ax, az, bx, bz, y0, y1, dz / l, -dx / l, 0.02, 0.02, 0.5, 0.5, col);
+    }
+    const t = (q) => [q[0], y1, q[1]];
+    this.triFace(t(pts[0]), t(pts[1]), t(pts[2]), col, () => [0.02, 0.5]);
+    this.triFace(t(pts[0]), t(pts[2]), t(pts[3]), col, () => [0.02, 0.5]);
+  }
+  empty() { return this.p.length === 0; }
+  geometry() {
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.Float32BufferAttribute(this.p, 3));
+    g.setAttribute('normal', new THREE.Float32BufferAttribute(this.n, 3));
+    g.setAttribute('uv', new THREE.Float32BufferAttribute(this.u, 2));
+    g.setAttribute('color', new THREE.Float32BufferAttribute(this.c, 3));
+    g.computeBoundingSphere();
+    return g;
+  }
+}
+
+// ---------------------------------------------------------------- CC0 photo textures (data/assets, see LICENSES.md)
+export async function loadDetailTextures(aniso) {
+  const loader = new THREE.TextureLoader(), out = {};
+  await Promise.all(['grass', 'paving', 'dirt', 'asphalt', 'rooftiles'].map(async (n) => {
+    try {
+      const t = await loader.loadAsync(`tex/${n}.jpg`);
+      t.wrapS = t.wrapT = THREE.RepeatWrapping; t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = aniso;
+      const c = document.createElement('canvas'); c.width = c.height = 16;
+      const x = c.getContext('2d'); x.drawImage(t.image, 0, 0, 16, 16);
+      const d = x.getImageData(0, 0, 16, 16).data; let r = 0, g = 0, b = 0;
+      for (let i = 0; i < d.length; i += 4) { r += d[i]; g += d[i + 1]; b += d[i + 2]; }
+      const k = d.length / 4, m = new THREE.Color().setRGB(r / k / 255, g / k / 255, b / k / 255, THREE.SRGBColorSpace);
+      out[n] = { tex: t, mean: new THREE.Vector3(m.r, m.g, m.b) };
+    } catch { /* texture is optional */ }
+  }));
+  return out;
+}
+const injectWPos = (sh) => {
+  sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vWPos;')
+    .replace('#include <begin_vertex>', '#include <begin_vertex>\n#ifdef USE_INSTANCING\nvWPos = (modelMatrix * instanceMatrix * vec4(transformed, 1.0)).xyz;\n#else\nvWPos = (modelMatrix * vec4(transformed, 1.0)).xyz;\n#endif');
+};
+// multiply a world-space tiling photo texture (normalised by its mean colour) into a material, fading with distance
+export function addWorldDetail(mat, d, scale, strength, far = 160) {
+  if (!d) return;
+  mat.onBeforeCompile = (sh) => {
+    sh.uniforms.dMap = { value: d.tex }; sh.uniforms.dMean = { value: d.mean };
+    injectWPos(sh);
+    sh.fragmentShader = sh.fragmentShader
+      .replace('#include <common>', '#include <common>\nvarying vec3 vWPos;\nuniform sampler2D dMap;\nuniform vec3 dMean;')
+      .replace('#include <map_fragment>', `#include <map_fragment>
+      { float k = 1.0 - smoothstep(${(far * 0.25).toFixed(1)}, ${far.toFixed(1)}, length(vWPos - cameraPosition));
+        vec3 dt = texture2D(dMap, vWPos.xz / ${scale.toFixed(2)}).rgb / max(dMean, vec3(0.02));
+        diffuseColor.rgb *= mix(vec3(1.0), dt, ${strength.toFixed(2)} * k); }`);
+  };
+}
+
+const hash = (x, z) => { const s = Math.sin(x * 12.9898 + z * 78.233) * 43758.5453; return s - Math.floor(s); };
+
+// ---------------------------------------------------------------- ground
+export function buildGround(ctx, T, orthoTex, detailTex, det = {}) {
+  const { scene, W, D } = ctx;
+  const g = new THREE.PlaneGeometry(W, D, T.nx - 1, T.nz - 1);
+  g.rotateX(-Math.PI / 2);
+  const pos = g.attributes.position;
+  for (let k = 0; k < T.nz; k++) for (let i = 0; i < T.nx; i++) pos.setY(k * T.nx + i, T.h[k * T.nx + i] / 10);
+  g.computeVertexNormals();
+  const mat = new THREE.MeshStandardMaterial({ map: orthoTex, roughness: 0.95 });
+  // up close the aerial photo is blurry; multiply in a tiling detail texture that fades out with distance
+  const hasPhoto = det.grass && det.paving && det.dirt;
+  const hasLC = hasPhoto && det.lc && det.asphalt;
+  mat.onBeforeCompile = (sh) => {
+    sh.uniforms.detailMap = { value: detailTex };
+    if (hasPhoto) {
+      sh.uniforms.gMap = { value: det.grass.tex }; sh.uniforms.gMean = { value: det.grass.mean };
+      sh.uniforms.pMap = { value: det.paving.tex }; sh.uniforms.pMean = { value: det.paving.mean };
+      sh.uniforms.tMap = { value: det.dirt.tex }; sh.uniforms.tMean = { value: det.dirt.mean };
+    }
+    if (hasLC) { sh.uniforms.lcMap = { value: det.lc }; sh.uniforms.lcSize = { value: new THREE.Vector2(W, D) }; sh.uniforms.aMap = { value: det.asphalt.tex }; }
+    sh.vertexShader = sh.vertexShader
+      .replace('#include <common>', '#include <common>\nvarying vec3 vWPos;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvWPos = (modelMatrix * vec4(transformed, 1.0)).xyz;');
+    sh.fragmentShader = sh.fragmentShader
+      .replace('#include <common>', '#include <common>\nvarying vec3 vWPos;\nuniform sampler2D detailMap;' + (hasPhoto ? '\nuniform sampler2D gMap, pMap, tMap;\nuniform vec3 gMean, pMean, tMean;' : '') + (hasLC ? '\nuniform sampler2D lcMap, aMap;\nuniform vec2 lcSize;' : ''))
+      .replace('#include <map_fragment>', hasLC ? GROUND_LC : hasPhoto ? GROUND_PHOTO : `#include <map_fragment>
+      {
+        // close to the camera: grass blades on green ground, a paving grid on grey ground, noise on both
+        float k = 1.0 - smoothstep(25.0, 220.0, length(vWPos - cameraPosition));
+        float d = texture2D(detailMap, vWPos.xz / 3.0).r * 0.55 + texture2D(detailMap, vWPos.xz / 17.0).r * 0.45;
+        vec3 c = diffuseColor.rgb;
+        float green = clamp((c.g - max(c.r, c.b)) * 9.0 + 0.15, 0.0, 1.0);
+        float grey = clamp(1.0 - (max(c.r, max(c.g, c.b)) - min(c.r, min(c.g, c.b))) * 8.0, 0.0, 1.0) * (1.0 - green);
+        float blades = texture2D(detailMap, vWPos.xz * vec2(1.7, 0.35)).r;
+        vec2 cell = abs(fract(vWPos.xz / 0.8) - 0.5);
+        float joint = smoothstep(0.47, 0.5, max(cell.x, cell.y));
+        float pattern = mix(1.0, 0.75 + blades * 0.45, green) * mix(1.0, 1.0 - joint * 0.35, grey * smoothstep(60.0, 10.0, length(vWPos - cameraPosition)));
+        diffuseColor.rgb *= mix(1.0, d * 1.32 * pattern, 0.6 * k);
+        diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(0.92, 1.06, 0.9), green * k * 0.5);
+      }`);
+  };
+  const ground = new THREE.Mesh(g, mat);
+  ground.receiveShadow = true;
+  scene.add(ground);
+  const R = 9000, shape = new THREE.Shape();
+  shape.moveTo(-R, -R); shape.lineTo(R, -R); shape.lineTo(R, R); shape.lineTo(-R, R); shape.closePath();
+  const hole = new THREE.Path();
+  hole.moveTo(-W / 2, -D / 2); hole.lineTo(-W / 2, D / 2); hole.lineTo(W / 2, D / 2); hole.lineTo(W / 2, -D / 2); hole.closePath();
+  shape.holes.push(hole);
+  const outer = new THREE.Mesh(new THREE.ShapeGeometry(shape).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ color: '#7a8668', roughness: 1 }));
+  outer.position.y = -1.5;
+  scene.add(outer);
+}
+
+const GROUND_PHOTO = `#include <map_fragment>
+      {
+        float dist = length(vWPos - cameraPosition);
+        float k = 1.0 - smoothstep(18.0, 190.0, dist);
+        vec3 c = diffuseColor.rgb;
+        float green = clamp((c.g - max(c.r, c.b)) * 9.0 + 0.15, 0.0, 1.0);
+        float sat = max(c.r, max(c.g, c.b)) - min(c.r, min(c.g, c.b));
+        float grey = clamp(1.0 - sat * 8.0, 0.0, 1.0) * (1.0 - green);
+        float dirtW = clamp(1.0 - green - grey, 0.0, 1.0);
+        vec3 g = texture2D(gMap, vWPos.xz / 2.2).rgb / max(gMean, vec3(0.02));
+        vec3 p = texture2D(pMap, vWPos.xz / 3.2).rgb / max(pMean, vec3(0.02));
+        vec3 t = texture2D(tMap, vWPos.xz / 3.0).rgb / max(tMean, vec3(0.02));
+        diffuseColor.rgb *= mix(vec3(1.0), g * green + p * grey + t * dirtW, 0.78 * k);
+        diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(0.93, 1.05, 0.9), green * k * 0.4);
+        float n = texture2D(detailMap, vWPos.xz / 17.0).r;
+        diffuseColor.rgb *= mix(1.0, n * 1.3, 0.3);
+      }`;
+
+// land-cover classes (tools/landcover.py): 1 grass 2 canopy 3 paving 4 asphalt 5 water 6 track 7 turf 8 court 9 soil 10 building
+const GROUND_LC = `#include <map_fragment>
+      {
+        float dist = length(vWPos - cameraPosition);
+        float k = 1.0 - smoothstep(35.0, 320.0, dist);
+        vec3 c0 = diffuseColor.rgb;
+        float n1 = texture2D(detailMap, vWPos.xz / 1.7).r, n2 = texture2D(detailMap, vWPos.xz / 17.0).r;
+        vec2 jit = (vec2(texture2D(detailMap, vWPos.xz / 6.0).r + n1 * 0.5, texture2D(detailMap, vWPos.zx / 5.3).r + texture2D(detailMap, vWPos.zx / 1.9).r * 0.5) - 0.75) * 2.6 / lcSize;
+        vec2 luv = vec2((vWPos.x + lcSize.x * 0.5) / lcSize.x, 1.0 - (vWPos.z + lcSize.y * 0.5) / lcSize.y);
+        float cls = floor(texture2D(lcMap, luv + jit).r * 255.0 + 0.5);
+        vec3 g = texture2D(gMap, vWPos.xz / 2.2).rgb, p = texture2D(pMap, vWPos.xz / 3.2).rgb;
+        vec3 t = texture2D(tMap, vWPos.xz / 3.0).rgb, a = texture2D(aMap, vWPos.xz / 3.5).rgb;
+        vec3 col = c0 * mix(1.0, n1 * 1.3, 0.3);
+        if (cls < 1.5) col = mix(g * vec3(0.92, 1.0, 0.86), c0 * g / max(gMean, vec3(0.02)), 0.35);
+        else if (cls < 2.5) col = mix(t, g, 0.45) * 0.72;
+        else if (cls < 3.5) col = c0 * p / max(pMean, vec3(0.02));
+        else if (cls < 4.5) { col = a * vec3(0.5, 0.51, 0.53); k = max(k, 0.7); }
+        else if (cls < 5.5) col = c0;
+        else if (cls < 6.5) col = vec3(0.6, 0.21, 0.17) * (0.82 + 0.36 * n1);
+        else if (cls < 7.5) col = g * vec3(0.55, 0.98, 0.48) * (0.9 + 0.1 * step(0.5, fract(vWPos.x / 6.0)));
+        else if (cls < 8.5) col = c0 * (0.9 + 0.2 * n1);
+        else if (cls < 9.5) col = c0 * t / max(tMean, vec3(0.02));
+        diffuseColor.rgb = mix(c0 * mix(1.0, n2 * 1.3, 0.3), col, k);
+      }`;
+
+// ---------------------------------------------------------------- roads with markings and sidewalks
+export function buildRoads(ctx, roads, tex, det = {}) {
+  const { scene, heightAt } = ctx;
+  const bufs = { main: new GeoBuf(), minor: new GeoBuf(), paving: new GeoBuf(), track: new GeoBuf(), walk: new GeoBuf() };
+  const bridgeSpots = [];
+  const white = new THREE.Color('#ffffff');
+  for (const r of roads) {
+    const kind = r.w >= 10 ? 'main' : r.w >= 5.5 ? 'minor' : r.kind === 'track' ? 'track' : 'paving';
+    const pts = [];
+    for (let i = 0; i < r.pts.length - 1; i++) {
+      const [x0, z0] = r.pts[i], [x1, z1] = r.pts[i + 1];
+      const n = Math.max(1, Math.ceil(Math.hypot(x1 - x0, z1 - z0) / 5));
+      for (let k = 0; k < n; k++) pts.push([x0 + (x1 - x0) * k / n, z0 + (z1 - z0) * k / n]);
+    }
+    pts.push(r.pts[r.pts.length - 1]);
+    if (pts.length < 2) continue;
+    const hw = r.w / 2, lift = 0.16 + Math.min(r.w, 18) * 0.006;
+    const sidewalk = r.w >= 7;
+    const rows = [];   // per point: left/right road edge + sidewalk outer edges
+    let s = 0;
+    for (let i = 0; i < pts.length; i++) {
+      const a = pts[Math.max(0, i - 1)], c = pts[Math.min(pts.length - 1, i + 1)];
+      let dx = c[0] - a[0], dz = c[1] - a[1];
+      const len = Math.hypot(dx, dz) || 1;
+      dx /= len; dz /= len;
+      if (i > 0) s += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
+      const nx = -dz, nz = dx, [x, z] = pts[i];
+      const wl = ctx.waterAt ? ctx.waterAt(x, z) : null;
+      const deck = wl === null ? null : Math.max(wl + 1.6, heightAt(x, z) + 0.6);
+      if (deck !== null) bridgeSpots.push([x, z, deck, nx, nz, hw]);
+      const at = (o, up) => [x + nx * o, (deck ?? heightAt(x + nx * o, z + nz * o)) + lift + up, z + nz * o];
+      rows.push({ s, L: at(hw, 0), R: at(-hw, 0), Lc: at(hw, 0.15), Rc: at(-hw, 0.15), Lo: at(hw + 2.4, 0.15), Ro: at(-hw - 2.4, 0.15) });
+    }
+    const buf = bufs[kind];
+    const vScale = kind === 'paving' || kind === 'track' ? 1 / 4 : 1 / 8;
+    for (let i = 0; i < rows.length - 1; i++) {
+      const A = rows[i], B = rows[i + 1];
+      const quad = (b, p0, p1, p2, p3, u0, u1, v0, v1) => {
+        const uvs = new Map([[p0, [u0, v0]], [p1, [u1, v0]], [p2, [u0, v1]], [p3, [u1, v1]]]);
+        b.triFace(p0, p1, p2, white, (x, z) => { for (const [q, uv] of uvs) if (q[0] === x && q[2] === z) return uv; return [0, 0]; });
+        b.triFace(p2, p1, p3, white, (x, z) => { for (const [q, uv] of uvs) if (q[0] === x && q[2] === z) return uv; return [0, 0]; });
+      };
+      const wScale = kind === 'paving' || kind === 'track' ? r.w / 4 : 1;
+      quad(buf, A.L, A.R, B.L, B.R, 0, wScale, A.s * vScale, B.s * vScale);
+      if (sidewalk) {
+        quad(bufs.walk, A.Lo, A.Lc, B.Lo, B.Lc, 0, 0.6, A.s / 4, B.s / 4);
+        quad(bufs.walk, A.Rc, A.Ro, B.Rc, B.Ro, 0, 0.6, A.s / 4, B.s / 4);
+      }
+    }
+  }
+  const mk = (map, extra = {}) => new THREE.MeshStandardMaterial({ map, roughness: 0.92, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2, ...extra });
+  const mats = { main: mk(tex.main), minor: mk(tex.minor), paving: mk(tex.paving), track: mk(tex.track), walk: mk(tex.paving, { side: THREE.DoubleSide }) };
+  // bridge parapets where a road crosses water
+  if (bridgeSpots.length) {
+    const br = new GeoBuf(), bc = new THREE.Color('#c9c5bb');
+    for (const [x, z, deck, nx, nz, hw] of bridgeSpots) for (const s of [-1, 1]) br.box(x + nx * (hw + 0.3) * s, z + nz * (hw + 0.3) * s, deck, 0.3, 1.1, 0.3, Math.atan2(nz, nx), bc);
+    const bm = new THREE.Mesh(br.geometry(), new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.8 })); bm.castShadow = true; scene.add(bm);
+  }
+  addWorldDetail(mats.main, det.asphalt, 3, 0.55); addWorldDetail(mats.minor, det.asphalt, 3, 0.55);
+  addWorldDetail(mats.paving, det.paving, 2.6, 0.7); addWorldDetail(mats.walk, det.paving, 2.6, 0.7); addWorldDetail(mats.track, det.dirt, 3, 0.6);
+  for (const [k, b] of Object.entries(bufs)) {
+    if (b.empty()) continue;
+    const m = new THREE.Mesh(b.geometry(), mats[k]);
+    m.receiveShadow = true;
+    scene.add(m);
+  }
+}
+
+// ---------------------------------------------------------------- junction patches (hide crossing lane lines) and zebra crossings
+export function buildJunctions(ctx, junctions, det = {}) {
+  if (!junctions?.length) return;
+  const { scene, heightAt } = ctx;
+  const disc = new GeoBuf(), zebra = new GeoBuf(), white = new THREE.Color('#ffffff');
+  for (const j of junctions) {
+    const y = heightAt(j.x, j.z) + 0.3, n = 28;
+    for (let i = 0; i < n; i++) {
+      const a0 = i / n * Math.PI * 2, a1 = (i + 1) / n * Math.PI * 2;
+      disc.triFace([j.x, y, j.z], [j.x + Math.cos(a0) * j.r, y, j.z + Math.sin(a0) * j.r], [j.x + Math.cos(a1) * j.r, y, j.z + Math.sin(a1) * j.r], white, (x, z) => [x / 4, z / 4]);
+    }
+    for (const [x, z, ang, wd] of j.cross) {
+      const dx = Math.cos(ang), dz = Math.sin(ang), nx = -dz, nz = dx, y2 = heightAt(x, z) + 0.32;
+      for (let o = -wd / 2 + 0.7; o <= wd / 2 - 0.7; o += 1.0) {
+        const cx = x + nx * o, cz = z + nz * o, P = (a, b) => [cx + dx * a + nx * b, y2, cz + dz * a + nz * b];
+        zebra.triFace(P(-1.5, -0.22), P(1.5, -0.22), P(1.5, 0.22), white, () => [0, 0]);
+        zebra.triFace(P(-1.5, -0.22), P(1.5, 0.22), P(-1.5, 0.22), white, () => [0, 0]);
+      }
+    }
+  }
+  const dm = new THREE.MeshStandardMaterial({ color: '#4a4d50', roughness: 0.92, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -3 });
+  addWorldDetail(dm, det.asphalt, 3, 0.55);
+  const zm = new THREE.MeshStandardMaterial({ color: '#eeeeea', roughness: 0.7, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4 });
+  for (const [buf, mat] of [[disc, dm], [zebra, zm]]) { if (buf.empty()) continue; const m = new THREE.Mesh(buf.geometry(), mat); m.receiveShadow = true; scene.add(m); }
+}
+
+// ---------------------------------------------------------------- water
+export function buildWater(ctx, list, normalTex) {
+  const { scene, heightAt, inCampus } = ctx;
+  const buf = new GeoBuf(), bank = new GeoBuf(), rail = new GeoBuf();
+  const col = new THREE.Color('#ffffff'), stone = new THREE.Color('#8f8a7e'), railC = new THREE.Color('#d9d6cf');
+  const pools = [];
+  for (const w of list) {
+    const pts = w.pts.map(([x, z]) => new THREE.Vector2(x, z));
+    if (pts.length < 3) continue;
+    const level = w.level ?? pts.reduce((s, p) => s + heightAt(p.x, p.y), 0) / pts.length - 0.6;
+    pools.push({ pts: w.pts, level });
+    let tris = [];
+    try { tris = THREE.ShapeUtils.triangulateShape(pts, []); } catch { tris = []; }
+    for (const [a, b, c] of tris) {
+      buf.triFace([pts[a].x, level, pts[a].y], [pts[b].x, level, pts[b].y], [pts[c].x, level, pts[c].y], col, (x, z) => [x / 18, z / 18]);
+    }
+    // stone embankment from below the water line up to the bank, and a railing along campus banks
+    for (let i = 0; i < pts.length; i++) {
+      const a = pts[i], c = pts[(i + 1) % pts.length];
+      const len = Math.hypot(c.x - a.x, c.y - a.y);
+      if (len < 0.3) continue;
+      const top = Math.max(heightAt(a.x, a.y), heightAt(c.x, c.y), level + 0.5) + 0.25;
+      const nx = (c.y - a.y) / len, nz = -(c.x - a.x) / len;
+      bank.wall(a.x, a.y, c.x, c.y, level - 1.2, top, nx, nz, 0, len / 2, 0, 1, stone);
+      bank.wall(c.x, c.y, a.x, a.y, level - 1.2, top, -nx, -nz, 0, len / 2, 0, 1, stone);
+      if (inCampus((a.x + c.x) / 2, (a.y + c.y) / 2) && len > 0.5) {
+        rail.wall(a.x, a.y, c.x, c.y, top + 0.95, top + 1.05, nx, nz, 0, 0, 0, 0, railC);
+        rail.wall(c.x, c.y, a.x, a.y, top + 0.95, top + 1.05, -nx, -nz, 0, 0, 0, 0, railC);
+        for (let t = 0; t < len; t += 2.5) { const x = a.x + (c.x - a.x) * t / len, z = a.y + (c.y - a.y) * t / len; rail.box(x, z, top, 0.08, 1.05, 0.08, 0, railC); }
+      }
+    }
+  }
+  normalTex.wrapS = normalTex.wrapT = THREE.RepeatWrapping;
+  const mat = new THREE.MeshStandardMaterial({ color: '#2a5661', roughness: 0.08, metalness: 0.1, normalMap: normalTex,
+    normalScale: new THREE.Vector2(0.5, 0.5), transparent: true, opacity: 0.93, envMapIntensity: 1.4 });
+  if (!buf.empty()) scene.add(new THREE.Mesh(buf.geometry(), mat));
+  for (const [b, m] of [[bank, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.95 })], [rail, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.5 })]]) {
+    if (b.empty()) continue;
+    const mesh = new THREE.Mesh(b.geometry(), m); mesh.castShadow = true; mesh.receiveShadow = true; scene.add(mesh);
+  }
+  const inPoly = (x, z, pts) => { let s = false; for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) { const [xi, zi] = pts[i], [xj, zj] = pts[j]; if ((zi > z) !== (zj > z) && x < (xj - xi) * (z - zi) / (zj - zi) + xi) s = !s; } return s; };
+  // water level under a point (for bridges), or null on dry land
+  ctx.waterAt = (x, z) => { for (const pl of pools) if (inPoly(x, z, pl.pts)) return pl.level; return null; };
+  return mat;
+}
+
+// ---------------------------------------------------------------- buildings
+const KIND_COLOR = { dorm: '#dcc4a2', teach: '#e8e4dd', hall: '#efece6', canteen: '#e7d5b8', other: '#d6d1c8', apartment: '#ece8df', wall: '#d2cabb' };
+const KIND_STYLE = { dorm: 'dorm', apartment: 'apartment', hall: 'hall', canteen: 'modern', teach: 'modern', other: 'modern' };
+
+export function buildBuildings(ctx, list, facadeMats, orthoTex, det = {}) {
+  const { scene, heightAt, inCampus, W, D } = ctx;
+  const facade = {}, roofBuf = new GeoBuf(), hipBuf = new GeoBuf(), plainBuf = new GeoBuf();
+  const wallC = new THREE.Color(), plainC = new THREE.Color(), grey = new THREE.Color('#bab7b1'), white = new THREE.Color('#ffffff');
+  const orthoUV = (x, z) => [(x + W / 2) / W, 1 - (z + D / 2) / D];
+  const out = [];
+  for (const b of list) {
+    let pts = b.pts.map(([x, z]) => new THREE.Vector2(x, z));
+    pts = pts.filter((p, i) => i === 0 || p.distanceTo(pts[i - 1]) > 0.05);
+    if (pts.length > 3 && pts[0].distanceTo(pts[pts.length - 1]) < 0.05) pts.pop();
+    if (pts.length < 3) continue;
+    if (THREE.ShapeUtils.isClockWise(pts)) pts.reverse();
+    let base = Infinity, cx = 0, cz = 0, minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity;
+    for (const p of pts) {
+      base = Math.min(base, heightAt(p.x, p.y));
+      cx += p.x; cz += p.y;
+      minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x); minZ = Math.min(minZ, p.y); maxZ = Math.max(maxZ, p.y);
+    }
+    cx /= pts.length; cz /= pts.length;
+    const top = base + b.h, bot = base - 1.5;
+    const campus = b.campus ?? inCampus(cx, cz);
+    const isWall = b.kind === 'wall';
+    const style = isWall ? 'wall' : (b.style || KIND_STYLE[b.kind] || 'modern');
+    wallC.set(b.color || KIND_COLOR[b.kind] || KIND_COLOR.other);
+    if (!campus && !isWall) wallC.lerp(grey, 0.45);
+    plainC.copy(wallC).multiplyScalar(0.9);
+    const buf = b.replaced ? new GeoBuf() : isWall ? plainBuf : (facade[style] ??= new GeoBuf());
+    const rBuf = b.replaced ? new GeoBuf() : roofBuf, hBuf = b.replaced ? new GeoBuf() : hipBuf, pBuf = b.replaced ? new GeoBuf() : plainBuf;
+    // walls, one bay = 3.2 m, one floor = 3.6 m
+    let s = 0, longest = 0, ang = 0;
+    for (let i = 0; i < pts.length; i++) {
+      const a = pts[i], c = pts[(i + 1) % pts.length];
+      const dx = c.x - a.x, dz = c.y - a.y, len = Math.hypot(dx, dz);
+      if (len < 0.01) continue;
+      if (len > longest) { longest = len; ang = Math.atan2(dz, dx); }
+      const bays = Math.max(1, Math.round(len / 3.2));
+      const u0 = isWall ? 0.02 : s, u1 = isWall ? 0.02 : s + bays;   // whole bays per edge, so windows never get cut
+      s += bays;
+      buf.wall(a.x, a.y, c.x, c.y, bot, top, dz / len, -dx / len, u0, u1, isWall ? 0.5 : (bot - base) / 3.6, isWall ? 0.5 : (top - base) / 3.6, isWall ? plainC : wallC);
+    }
+    const hip = b.roof && b.roof.type === 'hip';
+    if (hip) {
+      const [ox, oz, L0, W0, a] = b.roof.obb, L = L0 + 1.2, Wd = W0 + 1.2;
+      const dx = Math.cos(a), dz = Math.sin(a), nx = -dz, nz = dx;
+      const P = (u, v, y) => [ox + dx * u + nx * v, y, oz + dz * u + nz * v];
+      const e = top - 0.2, ry = top + b.roof.rise, hl = L / 2, hw = Wd / 2, rl = Math.max(0, hl - hw * 0.9);
+      const A = P(-hl, -hw, e), B = P(hl, -hw, e), C = P(hl, hw, e), Dd = P(-hl, hw, e), R1 = P(-rl, 0, ry), R2 = P(rl, 0, ry);
+      for (const [p, q, r] of [[A, B, R2], [A, R2, R1], [C, Dd, R1], [C, R1, R2], [B, C, R2], [Dd, A, R1]]) hBuf.triFace(p, q, r, white, orthoUV);
+    } else {
+      let tris = [];
+      try { tris = THREE.ShapeUtils.triangulateShape(pts, []); } catch { tris = []; }
+      for (const [i0, i1, i2] of tris) rBuf.triFace([pts[i0].x, top, pts[i0].y], [pts[i1].x, top, pts[i1].y], [pts[i2].x, top, pts[i2].y], white, orthoUV);
+      if (!isWall && b.h > 4) {
+        // parapet
+        for (let i = 0; i < pts.length; i++) {
+          const a = pts[i], c = pts[(i + 1) % pts.length];
+          const dx = c.x - a.x, dz = c.y - a.y, len = Math.hypot(dx, dz) || 1;
+          pBuf.wall(a.x, a.y, c.x, c.y, top, top + 0.9, dz / len, -dx / len, 0.02, 0.02, 0.5, 0.5, plainC);
+        }
+        // rooftop stair / lift housing and a few AC units on taller blocks
+        const area = (maxX - minX) * (maxZ - minZ);
+        const lv = b.lv || Math.round(b.h / 3.6);
+        if (lv >= 5 && area > 500 && pointIn(cx, cz, pts)) {
+          pBuf.box(cx, cz, top, Math.min(9, longest * 0.18), 3.2, 5, ang, plainC);
+          const r = hash(cx, cz);
+          for (let k = 0; k < 3; k++) {
+            const ux = (hash(cx + k, cz) - 0.5) * longest * 0.5, uz = (hash(cz, cx + k) - 0.5) * 6;
+            const px = cx + ux * Math.cos(ang) - uz * Math.sin(ang), pz = cz + ux * Math.sin(ang) + uz * Math.cos(ang);
+            if (pointIn(px, pz, pts)) pBuf.box(px, pz, top, 1.6, 1.1 + r, 1.2, ang, grey);
+          }
+        }
+      }
+    }
+    out.push({ name: b.label || b.name, kind: b.kind, cx, cz, base, top, campus, minX, maxX, minZ, maxZ,
+      photos: b.photos || null, landmark: b.replaced ? null : b.landmark || null, replaced: !!b.replaced,
+      xs: Float32Array.from(pts, (p) => p.x), zs: Float32Array.from(pts, (p) => p.y) });
+  }
+  for (const [style, buf] of Object.entries(facade)) {
+    const m = new THREE.Mesh(buf.geometry(), facadeMats[style] || facadeMats.modern);
+    m.castShadow = true; m.receiveShadow = true;
+    scene.add(m);
+  }
+  const roof = new THREE.Mesh(roofBuf.geometry(), new THREE.MeshStandardMaterial({ map: orthoTex, roughness: 0.85 }));
+  roof.castShadow = true; roof.receiveShadow = true;
+  if (!hipBuf.empty()) {
+    const hm = new THREE.MeshStandardMaterial({ map: orthoTex, roughness: 0.8 });
+    addWorldDetail(hm, det.rooftiles, 2.2, 0.6, 260);
+    const hip = new THREE.Mesh(hipBuf.geometry(), hm); hip.castShadow = true; hip.receiveShadow = true; scene.add(hip);
+  }
+  const plain = new THREE.Mesh(plainBuf.geometry(), new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.9, side: THREE.DoubleSide }));
+  plain.castShadow = true; plain.receiveShadow = true;
+  scene.add(roof, plain);
+  return out;
+}
+
+function pointIn(x, z, pts) {
+  let inside = false;
+  for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+    const xi = pts[i].x ?? pts[i][0], zi = pts[i].y ?? pts[i][1], xj = pts[j].x ?? pts[j][0], zj = pts[j].y ?? pts[j][1];
+    if ((zi > z) !== (zj > z) && x < (xj - xi) * (z - zi) / (zj - zi) + xi) inside = !inside;
+  }
+  return inside;
+}
+
+// ---------------------------------------------------------------- rooftop landmarks + POIs (gates, flags, radar tower)
+const MAT = () => ({
+  white: new THREE.MeshStandardMaterial({ color: '#f4f4f2', roughness: 0.35 }),
+  steel: new THREE.MeshStandardMaterial({ color: '#9aa3ab', roughness: 0.5, metalness: 0.6 }),
+  navy: new THREE.MeshStandardMaterial({ color: '#2c3f63', roughness: 0.55 }),
+  dark: new THREE.MeshStandardMaterial({ color: '#1e2633', roughness: 0.4 }),
+  stone: new THREE.MeshStandardMaterial({ color: '#9a6a52', roughness: 0.85 }),
+  stoneDark: new THREE.MeshStandardMaterial({ color: '#7a5242', roughness: 0.85 }),
+  pillar: new THREE.MeshStandardMaterial({ color: '#d8d6d0', roughness: 0.6 }),
+  paving: new THREE.MeshStandardMaterial({ color: '#c9c2b4', roughness: 0.9 }),
+});
+const mesh = (geo, mat, x = 0, y = 0, z = 0) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = true; m.receiveShadow = true; return m; };
+
+export function buildLandmarks(ctx, metas) {
+  const M = MAT();
+  for (const m of metas) {
+    const g = new THREE.Group();
+    if (m.landmark === 'radar') {
+      g.add(mesh(new THREE.CylinderGeometry(2.2, 3.2, 10, 8), M.steel, 0, 5), mesh(new THREE.SphereGeometry(7, 32, 20), M.white, 0, 16));
+    } else if (m.landmark === 'clocktower') {
+      g.add(mesh(new THREE.BoxGeometry(9, 26, 9), M.white, 0, 7));
+      const sp = mesh(new THREE.ConeGeometry(7, 18, 4), M.navy, 0, 29); sp.rotation.y = Math.PI / 4; g.add(sp);
+      for (let i = 0; i < 4; i++) {
+        const a = i * Math.PI / 2, ck = mesh(new THREE.CircleGeometry(2.4, 24), M.dark, Math.sin(a) * 4.56, 15, Math.cos(a) * 4.56);
+        ck.rotation.y = a; g.add(ck);
+      }
+    } else continue;
+    g.position.set(m.cx, m.top, m.cz);
+    ctx.scene.add(g);
+  }
+}
+
+export function buildPois(ctx, pois) {
+  const M = MAT(), out = [];
+  const flagColors = ['#d62828', '#1d4fa3', '#f2f2f2', '#2a9d3f', '#f4c430', '#e76f2a', '#111111', '#4cb4e7'];
+  for (let p of pois || []) {
+    const g = new THREE.Group(), y = ctx.heightAt(p.x, p.z);
+    let h = 8;
+    if (p.replaced) p = { ...p, landmark: 'none' };
+    if (p.landmark === 'gate_old') {
+      // long flat stone canopy on two piers with low side walls (老校门 photo)
+      g.add(mesh(new THREE.BoxGeometry(24, 1.3, 4), M.stoneDark, 0, 6.2), mesh(new THREE.BoxGeometry(3, 5.6, 3), M.stone, -9.5, 2.8),
+        mesh(new THREE.BoxGeometry(3, 5.6, 3), M.stone, 9.5, 2.8), mesh(new THREE.BoxGeometry(7, 1.4, 0.6), M.stone, -14.5, 0.7),
+        mesh(new THREE.BoxGeometry(7, 1.4, 0.6), M.stone, 14.5, 0.7));
+      h = 7;
+    } else if (p.landmark === 'gate_east') {
+      g.add(mesh(new THREE.CylinderGeometry(11, 11, 0.4, 40), M.paving, 0, 0.2));
+      for (let i = 0; i < 8; i++) {
+        const a = -Math.PI * 0.42 + i * (Math.PI * 0.84 / 7);
+        g.add(mesh(new THREE.BoxGeometry(1.6, 14, 1.6), M.pillar, Math.sin(a) * 24, 7, -Math.cos(a) * 24 + 12));
+      }
+      h = 14;
+    } else if (p.landmark === 'flags') {
+      const poleGeo = new THREE.CylinderGeometry(0.06, 0.08, 10, 6), flagGeo = new THREE.PlaneGeometry(1.8, 1.2);
+      for (let i = 0; i < 21; i++) {
+        const a = Math.PI * (0.15 + 0.7 * i / 20), px = Math.cos(a) * 15, pz = -Math.sin(a) * 9;
+        g.add(mesh(poleGeo, M.steel, px, 5, pz));
+        const fm = new THREE.MeshStandardMaterial({ color: flagColors[i % flagColors.length], side: THREE.DoubleSide, roughness: 0.8 });
+        g.add(mesh(flagGeo, fm, px + 0.9, 9.2, pz));
+      }
+      g.add(mesh(new THREE.CylinderGeometry(0.08, 0.1, 14, 6), M.steel, 0, 7, -2));
+      g.add(mesh(flagGeo.clone().scale(1.4, 1.4, 1), new THREE.MeshStandardMaterial({ color: '#de2910', side: THREE.DoubleSide }), 1.26, 13, -2));
+      h = 12;
+    } else if (p.landmark === 'gate_generic') {
+      // campus gate from the official map's 出入口 list: two stone pillars, a beam with a sign, a guard booth
+      g.add(mesh(new THREE.BoxGeometry(1.4, 5.6, 1.4), M.pillar, -8, 2.8), mesh(new THREE.BoxGeometry(1.4, 5.6, 1.4), M.pillar, 8, 2.8),
+        mesh(new THREE.BoxGeometry(17.6, 1.1, 1.3), M.pillar, 0, 6.1), mesh(new THREE.BoxGeometry(6.5, 1.0, 0.25), M.stoneDark, 0, 6.1, 0.72),
+        mesh(new THREE.BoxGeometry(3, 2.8, 3), M.white, 11.5, 1.4), mesh(new THREE.BoxGeometry(3.6, 0.3, 3.6), M.navy, 11.5, 2.95));
+      h = 7;
+    } else if (p.landmark === 'radar_tower') {
+      g.add(mesh(new THREE.CylinderGeometry(0.9, 1.7, 26, 10), M.white, 0, 13), mesh(new THREE.CylinderGeometry(3.2, 3.2, 0.6, 16), M.steel, 0, 26.3),
+        mesh(new THREE.SphereGeometry(4.5, 28, 18), M.white, 0, 30.5));
+      h = 34;
+    }
+    g.position.set(p.x, y, p.z);
+    g.rotation.y = THREE.MathUtils.degToRad(p.rot || 0);
+    ctx.scene.add(g);
+    out.push({ name: p.name, kind: 'poi', cx: p.x, cz: p.z, base: y, top: y + h, campus: true,
+      minX: p.x - 6, maxX: p.x + 6, minZ: p.z - 6, maxZ: p.z + 6, photos: p.photos || null, landmark: p.landmark });
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------- trees: per-tree height / crown from the drone DSM, three species shapes
+// crowns are smooth-shaded clusters with a dark-to-light vertical gradient (vertex colour x instance colour)
+function gradient(geo, y0, y1, lo = 0.55, hi = 1.12) {
+  const pos = geo.attributes.position, col = new Float32Array(pos.count * 3);
+  for (let i = 0; i < pos.count; i++) {
+    const t = Math.min(1, Math.max(0, (pos.getY(i) - y0) / (y1 - y0))), v = lo + (hi - lo) * t;
+    col[i * 3] = v; col[i * 3 + 1] = v; col[i * 3 + 2] = v;
+  }
+  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  return geo;
+}
+export function buildTrees(ctx, trees, lite) {
+  const { scene, W, D, heightAt, inCampus } = ctx;
+  const ico = (r, x, y, z, sy = 1, detail = 1) => new THREE.IcosahedronGeometry(r, detail).scale(1, sy, 1).translate(x, y, z);
+  const cone = (r, h, y) => new THREE.ConeGeometry(r, h, 10, 1).translate(0, y, 0).toNonIndexed();
+  const fine = !lite;
+  const V = {
+    broad: gradient(mergeGeometries(fine
+      ? [ico(1.8, 0, 4.4, 0), ico(1.45, 1.15, 3.8, 0.5), ico(1.35, -1.05, 3.9, -0.6), ico(1.25, 0.3, 5.4, -0.45), ico(1.15, -0.45, 4.8, 1.05)]
+      : [ico(1.8, 0, 4.4, 0, 1, 0), ico(1.4, 1.1, 3.8, 0.5, 1, 0), ico(1.3, -1.0, 3.9, -0.6, 1, 0)]), 2.4, 6.6),
+    conifer: gradient(mergeGeometries([cone(2.0, 3.2, 3.0), cone(1.65, 2.8, 4.4), cone(1.25, 2.4, 5.7), cone(0.8, 2.0, 6.9)]), 1.4, 7.9, 0.5, 1.05),
+    slim: gradient(mergeGeometries([ico(1.25, 0, 4.4, 0, 1.9, fine ? 1 : 0), ico(0.95, 0.2, 6.1, 0.1, 1.5, fine ? 1 : 0)]), 2.2, 7.4),
+    simple: gradient(ico(2.0, 0, 4.4, 0, 1.05, 0), 2.4, 6.5),
+  };
+  const trunkG = mergeGeometries([
+    new THREE.CylinderGeometry(0.13, 0.22, 3.0, 6).translate(0, 1.5, 0),
+    new THREE.CylinderGeometry(0.06, 0.1, 1.6, 5).rotateZ(0.6).translate(0.45, 2.9, 0),
+    new THREE.CylinderGeometry(0.06, 0.1, 1.5, 5).rotateZ(-0.7).translate(-0.4, 3.0, 0.1),
+  ]);
+  const trunkM = new THREE.MeshStandardMaterial({ color: '#5b4636', roughness: 1 });
+  const crownM = new THREE.MeshStandardMaterial({ color: '#ffffff', vertexColors: true, roughness: 0.82 });
+  const coniferM = new THREE.MeshStandardMaterial({ color: '#ffffff', vertexColors: true, roughness: 0.85, flatShading: true });
+  // never let a tree block the third-person camera: drop fragments within 4 m of the camera
+  for (const mat of [trunkM, crownM, coniferM]) {
+    mat.onBeforeCompile = (sh) => {
+      injectWPos(sh);
+      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vWPos;')
+        .replace('void main() {', 'void main() {\n  if (length(vWPos - cameraPosition) < 4.0) discard;');
+    };
+  }
+  const CH = 400, groups = new Map();
+  trees.forEach((t, i) => {
+    const near = inCampus(t[0], t[1]);
+    if (lite && i % 2) return;
+    if (!near && i % 3 === 0) return;                    // thinner forest outside the campus
+    const sp = t.length > 4 ? t[4] : (hash(t[0], t[1]) < 0.75 ? 'broad' : 'conifer');
+    const v = sp === 'conifer' ? 'conifer' : !near ? 'simple' : sp === 'ginkgo' ? 'slim' : 'broad';
+    const key = `${Math.floor((t[0] + W / 2) / CH)},${Math.floor((t[1] + D / 2) / CH)}`;
+    if (!groups.has(key)) groups.set(key, { broad: [], conifer: [], slim: [], simple: [] });
+    groups.get(key)[v].push(t);
+  });
+  const hue = { broad: [0.23, 0.31, 0.2, 0.3], conifer: [0.3, 0.37, 0.13, 0.2], slim: [0.19, 0.25, 0.26, 0.36], simple: [0.24, 0.32, 0.17, 0.26] };
+  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), s = new THREE.Vector3(), p = new THREE.Vector3(), c = new THREE.Color(), up = new THREE.Vector3(0, 1, 0);
+  const dims = (t) => t.length > 4 ? [t[3] / 2.3, t[2] / 6.6] : [t[2], t[2]];   // [crown scale, height scale]
+  for (const grp of groups.values()) {
+    const all = [...grp.broad, ...grp.slim, ...grp.simple, ...grp.conifer];
+    const tm = new THREE.InstancedMesh(trunkG, trunkM, all.length);
+    all.forEach((t, i) => { const [sx, sy] = dims(t); p.set(t[0], heightAt(t[0], t[1]) - 0.1, t[1]); q.setFromAxisAngle(up, hash(t[1], t[0]) * 6.283); s.set(Math.sqrt(sx * sy), sy, Math.sqrt(sx * sy)); m4.compose(p, q, s); tm.setMatrixAt(i, m4); });
+    tm.computeBoundingSphere(); tm.receiveShadow = true; tm.castShadow = true; scene.add(tm);
+    for (const [name, list] of Object.entries(grp)) {
+      if (!list.length) continue;
+      const cm = new THREE.InstancedMesh(V[name], name === 'conifer' ? coniferM : crownM, list.length);
+      const [h0, h1, l0, l1] = hue[name];
+      list.forEach((t, i) => {
+        const r1 = hash(t[1], t[0]), [sx, sy] = dims(t);
+        p.set(t[0], heightAt(t[0], t[1]) - 0.1, t[1]);
+        q.setFromAxisAngle(up, r1 * 6.283);
+        s.set(sx * (0.9 + r1 * 0.2), sy, sx * (1.1 - r1 * 0.2));
+        m4.compose(p, q, s); cm.setMatrixAt(i, m4);
+        c.setHSL(h0 + (h1 - h0) * r1, 0.38 + ((r1 * 7) % 1) * 0.2, l0 + (l1 - l0) * ((r1 * 13) % 1), THREE.SRGBColorSpace);
+        cm.setColorAt(i, c);
+      });
+      cm.computeBoundingSphere(); cm.castShadow = true; cm.receiveShadow = true;
+      scene.add(cm);
+    }
+  }
+}
+
+// ---------------------------------------------------------------- flowering trees at the official map's 百花 spots
+export function buildFlowers(ctx, flowers) {
+  if (!flowers?.length) return;
+  const { scene, heightAt } = ctx;
+  const ico = (r, x, y, z) => new THREE.IcosahedronGeometry(r, 1).translate(x, y, z);
+  const crown = gradient(mergeGeometries([ico(1.3, 0, 3.0, 0), ico(1.0, 0.8, 2.6, 0.3), ico(0.9, -0.7, 2.7, -0.4), ico(0.85, 0.1, 3.7, 0.2)]), 1.8, 4.5, 0.7, 1.1);
+  const trunk = new THREE.CylinderGeometry(0.1, 0.16, 2.0, 5).translate(0, 1.0, 0);
+  const palette = (name) => /樱|桃|海棠|梅|紫薇|夹竹桃|蔷薇|杜鹃/.test(name) ? ['#f3a6c8', '#f7c4da', '#ec8fb7']
+    : /玉兰|梨|李|栀子|女贞/.test(name) ? ['#f5f3ee', '#efe9f2', '#fbfbf7']
+    : /桂|金丝|迎春|银杏|腊梅|连翘/.test(name) ? ['#f2cf4a', '#e9c03a', '#f6dc74']
+    : /茶花|石榴|月季/.test(name) ? ['#d9394f', '#e65468', '#c92f45'] : ['#f0a5c5', '#f5c0d6', '#ffffff'];
+  const spots = [];
+  for (const [x, z, name] of flowers) for (let i = 0; i < 5; i++) {
+    const a = i * 1.257 + x, r = i ? 3.5 + (i % 2) * 2 : 0;
+    spots.push([x + Math.cos(a) * r, z + Math.sin(a) * r, palette(name)[i % 3]]);
+  }
+  const cm = new THREE.InstancedMesh(crown, new THREE.MeshStandardMaterial({ color: '#ffffff', vertexColors: true, roughness: 0.8 }), spots.length);
+  const tm = new THREE.InstancedMesh(trunk, new THREE.MeshStandardMaterial({ color: '#5a4634', roughness: 1 }), spots.length);
+  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), s = new THREE.Vector3(), p = new THREE.Vector3(), c = new THREE.Color(), up = new THREE.Vector3(0, 1, 0);
+  spots.forEach(([x, z, col], i) => {
+    p.set(x, heightAt(x, z) - 0.05, z); q.setFromAxisAngle(up, i); s.setScalar(0.85 + (i % 3) * 0.15);
+    m4.compose(p, q, s); cm.setMatrixAt(i, m4); tm.setMatrixAt(i, m4); cm.setColorAt(i, c.set(col));
+  });
+  for (const m of [cm, tm]) { m.castShadow = true; m.receiveShadow = true; m.computeBoundingSphere(); scene.add(m); }
+}
+
+// ---------------------------------------------------------------- street lamps along campus roads
+export function buildLamps(ctx, roads) {
+  const { scene, heightAt, inCampus } = ctx;
+  const geo = mergeGeometries([
+    new THREE.CylinderGeometry(0.07, 0.1, 6, 6).translate(0, 3, 0),
+    new THREE.BoxGeometry(0.08, 0.08, 1.3).translate(0, 5.95, -0.6),
+  ]);
+  const headGeo = new THREE.BoxGeometry(0.32, 0.14, 0.55).translate(0, 5.88, -1.2);
+  const spots = [];
+  for (const r of roads) {
+    if (r.w < 5.5) continue;
+    let acc = 12, side = 1;
+    for (let i = 0; i < r.pts.length - 1; i++) {
+      const [x0, z0] = r.pts[i], [x1, z1] = r.pts[i + 1];
+      const L = Math.hypot(x1 - x0, z1 - z0);
+      if (L < 0.1) continue;
+      const dx = (x1 - x0) / L, dz = (z1 - z0) / L;
+      for (let t = acc; t < L; t += 30) {
+        const x = x0 + dx * t, z = z0 + dz * t;
+        if (!inCampus(x, z)) continue;
+        const o = r.w / 2 + 0.9;
+        spots.push([x - dz * o * side, z + dx * o * side, Math.atan2(-dz * side, dx * side) + Math.PI / 2]);
+        side = -side;
+      }
+      acc = (acc - L) % 30;
+      if (acc < 0) acc += 30;
+    }
+  }
+  const im = new THREE.InstancedMesh(geo, new THREE.MeshStandardMaterial({ color: '#3d4247', roughness: 0.6, metalness: 0.4 }), spots.length);
+  const headMat = new THREE.MeshStandardMaterial({ color: '#e8e4da', roughness: 0.4, emissive: new THREE.Color('#fff0c8'), emissiveIntensity: 0 });
+  const hm = new THREE.InstancedMesh(headGeo, headMat, spots.length);
+  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0), one = new THREE.Vector3(1, 1, 1), p = new THREE.Vector3();
+  spots.forEach(([x, z, a], i) => { p.set(x, heightAt(x, z), z); q.setFromAxisAngle(up, a); m4.compose(p, q, one); im.setMatrixAt(i, m4); hm.setMatrixAt(i, m4); });
+  im.computeBoundingSphere(); im.castShadow = true; hm.computeBoundingSphere();
+  scene.add(im, hm);
+  return headMat;
+}
+
+// ---------------------------------------------------------------- entrances: door + canopy on the wall facing the nearest road, name plaque
+export function buildEntrances(ctx, metas, roads) {
+  const { scene, heightAt } = ctx;
+  const rp = [];
+  for (const r of roads) {
+    if (r.w < 3) continue;
+    for (let i = 0; i < r.pts.length - 1; i++) {
+      const [x0, z0] = r.pts[i], [x1, z1] = r.pts[i + 1], L = Math.hypot(x1 - x0, z1 - z0);
+      for (let t = 0; t <= L; t += 4) rp.push(x0 + (x1 - x0) * t / Math.max(L, 1e-6), z0 + (z1 - z0) * t / Math.max(L, 1e-6));
+    }
+  }
+  const canopy = new GeoBuf(), door = new GeoBuf();
+  const cC = new THREE.Color('#e9e7e1'), dC = new THREE.Color('#25313b'), colC = new THREE.Color('#cfcbc2');
+  let plaques = 0;
+  for (const m of metas) {
+    if (m.replaced || !m.xs || m.kind === 'wall' || m.kind === 'poi' || m.top - m.base < 5 || !m.campus) continue;
+    let best = null;
+    const n = m.xs.length;
+    for (let i = 0; i < n; i++) {
+      const ax = m.xs[i], az = m.zs[i], bx = m.xs[(i + 1) % n], bz = m.zs[(i + 1) % n];
+      const len = Math.hypot(bx - ax, bz - az);
+      if (len < 8) continue;
+      const mx = (ax + bx) / 2, mz = (az + bz) / 2;
+      let d = Infinity;
+      for (let k = 0; k < rp.length; k += 2) { const dd = (rp[k] - mx) ** 2 + (rp[k + 1] - mz) ** 2; if (dd < d) d = dd; }
+      if (!best || d < best.d) best = { d, ax, az, bx, bz, len, mx, mz };
+    }
+    if (!best) continue;
+    const { ax, az, bx, bz, len, mx, mz } = best;
+    const ux = (bx - ax) / len, uz = (bz - az) / len, nx = uz, nz = -ux;   // outward normal (counter-clockwise footprints)
+    const y = m.base + 0.0, ang = Math.atan2(uz, ux);
+    const P = (u, v, h) => [mx + ux * u + nx * v, y + h, mz + uz * u + nz * v];
+    // glass door on the wall
+    const d0 = P(-1.4, 0.06, 0), d1 = P(1.4, 0.06, 0);
+    door.wall(d0[0], d0[2], d1[0], d1[2], y, y + 2.7, nx, nz, 0, 0, 0, 0, dC);
+    // canopy slab and two columns
+    const cx = mx + nx * 1.1, cz = mz + nz * 1.1;
+    canopy.box(cx, cz, y + 3.1, 4.6, 0.28, 2.2, ang, cC);
+    for (const s of [-1, 1]) { const q = P(s * 2.1, 2.0, 0); canopy.box(q[0], q[2], y, 0.22, 3.1, 0.22, ang, colC); }
+    // name plaque above the canopy
+    if (m.name && plaques < 140) {
+      const c = document.createElement('canvas'); c.width = 512; c.height = 96;
+      const x = c.getContext('2d');
+      x.fillStyle = '#7a1f1f'; x.fillRect(0, 0, 512, 96);
+      x.fillStyle = '#f1d9a6'; x.font = 'bold 60px "KaiTi", "STKaiti", "Microsoft YaHei", serif'; x.textAlign = 'center'; x.textBaseline = 'middle';
+      x.fillText(m.name.replace(/（.*?）/g, ''), 256, 52);
+      const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
+      const pl = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 0.8), new THREE.MeshStandardMaterial({ map: tex, roughness: 0.6 }));
+      const q = P(0, 0.08, 3.9);
+      pl.position.set(q[0], q[1], q[2]);
+      pl.rotation.y = Math.atan2(nx, nz);
+      scene.add(pl);
+      plaques++;
+    }
+  }
+  for (const [buf, mat] of [[canopy, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.7 })], [door, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.15, metalness: 0.3 })]]) {
+    if (buf.empty()) continue;
+    const mesh = new THREE.Mesh(buf.geometry(), mat); mesh.castShadow = true; mesh.receiveShadow = true; scene.add(mesh);
+  }
+  return plaques;
+}

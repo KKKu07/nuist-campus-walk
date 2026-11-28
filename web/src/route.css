@@ -1,0 +1,40 @@
+/* 路线游览：顶部步骤条、讲解卡片、完成证书 */
+body.route-on #questbar, body.route-on #lifeTask, body.route-on #card { display: none !important; }
+#routeBar { position: fixed; left: 50%; top: 12px; transform: translateX(-50%); max-width: min(680px, calc(100vw - 24px)); display: flex; gap: 10px; align-items: center;
+  background: rgba(120,48,16,.86); color: #fff4ec; border-radius: 999px; padding: 6px 8px 6px 16px; font-size: 14px; white-space: nowrap; z-index: 6; }
+#routeBar[hidden] { display: none; }
+#routeBar > b { color: #ffd0b0; font-variant-numeric: tabular-nums; }
+#routeBar .rb-mode { font-style: normal; font-size: 18px; }
+#routeBar .rb-title { overflow: hidden; text-overflow: ellipsis; min-width: 0; font-weight: 600; }
+#routeBar .rb-arrow { display: inline-block; width: 18px; text-align: center; font-style: normal; font-weight: 800; color: #ffd0b0; }
+#routeBar .rb-arrow[hidden] { display: none; }
+#routeBar .rb-dist { font-variant-numeric: tabular-nums; color: #ffd0b0; }
+#routeBar button { border: 0; border-radius: 50%; width: 26px; height: 26px; background: rgba(255,255,255,.18); color: #fff; font: inherit; cursor: pointer; line-height: 1; }
+#routeCard { position: fixed; left: 50%; bottom: 76px; transform: translateX(-50%); width: min(560px, calc(100vw - 24px)); display: flex; gap: 12px; align-items: stretch;
+  background: rgba(16,24,22,.86); color: #eef3f0; border-radius: 12px; padding: 10px; box-shadow: 0 8px 28px rgba(0,0,0,.4); z-index: 6; animation: rcIn .35s ease; }
+#routeCard[hidden] { display: none; }
+#routeCard img { width: 150px; height: 100px; object-fit: cover; border-radius: 8px; flex: none; }
+#routeCard img[hidden] { display: none; }
+#routeCard .rc-body { display: grid; gap: 4px; align-content: start; min-width: 0; padding-right: 18px; }
+#routeCard b { font-size: 18px; color: #ffd0b0; }
+#routeCard p { margin: 0; font-size: 13px; line-height: 1.6; color: #d6e0db; }
+#routeCard .rc-x { position: absolute; right: 8px; top: 6px; border: 0; background: none; color: #a9b8b2; font-size: 20px; cursor: pointer; }
+@keyframes rcIn { from { transform: translate(-50%, 20px); opacity: 0; } }
+#routeDone { position: fixed; inset: 0; z-index: 46; display: grid; place-items: center; background: rgba(8,12,10,.6); }
+#routeDone[hidden] { display: none; }
+.rd-card { width: min(520px, calc(100vw - 24px)); background: #f6f1e4; color: #2b2418; border-radius: 16px; padding: 22px 24px; text-align: center; box-shadow: 0 16px 50px rgba(0,0,0,.5); }
+.rd-card h2 { margin: 0 0 6px; font-size: 26px; color: #b5422e; }
+.rd-card p { margin: 0 0 14px; font-size: 14px; line-height: 1.6; color: #5b4f3a; }
+.rd-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+.rd-stats div { display: grid; gap: 2px; background: #fffaf0; border-radius: 10px; padding: 10px 4px; }
+.rd-stats b { font-size: 18px; color: #2b2418; } .rd-stats span { font-size: 12px; color: #8a7a5e; }
+.rd-note { font-size: 12px !important; color: #8a7a5e !important; }
+.rd-btns { display: flex; gap: 10px; justify-content: center; }
+.rd-btns button { border: 1px solid #d9ccb0; border-radius: 10px; padding: 10px 18px; background: #fff; color: #2b2418; font: inherit; cursor: pointer; }
+.rd-btns button.primary { background: #b5422e; color: #fff; border-color: #b5422e; }
+body.touch #routeBar { top: auto; bottom: 256px; font-size: 12px; }
+body.touch #routeCard { bottom: auto; top: 112px; }
+body.touch #routeCard img { width: 96px; height: 72px; }
+@media (max-width: 560px) { .rd-stats { grid-template-columns: repeat(2, 1fr); } #routeBar .rb-title { max-width: 46vw; } }
+.rd-img { display: block; width: calc(100% + 48px); margin: -22px -24px 14px; height: 150px; object-fit: cover; border-radius: 16px 16px 0 0; }
+.rd-last { font-size: 13px !important; background: #fffaf0; border-radius: 10px; padding: 8px 12px; text-align: left; }

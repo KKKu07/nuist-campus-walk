@@ -1,0 +1,8 @@
+{
+  "source": "全景航拍.jpg",
+  "matches": 232,
+  "inliers": 37,
+  "rms_homography_m": 1.74,
+  "rms_poly_m": 1.66,
+  "coverage": 0.367
+}

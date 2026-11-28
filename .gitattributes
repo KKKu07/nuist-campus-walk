@@ -1,0 +1,13 @@
+# 二进制素材：不做换行转换、不做文本 diff
+*.glb binary
+*.gltf binary
+*.blend binary
+*.npy binary
+*.hdr binary
+*.ply binary
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.webp binary
+*.pdf binary
+*.xlsx binary

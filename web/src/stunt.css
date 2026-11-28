@@ -1,0 +1,31 @@
+/* 飙车 / 翘头 HUD + 速度线 */
+#wheelie { position: fixed; left: 50%; bottom: 70px; transform: translateX(-50%); width: min(360px, 84vw); display: grid; gap: 6px; justify-items: center;
+  pointer-events: none; color: #eef3f0; z-index: 5; }
+#wheelie[hidden], #wheelie .wh-w[hidden] { display: none; }
+.wh-spd { display: flex; align-items: baseline; gap: 6px; background: rgba(16,24,22,.62); border-radius: 999px; padding: 2px 14px; }
+.wh-spd b { font-size: 26px; font-style: italic; font-variant-numeric: tabular-nums; min-width: 2.2em; text-align: right; }
+.wh-spd small { font-size: 12px; color: #a9b8b2; }
+.wh-spd span { font-size: 12px; color: #a9b8b2; margin-left: 6px; }
+.wh-spd em { font-style: normal; font-weight: 800; font-size: 13px; color: #ff5a3c; letter-spacing: 2px; }
+.wh-spd em:empty { display: none; }
+.wh-bar { width: min(220px, 60vw); height: 5px; border-radius: 3px; background: rgba(255,255,255,.18); overflow: hidden; }
+.wh-bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #3fb4ff, #ffb347 70%, #ff5a3c); transition: width .1s linear; }
+#wheelie.boost .wh-spd b { color: #ffb347; }
+.wh-w { width: 100%; display: grid; gap: 6px; justify-items: center; background: rgba(16,24,22,.72); border-radius: 12px; padding: 8px 14px 10px; }
+.wh-w b { font-size: 21px; letter-spacing: 1px; font-variant-numeric: tabular-nums; }
+.wh-w span { font-size: 12px; color: #a9b8b2; }
+#wheelie.perfect .wh-w b { color: #ffd24a; text-shadow: 0 0 10px rgba(255,200,60,.6); }
+#wheelie .wb { position: relative; width: 100%; height: 10px; border-radius: 5px; background: rgba(255,255,255,.18); overflow: hidden; }
+#wheelie .wb::after { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 5%; background: #e05050; }
+#wheelie .wz { position: absolute; top: 0; bottom: 0; background: #3fbf6f; }
+#wheelie .wp { position: absolute; top: 0; bottom: 0; background: #ffc83c; }
+#wheelie .wn { position: absolute; top: -2px; bottom: -2px; width: 4px; margin-left: -2px; background: #fff; border-radius: 2px; }
+#wheelie.bad .wn { background: #ff6a5a; }
+#speedfx { position: fixed; inset: 0; pointer-events: none; opacity: 0; z-index: 1; transition: opacity .2s;
+  background: repeating-conic-gradient(from 0deg at 50% 55%, rgba(255,255,255,0) 0deg 4deg, rgba(255,255,255,.22) 4deg 4.5deg);
+  -webkit-mask: radial-gradient(ellipse at 50% 55%, transparent 38%, #000 85%); mask: radial-gradient(ellipse at 50% 55%, transparent 38%, #000 85%);
+  animation: speedfx .12s steps(2) infinite; }
+@keyframes speedfx { 50% { transform: rotate(1.5deg) scale(1.02); } }
+body.touch #wheelie { bottom: 356px; }
+body.photo-mode #speedfx { display: none; }
+@media (max-width: 700px) { body.stunt-hud:not(.touch) #questbar { bottom: 268px; } }

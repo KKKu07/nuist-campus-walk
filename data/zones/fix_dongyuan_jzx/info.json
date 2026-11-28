@@ -1,0 +1,170 @@
+{
+ "box": [
+  740.0,
+  -740.0,
+  900.0,
+  -640.0
+ ],
+ "buildings": [
+  {
+   "id": 860503921,
+   "name": "硕园3栋",
+   "h": 21.3,
+   "lv": 6,
+   "kind": "dorm",
+   "style": null,
+   "color": "#dbe2e8",
+   "replaced": true,
+   "fixed": null
+  },
+  {
+   "id": 862952684,
+   "name": "科创1号楼",
+   "h": 19.2,
+   "lv": 5,
+   "kind": "teach",
+   "style": null,
+   "color": "#8e8679",
+   "replaced": true,
+   "fixed": null
+  },
+  {
+   "id": 862952685,
+   "name": "硕园4栋",
+   "h": 15.1,
+   "lv": 5,
+   "kind": "dorm",
+   "style": null,
+   "color": "#bbb8b2",
+   "replaced": true,
+   "fixed": null
+  },
+  {
+   "id": 862952686,
+   "name": "硕园5栋-云中信大",
+   "h": 21.6,
+   "lv": 6,
+   "kind": "dorm",
+   "style": null,
+   "color": "#9a8f85",
+   "replaced": true,
+   "fixed": null
+  },
+  {
+   "id": 862952691,
+   "name": "东苑食堂",
+   "h": 9.6,
+   "lv": 2,
+   "kind": "canteen",
+   "style": null,
+   "color": "#dbe3e3",
+   "replaced": true,
+   "fixed": null
+  },
+  {
+   "id": 1316175152,
+   "name": "东苑集装箱美食街",
+   "h": 15.6,
+   "lv": 4,
+   "kind": "other",
+   "style": null,
+   "color": "#dde2e1",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": 1425504863,
+   "name": "",
+   "h": 22.8,
+   "lv": 6,
+   "kind": "dorm",
+   "style": null,
+   "color": "#e0e2d8",
+   "replaced": true,
+   "fixed": null
+  }
+ ],
+ "roads": [
+  {
+   "id": 93553393,
+   "name": "杨新路",
+   "kind": "secondary",
+   "w": 8.0,
+   "sw": 3.0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 422681310,
+   "name": "杨新路",
+   "kind": "secondary",
+   "w": 9.0,
+   "sw": 3.0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 586029343,
+   "name": "",
+   "kind": "service",
+   "w": 4.0,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 682188155,
+   "name": "",
+   "kind": "service",
+   "w": 6.0,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 682188159,
+   "name": "",
+   "kind": "service",
+   "w": 5.5,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 1316175151,
+   "name": "东苑美食街",
+   "kind": "footway",
+   "w": 3,
+   "sw": 0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 1316175156,
+   "name": "",
+   "kind": "service",
+   "w": 5.5,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  }
+ ],
+ "sports": [],
+ "markers": [
+  {
+   "name": "东苑“信大藕遇”街区",
+   "cat": "商业服务",
+   "x": 872.2,
+   "z": -701.8
+  }
+ ],
+ "models": [
+  {
+   "name": "东苑宿舍 H1",
+   "file": "models/dorm_dongyuan_h1.glb",
+   "x": 775.99,
+   "z": -721.45,
+   "rotY": 0
+  }
+ ]
+}

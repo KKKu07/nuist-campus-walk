@@ -1,0 +1,134 @@
+{
+ "box": [
+  1320.0,
+  -590.0,
+  1490.0,
+  -440.0
+ ],
+ "buildings": [],
+ "roads": [
+  {
+   "id": 404874359,
+   "name": "",
+   "kind": "cycleway",
+   "w": 3,
+   "sw": 0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 404874362,
+   "name": "",
+   "kind": "service",
+   "w": 12,
+   "sw": 3.0,
+   "pave": "grey",
+   "audited": true
+  },
+  {
+   "id": 590302085,
+   "name": "",
+   "kind": "service",
+   "w": 13.5,
+   "sw": 3.0,
+   "pave": "grey",
+   "audited": true
+  },
+  {
+   "id": 656927784,
+   "name": "江北大道快速路",
+   "kind": "trunk",
+   "w": 6.5,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 656927790,
+   "name": "江北大道快速路",
+   "kind": "trunk",
+   "w": 8.0,
+   "sw": 3.0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 656927793,
+   "name": "六合大道",
+   "kind": "primary",
+   "w": 9.0,
+   "sw": 3.0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 682188372,
+   "name": "正气东路",
+   "kind": "service",
+   "w": 8,
+   "sw": 2.0,
+   "pave": "grey",
+   "audited": true
+  },
+  {
+   "id": 1057158539,
+   "name": "",
+   "kind": "footway",
+   "w": 3,
+   "sw": 0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 1174938484,
+   "name": "六合大道",
+   "kind": "primary",
+   "w": 6.0,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 1421540868,
+   "name": "",
+   "kind": "footway",
+   "w": 3,
+   "sw": 0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 1423475405,
+   "name": "",
+   "kind": "primary",
+   "w": 16,
+   "sw": 3.0,
+   "pave": "grey",
+   "audited": null
+  }
+ ],
+ "sports": [],
+ "markers": [
+  {
+   "name": "东大门",
+   "cat": "文化风景",
+   "x": 1404.2,
+   "z": -508.9
+  },
+  {
+   "name": "东大门",
+   "cat": "出入口",
+   "x": 1412.4,
+   "z": -517.9
+  }
+ ],
+ "models": [
+  {
+   "name": "东大门",
+   "file": "models/dongdamen.glb",
+   "x": 1405.0,
+   "z": -508.0,
+   "rotY": 0
+  }
+ ]
+}

@@ -1,0 +1,203 @@
+{
+ "box": [
+  20.0,
+  -330.0,
+  230.0,
+  -140.0
+ ],
+ "buildings": [
+  {
+   "id": 862952701,
+   "name": "图书馆",
+   "h": 22.8,
+   "lv": 6,
+   "kind": "hall",
+   "style": "classical",
+   "color": "#eadcc3",
+   "replaced": true,
+   "fixed": true
+  },
+  {
+   "id": 1114843832,
+   "name": "学科2号楼",
+   "h": 19.8,
+   "lv": 5,
+   "kind": "teach",
+   "style": null,
+   "color": "#c9d3dc",
+   "replaced": true,
+   "fixed": null
+  },
+  {
+   "id": 1316148867,
+   "name": "新园31栋",
+   "h": 17.6,
+   "lv": 6,
+   "kind": "dorm",
+   "style": null,
+   "color": "#dfe3da",
+   "replaced": true,
+   "fixed": null
+  },
+  {
+   "id": 1316148868,
+   "name": "沁园40栋",
+   "h": 16.8,
+   "lv": 5,
+   "kind": "dorm",
+   "style": null,
+   "color": null,
+   "replaced": true,
+   "fixed": null
+  },
+  {
+   "id": "old-res-3",
+   "name": "老居民楼",
+   "h": 16.0,
+   "lv": 5,
+   "kind": "apartment",
+   "style": "dorm",
+   "color": "#7a746a",
+   "replaced": true,
+   "fixed": null
+  },
+  {
+   "id": "old-res-4",
+   "name": "老居民楼",
+   "h": 16.0,
+   "lv": 5,
+   "kind": "apartment",
+   "style": "dorm",
+   "color": "#7a746a",
+   "replaced": true,
+   "fixed": null
+  },
+  {
+   "id": "old-res-2a",
+   "name": "",
+   "h": 3.2,
+   "lv": 1,
+   "kind": "apartment",
+   "style": "brick",
+   "color": "#6f685e",
+   "replaced": true,
+   "fixed": null
+  },
+  {
+   "id": "tower-1",
+   "name": "",
+   "h": 23.1,
+   "lv": 6,
+   "kind": "hall",
+   "style": "classical",
+   "color": "#eadcc3",
+   "replaced": true,
+   "fixed": null
+  },
+  {
+   "id": "tower-3",
+   "name": "",
+   "h": 18.1,
+   "lv": 5,
+   "kind": "dorm",
+   "style": "modern",
+   "color": "#cf6358",
+   "replaced": true,
+   "fixed": null
+  }
+ ],
+ "roads": [
+  {
+   "id": 586028697,
+   "name": "万象路",
+   "kind": "service",
+   "w": 8,
+   "sw": 2.5,
+   "pave": "red",
+   "audited": true
+  },
+  {
+   "id": 586028701,
+   "name": "正气路",
+   "kind": "service",
+   "w": 7.5,
+   "sw": 2.0,
+   "pave": "grey",
+   "audited": true
+  },
+  {
+   "id": 656927781,
+   "name": "龙山北路",
+   "kind": "tertiary",
+   "w": 11.5,
+   "sw": 3.0,
+   "pave": "grey",
+   "audited": true
+  },
+  {
+   "id": 682188160,
+   "name": "",
+   "kind": "service",
+   "w": 7,
+   "sw": 2.4,
+   "pave": "grey",
+   "audited": true
+  },
+  {
+   "id": 682188174,
+   "name": "",
+   "kind": "footway",
+   "w": 3,
+   "sw": 0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 682188175,
+   "name": "",
+   "kind": "service",
+   "w": 3.5,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 682188178,
+   "name": "",
+   "kind": "footway",
+   "w": 3,
+   "sw": 0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 971602085,
+   "name": "",
+   "kind": "service",
+   "w": 5.5,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 971602102,
+   "name": "",
+   "kind": "service",
+   "w": 5.0,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  }
+ ],
+ "sports": [],
+ "markers": [],
+ "models": [
+  {
+   "name": "图书馆",
+   "file": "models/tushuguan.glb",
+   "x": 125.95,
+   "z": -271.26,
+   "rotY": 0
+  }
+ ]
+}

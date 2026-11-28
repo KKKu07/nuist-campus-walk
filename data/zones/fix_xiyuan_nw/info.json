@@ -1,0 +1,321 @@
+{
+ "box": [
+  -680.0,
+  -620.0,
+  -440.0,
+  -470.0
+ ],
+ "buildings": [
+  {
+   "id": 862959378,
+   "name": "文园17栋",
+   "h": 6.0,
+   "lv": null,
+   "kind": "dorm",
+   "style": null,
+   "color": "#d0d5d6",
+   "replaced": true,
+   "fixed": null
+  },
+  {
+   "id": 862959379,
+   "name": "文园16栋",
+   "h": 18.8,
+   "lv": 5,
+   "kind": "dorm",
+   "style": null,
+   "color": "#dbe2e4",
+   "replaced": true,
+   "fixed": null
+  },
+  {
+   "id": 862959381,
+   "name": "文园15栋",
+   "h": 19.0,
+   "lv": 5,
+   "kind": "dorm",
+   "style": null,
+   "color": "#d6dfe4",
+   "replaced": true,
+   "fixed": null
+  },
+  {
+   "id": 1245446261,
+   "name": "文园21栋",
+   "h": 14.6,
+   "lv": 5,
+   "kind": "dorm",
+   "style": null,
+   "color": null,
+   "replaced": true,
+   "fixed": null
+  },
+  {
+   "id": "manual-25",
+   "name": "",
+   "h": 12.0,
+   "lv": 3,
+   "kind": "teach",
+   "style": null,
+   "color": "#dde2e0",
+   "replaced": null,
+   "fixed": null
+  },
+  {
+   "id": "manual-26",
+   "name": "",
+   "h": 12.0,
+   "lv": 3,
+   "kind": "teach",
+   "style": null,
+   "color": "#c8d4d0",
+   "replaced": null,
+   "fixed": null
+  }
+ ],
+ "roads": [
+  {
+   "id": 422681307,
+   "name": "",
+   "kind": "tertiary",
+   "w": 11,
+   "sw": 3.0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 422681312,
+   "name": "万家坝路",
+   "kind": "secondary",
+   "w": 14,
+   "sw": 3.5,
+   "pave": "grey",
+   "audited": true
+  },
+  {
+   "id": 588006878,
+   "name": "",
+   "kind": "tertiary",
+   "w": 11,
+   "sw": 3.0,
+   "pave": "grey",
+   "audited": null
+  },
+  {
+   "id": 588006881,
+   "name": "万家坝路",
+   "kind": "secondary",
+   "w": 14,
+   "sw": 3.5,
+   "pave": "grey",
+   "audited": true
+  },
+  {
+   "id": 971602093,
+   "name": "",
+   "kind": "service",
+   "w": 6.0,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 1114843840,
+   "name": "",
+   "kind": "service",
+   "w": 8.0,
+   "sw": 2.4,
+   "pave": "red",
+   "audited": null
+  },
+  {
+   "id": 1114843841,
+   "name": "",
+   "kind": "service",
+   "w": 6.0,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  },
+  {
+   "id": 1114843842,
+   "name": "",
+   "kind": "service",
+   "w": 6,
+   "sw": 0,
+   "pave": null,
+   "audited": true
+  },
+  {
+   "id": 1379304617,
+   "name": "",
+   "kind": "service",
+   "w": 5.5,
+   "sw": 0,
+   "pave": null,
+   "audited": null
+  }
+ ],
+ "sports": [],
+ "markers": [
+  {
+   "name": "西安面馆",
+   "cat": "食堂餐厅",
+   "x": -569.6,
+   "z": -527.6
+  },
+  {
+   "name": "德克士",
+   "cat": "食堂餐厅",
+   "x": -483.4,
+   "z": -538.8
+  },
+  {
+   "name": "张亮麻辣烫",
+   "cat": "食堂餐厅",
+   "x": -537.6,
+   "z": -547.9
+  },
+  {
+   "name": "百味黑鸦",
+   "cat": "食堂餐厅",
+   "x": -575.8,
+   "z": -512.4
+  },
+  {
+   "name": "老长沙粉面馆",
+   "cat": "食堂餐厅",
+   "x": -571.2,
+   "z": -511.1
+  },
+  {
+   "name": "烘培好忙",
+   "cat": "食堂餐厅",
+   "x": -516.7,
+   "z": -546.2
+  },
+  {
+   "name": "香酥鸡柳烧饼",
+   "cat": "食堂餐厅",
+   "x": -558.5,
+   "z": -548.0
+  },
+  {
+   "name": "卤肉卷饼",
+   "cat": "食堂餐厅",
+   "x": -551.9,
+   "z": -547.8
+  },
+  {
+   "name": "柳州螺狮粉",
+   "cat": "食堂餐厅",
+   "x": -567.0,
+   "z": -511.5
+  },
+  {
+   "name": "大叔烤冷面",
+   "cat": "食堂餐厅",
+   "x": -572.9,
+   "z": -530.8
+  },
+  {
+   "name": "联想百应服务中心",
+   "cat": "商业服务",
+   "x": -561.8,
+   "z": -548.0
+  },
+  {
+   "name": "晨光文具",
+   "cat": "商业服务",
+   "x": -474.0,
+   "z": -541.5
+  },
+  {
+   "name": "雅克雅思",
+   "cat": "商业服务",
+   "x": -499.8,
+   "z": -544.2
+  },
+  {
+   "name": "澳洁干洗",
+   "cat": "商业服务",
+   "x": -566.6,
+   "z": -548.4
+  },
+  {
+   "name": "果C果乐",
+   "cat": "商业服务",
+   "x": -493.9,
+   "z": -542.4
+  },
+  {
+   "name": "瑞幸咖啡",
+   "cat": "商业服务",
+   "x": -507.5,
+   "z": -546.2
+  },
+  {
+   "name": "百佳超市",
+   "cat": "商业服务",
+   "x": -478.0,
+   "z": -541.8
+  },
+  {
+   "name": "茶百道",
+   "cat": "商业服务",
+   "x": -531.4,
+   "z": -548.1
+  },
+  {
+   "name": "瑞幸咖啡",
+   "cat": "商业服务",
+   "x": -507.5,
+   "z": -546.2
+  },
+  {
+   "name": "茶百道",
+   "cat": "商业服务",
+   "x": -531.4,
+   "z": -548.1
+  },
+  {
+   "name": "西苑“长望西街”街区",
+   "cat": "商业服务",
+   "x": -517.2,
+   "z": -554.0
+  },
+  {
+   "name": "文园鲜果",
+   "cat": "商业服务",
+   "x": -512.7,
+   "z": -546.5
+  },
+  {
+   "name": "中国电信",
+   "cat": "通信营业厅",
+   "x": -570.6,
+   "z": -547.5
+  },
+  {
+   "name": "中国移动",
+   "cat": "通信营业厅",
+   "x": -506.6,
+   "z": -546.4
+  },
+  {
+   "name": "学生服务站",
+   "cat": "便民服务",
+   "x": -579.9,
+   "z": -512.5
+  }
+ ],
+ "models": [
+  {
+   "name": "文园宿舍 A2",
+   "file": "models/dorm_wenyuan_a2.glb",
+   "x": -537.71,
+   "z": -485.03,
+   "rotY": 0
+  }
+ ]
+}
