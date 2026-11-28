@@ -17,9 +17,11 @@ import { buildSports } from './sports.js';
 import { boundaryOpenings, modelGrid, coverage } from './bounds.js';
 import { makeUnderpasses } from './underpass.js';
 import { makeClearance, bankApron } from './sanity.js';
+import { chooseTier, pixelRatio, createDetail, splitInstanced, mergeStatic, compactGroups, createTextureDedupe, createFpsGuard, mountQualityMenu, devBench } from './perf.js';
 
 const $ = (id) => document.getElementById(id);
-const setMsg = (t) => { $('loadMsg').textContent = t; };
+const setMsg = (t) => { $('loadMsg').textContent = t; performance.mark?.(t); };   // marks: load phases (性能)
+const progress = (label, total) => { let n = 0; return () => { n++; $('loadMsg').textContent = `${label} ${n}/${total}`; }; };
 const loadJSON = async (url) => { const r = await fetch(url); if (!r.ok) throw new Error(`${url} ${r.status}`); return r.json(); };
 const tick = () => new Promise((r) => setTimeout(r, 20));
 const clamp = THREE.MathUtils.clamp, deg = THREE.MathUtils.degToRad;
@@ -27,10 +29,17 @@ const clamp = THREE.MathUtils.clamp, deg = THREE.MathUtils.degToRad;
 // ---------- renderer / scene ----------
 const isTouch = matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
 const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
-renderer.setPixelRatio(Math.min(devicePixelRatio, isTouch ? 1.5 : 2));
+// 画质 流畅 / 均衡 / 高清 (perf.js, shared with the game): picked from the GPU or the viewer's saved choice
+const Q = chooseTier(renderer, isTouch);
+let tier = Q.tier, qmenu = null;
+const detail = createDetail(), texDedupe = createTextureDedupe();
+detail.setLod(tier.lod);
+const shadowSize = (t) => Math.max(2048, t.shadow);   // the overview's shadow box spans the whole campus
+renderer.setPixelRatio(pixelRatio(tier, isTouch));
 renderer.setSize(innerWidth, innerHeight);
 renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.shadowMap.type = tier.id === 'low' ? THREE.PCFShadowMap : THREE.PCFSoftShadowMap;
+renderer.shadowMap.autoUpdate = tier.id === 'high';   // 流畅 / 均衡: redraw the shadow map only when its box moves (step())
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 0.85;
 $('app').appendChild(renderer.domElement);
@@ -55,17 +64,18 @@ scene.add(skyMesh);
 const pmrem = new THREE.PMREMGenerator(renderer);
 const envScene = new THREE.Scene();
 envScene.add(makeSky(1000));
-scene.environment = pmrem.fromScene(envScene).texture;
+const envRT = pmrem.fromScene(envScene);
+scene.environment = envRT.texture;
 scene.environmentIntensity = 0.5;
 scene.add(new THREE.HemisphereLight(0xcfe2ff, 0x5d6650, 0.8));
 const sun = new THREE.DirectionalLight(0xfff1dc, 2.6);
 sun.castShadow = true;
-sun.shadow.mapSize.set(isTouch ? 2048 : 4096, isTouch ? 2048 : 4096);
+sun.shadow.mapSize.set(shadowSize(tier), shadowSize(tier));
 sun.shadow.normalBias = 0.4;
 scene.add(sun, sun.target);
 
 let composer = null;
-if (!isTouch) {   // contact shadows at building feet / under trees, as in the game
+function makeComposer() {   // contact shadows at building feet / under trees, as in the game (高清)
   const rt = new THREE.WebGLRenderTarget(innerWidth * renderer.getPixelRatio(), innerHeight * renderer.getPixelRatio(), { samples: 4, type: THREE.HalfFloatType });
   composer = new EffectComposer(renderer, rt);
   composer.addPass(new RenderPass(scene, camera));
@@ -74,6 +84,23 @@ if (!isTouch) {   // contact shadows at building feet / under trees, as in the g
   ao.blendIntensity = 0.85;
   composer.addPass(ao);
   composer.addPass(new OutputPass());
+}
+if (tier.ao) makeComposer();
+// switch tier live (quality menu / fps guard); tree detail, shrubs, grass, aerial resolution need a reload
+function applyTier(t, { auto } = {}) {
+  tier = t;
+  if (auto !== undefined) Q.auto = auto;
+  renderer.setPixelRatio(pixelRatio(t, isTouch));
+  renderer.setSize(innerWidth, innerHeight);
+  const s = shadowSize(t);
+  if (sun.shadow.mapSize.x !== s) { sun.shadow.mapSize.set(s, s); sun.shadow.map?.dispose(); sun.shadow.map = null; }
+  renderer.shadowMap.autoUpdate = t.id === 'high';
+  renderer.shadowMap.needsUpdate = true;
+  if (t.ao && !composer) makeComposer();
+  if (!t.ao && composer) { for (const p of composer.passes) p.dispose?.(); composer.dispose(); composer = null; }
+  if (composer) { composer.setPixelRatio(renderer.getPixelRatio()); composer.setSize(innerWidth, innerHeight); }
+  detail.setLod(t.lod);
+  qmenu?.set(t, { auto: Q.auto });
 }
 
 // ---------- terrain helpers (same as the game: main.js heightAt / terrainAt) ----------
@@ -252,10 +279,18 @@ addEventListener('resize', () => {
 });
 
 // ---------- per-frame: keep near plane, fog and the sun's shadow box matched to the viewing distance ----------
-let walkers = null, grass = null, waterMat = null, shadowExt = 0;
+let walkers = null, grass = null, waterMat = null, shadowExt = 0, shadowN = 0, shadowAtExt = 0;
+const shadowAt = new THREE.Vector3(Infinity, 0, 0);
 const clock = new THREE.Clock();
+const fpsGuard = createFpsGuard({ getTier: () => tier, setTier: applyTier, isAuto: () => Q.auto,
+  say: (t) => { $('viewName').textContent = t; viewT = 0; } });
 function frame() {
-  const dt = Math.min(clock.getDelta(), 0.05);
+  step(Math.min(clock.getDelta(), 0.05));
+  fpsGuard();
+  if (composer) composer.render(); else renderer.render(scene, camera);
+  requestAnimationFrame(frame);
+}
+function step(dt) {
   if (anim) stepAnim(dt); else keyMove(dt);
   controls.update(dt);
   // stay inside the map and above the ground; the pivot sits on the terrain
@@ -284,8 +319,16 @@ function frame() {
   viewT += dt;
   $('viewName').classList.toggle('fade', viewT > 6);
 
-  if (composer) composer.render(); else renderer.render(scene, camera);
-  requestAnimationFrame(frame);
+  detail.update(camera);                    // far vegetation / hedges / fence / signs by distance (perf.js)
+  // 流畅 / 均衡: the sun and the scene are static, so the shadow map is redrawn only when its box follows the view
+  // (流畅 at most every other frame) and every 10 / 30 frames for the walkers; orbiting about a fixed target costs nothing
+  if (tier.id !== 'high') {
+    shadowN++;
+    const moved = shadowAtExt !== shadowExt || shadowAt.distanceToSquared(t) > (shadowExt * 0.01) ** 2;
+    if ((moved && shadowN % tier.shadowEvery === 0) || shadowN % (tier.id === 'low' ? 30 : 10) === 0) {
+      renderer.shadowMap.needsUpdate = true; shadowAt.copy(t); shadowAtExt = shadowExt;
+    }
+  }
 }
 
 // ---------- boot: the same scene as the game, without any gameplay ----------
@@ -297,10 +340,10 @@ async function main() {
   const openings = boundary.length ? boundaryOpenings(boundary, (C.pois || []).filter((p) => /gate/.test(p.landmark || '')), C.roads || []) : [];
   under = C.underpasses?.length ? makeUnderpasses(C.underpasses, terrainAt) : null;
   setMsg('加载航拍影像…');
-  const orthoTex = await new THREE.TextureLoader().loadAsync(maxTex >= 8192 && !isTouch ? 'campus/ortho.jpg' : 'campus/ortho_4k.jpg');
+  const orthoTex = await new THREE.TextureLoader().loadAsync(tier.ortho8k && maxTex >= 8192 && !isTouch ? 'campus/ortho.jpg' : 'campus/ortho_4k.jpg');
   orthoTex.colorSpace = THREE.SRGBColorSpace;
   orthoTex.anisotropy = aniso;
-  const ctx = { scene, heightAt, inCampus, W, D, aniso, under, terrainAt };
+  const ctx = { scene, heightAt, inCampus, W, D, aniso, under, terrainAt, detail, treeChunk: 300 };   // perf.js distance detail
   const dugH = shapeTerrain(C);
   const modelGrids = [], modelledIds = new Set();   // model footprints, so trees / props keep out of the Blender buildings
 
@@ -311,9 +354,10 @@ async function main() {
     det.lc.magFilter = det.lc.minFilter = THREE.NearestFilter; det.lc.generateMipmaps = false;
   } catch { /* optional */ }
   try {
-    const hdr = await new RGBELoader().loadAsync('tex/sky.hdr');
+    const hdr = await new RGBELoader().loadAsync(tier.skyHi ? 'tex/sky.hdr' : 'tex/sky_1k.hdr').catch(() => new RGBELoader().loadAsync('tex/sky.hdr'));
     hdr.mapping = THREE.EquirectangularReflectionMapping;
     scene.environment = pmrem.fromEquirectangular(hdr).texture;
+    envRT.dispose(); pmrem.dispose();
     scene.background = hdr; scene.backgroundIntensity = 0.85; scene.environmentIntensity = 0.55;
     skyMesh.visible = false;
   } catch (e) { console.warn('sky.hdr not loaded, using procedural sky', e); }
@@ -325,14 +369,14 @@ async function main() {
 
   setMsg('生成地形、道路和水面…'); await tick();
   const rtex = roadTextures(aniso);
-  det.tileTex = rtex.tile; det.brickTex = rtex.brick; det.stoneTex = rtex.stone; det.lite = isTouch;   // 地表色板 granite slabs
+  det.tileTex = rtex.tile; det.brickTex = rtex.brick; det.stoneTex = rtex.stone; det.lite = tier.lite;   // 地表色板 granite slabs
   const renderH = T.h.slice();
   for (const [j, v] of dugH) renderH[j] = Math.min(renderH[j], v);
   const nGround = scene.children.length;
   buildGround(ctx, { ...T, h: renderH }, orthoTex, detailTexture(aniso), det);
   const groundMesh = scene.children.slice(nGround).find((o) => o.isMesh);
   waterMat = buildWater(ctx, C.water, waterNormal(), C.roads);
-  if (groundMesh && dugH.size) bankApron(ctx, T, renderH, new Set(dugH.keys()), groundMesh.material, { cell: isTouch ? 1 : 0.5 });
+  if (groundMesh && dugH.size) bankApron(ctx, T, renderH, new Set(dugH.keys()), groundMesh.material, { cell: tier.apron });
   buildRoads(ctx, C.roads, rtex, det);
   if (under) { const ug = under.build(ctx, C.roads); if (ug) modelGrids.push(ug); }   // cut walls, deck / tunnel roof
   buildJunctions(ctx, C.junctions, det);
@@ -343,28 +387,38 @@ async function main() {
   buildLandmarks(ctx, metas);
   buildEntrances(ctx, metas, C.roads);
   const named = [...metas.filter((m) => m.name), ...buildPois(ctx, C.pois)];
+  for (const o of scene.children.slice(nGround)) if (o.isGroup) mergeStatic(o);   // static procedural groups: one draw call per material
 
   const loader = new GLTFLoader();
   if (C.models?.length) {
     setMsg('加载精修模型…');
+    const prog = progress('加载精修模型…', C.models.length);
     await Promise.all(C.models.map(async (md) => {
       try {
         const gltf = await loader.loadAsync(md.file);
-        const reps = metas.filter((m) => m.replaced && Math.hypot(m.cx - md.x, m.cz - md.z) < 120);
+        // ground level from the buildings this model replaces (md.replaces), else the terrain at its origin (same as main.js)
+        const own = new Set((md.replaces || []).map(String));
+        const reps = metas.filter((m) => m.replaced && own.has(String(m.id)));
         const base = reps.length ? Math.min(...reps.map((m) => m.base)) : heightAt(md.x, md.z);
         gltf.scene.position.set(md.x, base, md.z);
         gltf.scene.rotation.y = deg(md.rotY || 0);
+        // group GLBs: each building (child node named by its id) on its own base, not the group's lowest (same as main.js)
+        const ownBase = new Map(reps.map((m) => [String(m.id), m.base]));
+        for (const node of gltf.scene.children) if (ownBase.has(node.name)) node.position.y += ownBase.get(node.name) - base;
+        texDedupe.dedupe(gltf.scene);
         gltf.scene.traverse(prepModelMesh);
         scene.add(gltf.scene);
         const g = modelGrid(gltf.scene, base);
         if (g) { g.name = md.name; modelGrids.push(g); }
-      } catch (e) { console.warn('model failed', md.file, e); }
+        mergeStatic(gltf.scene);
+      } catch (e) { console.warn('model failed', md.file, e); } finally { prog(); }
     }));
     for (const m of metas) if (m.replaced && m.xs && modelGrids.some((g) => coverage(g, m.xs, m.zs) > 0.5)) modelledIds.add(String(m.id));
   }
   if (C.generic?.length) {
     setMsg('加载楼宇模型…');
     const byId = new Map(metas.filter((m) => m.generic).map((m) => [String(m.id), m]));
+    const prog = progress('加载楼宇模型…', C.generic.length);
     await Promise.all(C.generic.map(async (ch) => {
       try {
         const gltf = await loader.loadAsync(ch.file);
@@ -374,9 +428,11 @@ async function main() {
           if (!m) { node.visible = false; continue; }
           node.position.y = m.base;
         }
+        texDedupe.dedupe(gltf.scene);
         gltf.scene.traverse(prepModelMesh);
+        mergeStatic(gltf.scene);
         scene.add(gltf.scene);
-      } catch (e) { console.warn('generic chunk failed', ch.file, e); }
+      } catch (e) { console.warn('generic chunk failed', ch.file, e); } finally { prog(); }
     }));
   }
 
@@ -402,22 +458,29 @@ async function main() {
     }
     treeList.push(t);
   }
-  buildTrees(ctx, treeList, isTouch);
+  buildTrees(ctx, treeList, tier.lite);
   buildLamps(ctx, C.roads);
   buildRoadSigns(ctx, C.roads);      // after the models: signs keep out of buildings too
   buildFlowers(ctx, C.flowers);
   const markers = C.markers || [];
   buildFence(ctx, boundary, openings);
   buildCars(ctx, C.roads, markers.filter((mk) => mk.cat === '停车场'));
-  walkers = createWalkers(ctx, C.roads, isTouch ? 40 : 90, isTouch ? 8 : 14);
+  walkers = createWalkers(ctx, C.roads, ...tier.walkers);
   // grass tufts, hedges, shrubs, benches follow the ground the terrain shows (ground.png), else the aerial land cover
   const lcAt = det.ground && det.groundMeta ? makeGroundReader(ctx, det.ground.image, det.groundMeta) : det.lc ? makeLandcoverReader(ctx, det.lc.image) : null;
-  if (!isTouch && lcAt) grass = createGrass(ctx, lcAt);
+  if (tier.grass && lcAt) grass = createGrass(ctx, lcAt);
   if (lcAt) {
     buildHedges(ctx, C.roads, lcAt);
-    if (!isTouch) buildShrubs(ctx, lcAt);
+    if (tier.shrubs) buildShrubs(ctx, lcAt);
     buildFurniture(ctx, C.roads, lcAt);
   }
+  // campus-wide hedges / shrubs / fence in 300 m chunks hidden by distance, road-name plates by distance (perf.js)
+  for (const o of [...scene.children]) {
+    const kind = o.userData.sanity?.kind;
+    if (o.isInstancedMesh && (kind === 'hedge' || kind === 'fence')) for (const part of splitInstanced(o, 300)) detail.tag(part, kind);
+    else if (kind === 'sign') detail.tag(o, 'sign');
+  }
+  compactGroups(scene);
 
   // preset views: the overview plus the main landmarks (seen from the south-south-east, ~55° down)
   home = overview(metas);
@@ -433,7 +496,15 @@ async function main() {
   buildPresetBar();
   showView(home.label);
   $('stats').textContent = `${metas.filter((m) => m.kind !== 'wall').length} 栋建筑 · ${(C.models?.length || 0)} 个精修模型 · ${treeList.length.toLocaleString()} 棵树`;
-  if (import.meta.env.DEV) window.__showcase = { scene, camera, controls, flyTo, presets, get home() { return home; }, heightAt, THREE };
+  qmenu = mountQualityMenu($('stats'), {   // 画质 button after the building / tree counts
+    current: tier, auto: Q.auto, detected: Q.detected, onPick: (t, o) => applyTier(t, o) });
+  if (import.meta.env.DEV) window.__showcase = { scene, camera, controls, flyTo, presets, get home() { return home; }, heightAt, THREE, renderer,
+    // 性能: await __showcase.perf.run('home' | 0..n preset index) → { gpuMs, cpuMs, calls, triK }
+    perf: { Q, detail, applyTier, get tier() { return tier; },
+      run(view, o) {
+        return devBench({ renderer, camera, composer: () => composer, step: () => step(1 / 60),
+          render: () => (composer ? composer.render() : renderer.render(scene, camera)) })(() => { anim = null; controls.autoRotate = false; setCamera(view === 'home' ? home : presets[view]); }, o);
+      } } };
   $('loading').remove();
   setTimeout(() => $('hint').classList.add('fade'), 12000);
   frame();

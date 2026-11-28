@@ -35,7 +35,7 @@ function gridAdd(grid, C, x0, z0, x1, z1, item) {
 
 // Sets ctx.inSport / inBuilding / buildingDist / wet / onSurface / topAt / blockedBy / clear.
 // Call once the buildings and the Blender models are in (model grids decide where a model stands).
-export function makeClearance(ctx, { roads = [], sports = [], metas = [], modelGrids = [], modelledIds = new Set(), junctions = [] } = {}) {
+export function makeClearance(ctx, { roads = [], sports = [], metas = [], modelGrids = [], modelledIds = new Set(), junctions = [], models = [] } = {}) {
   const { heightAt } = ctx;
   // pitches, courts and tracks: oriented boxes
   const obbs = sports.map(({ obb: [cx, cz, L, Wd, a] }) => ({ cx, cz, hl: L / 2, hw: Wd / 2, c: Math.cos(a), s: Math.sin(a) }));
@@ -76,6 +76,106 @@ export function makeClearance(ctx, { roads = [], sports = [], metas = [], modelG
   ctx.inBuilding = (x, z, m = 0) => ctx.buildingDist(x, z, Math.max(m, 0.01)) <= m;
 
   ctx.wet = (x, z) => !!ctx.waterAt && ctx.waterAt(x, z) !== null && !(ctx.deckAt && ctx.deckAt(x, z) !== null);
+
+  // ground a Blender model paves or plants itself (plazas, islands, curbs, plinths: surfaces within 1.5 m of its
+  // base), 0.5 m cells; vegetation keeps off it (东大门: no tree in the middle of the 北斗七星 plaza)
+  const CV = 0.5, cover = new Set(), va = new THREE.Vector3(), vb = new THREE.Vector3(), vc = new THREE.Vector3();
+  const vcount = (o) => { let n = 0; o.traverse((m) => { if (m.isMesh && m.visible) n += m.geometry.attributes.position?.count || 0; }); return n; };
+  const roots = [];
+  for (const md of models) {
+    // the model root sits at (md.x, md.z); a POI group the model replaces can sit at the same spot: take the heavier
+    const cands = ctx.scene.children.filter((o) => !o.isMesh && Math.abs(o.position.x - md.x) < 0.01 && Math.abs(o.position.z - md.z) < 0.01);
+    const root = cands.length > 1 ? cands.reduce((p, q) => (vcount(q) > vcount(p) ? q : p)) : cands[0];
+    if (!root) continue;
+    roots.push({ md, root });
+    root.updateMatrixWorld(true);
+    const base = root.position.y;
+    root.traverse((o) => {
+      if (!o.isMesh || o.isInstancedMesh || !o.visible) return;
+      const pos = o.geometry.attributes.position, idx = o.geometry.index, n = idx ? idx.count : pos.count;
+      for (let t = 0; t + 2 < n; t += 3) {
+        va.fromBufferAttribute(pos, idx ? idx.getX(t) : t).applyMatrix4(o.matrixWorld);
+        vb.fromBufferAttribute(pos, idx ? idx.getX(t + 1) : t + 1).applyMatrix4(o.matrixWorld);
+        vc.fromBufferAttribute(pos, idx ? idx.getX(t + 2) : t + 2).applyMatrix4(o.matrixWorld);
+        if (Math.max(va.y, vb.y, vc.y) > base + 1.5) continue;
+        const area = (vb.x - va.x) * (vc.z - va.z) - (vc.x - va.x) * (vb.z - va.z);
+        if (Math.abs(area) < 1e-6) continue;
+        for (let z = Math.floor(Math.min(va.z, vb.z, vc.z) / CV); z <= Math.floor(Math.max(va.z, vb.z, vc.z) / CV); z++)
+          for (let x = Math.floor(Math.min(va.x, vb.x, vc.x) / CV); x <= Math.floor(Math.max(va.x, vb.x, vc.x) / CV); x++) {
+            const px = (x + 0.5) * CV, pz = (z + 0.5) * CV;
+            const w0 = ((vb.x - px) * (vc.z - pz) - (vc.x - px) * (vb.z - pz)) / area, w1 = ((vc.x - px) * (va.z - pz) - (va.x - px) * (vc.z - pz)) / area;
+            if (w0 >= -0.05 && w1 >= -0.05 && w0 + w1 <= 1.05) cover.add(cellKey(x, z));
+          }
+      }
+    });
+  }
+  // DEV audit of the Blender models against the terrain and their collision grids (__campus.world.scanModels()):
+  //   float  feet of ground-level walls (< 2 m above the model base) hanging > 0.3 m over the terrain: samples, worst gap
+  //   bury   terrain > 1.2 m above the model's lowest geometry (walls / doors under the ground on a slope)
+  //   blind  collision cells with no model geometry at all above them (walls you cannot see; enclosed light wells
+  //          and courtyards show up here too, harmless when nothing outside reaches them)
+  ctx.scanModels = ({ min = 0 } = {}) => {
+    const out = [], a = new THREE.Vector3(), b = new THREE.Vector3(), d = new THREE.Vector3();
+    for (const { md, root } of roots) {
+      root.updateMatrixWorld(true);
+      const base = root.position.y, lo = new Map(), feet = new Map(), has = new Set(), C1 = 1, CH = 0.5;
+      const put = (x, z, y) => { const k = cellKey(Math.floor(x / C1), Math.floor(z / C1)); if (!lo.has(k) || y < lo.get(k)) lo.set(k, y); has.add(cellKey(Math.floor(x / CH), Math.floor(z / CH))); };
+      root.traverse((o) => {
+        if (!o.isMesh || o.isInstancedMesh || !o.visible) return;
+        const pos = o.geometry.attributes.position, idx = o.geometry.index, n = idx ? idx.count : pos.count;
+        for (let t = 0; t + 2 < n; t += 3) {
+          a.fromBufferAttribute(pos, idx ? idx.getX(t) : t).applyMatrix4(o.matrixWorld);
+          b.fromBufferAttribute(pos, idx ? idx.getX(t + 1) : t + 1).applyMatrix4(o.matrixWorld);
+          d.fromBufferAttribute(pos, idx ? idx.getX(t + 2) : t + 2).applyMatrix4(o.matrixWorld);
+          const area = (b.x - a.x) * (d.z - a.z) - (d.x - a.x) * (b.z - a.z), y0 = Math.min(a.y, b.y, d.y);
+          if (Math.abs(area) < 0.05) {          // walls: their footprint is their edges
+            for (const [p, q] of [[a, b], [b, d], [d, a]]) {
+              const m = Math.max(1, Math.ceil(Math.hypot(q.x - p.x, q.z - p.z) / 0.25));
+              for (let s = 0; s <= m; s++) put(p.x + (q.x - p.x) * s / m, p.z + (q.z - p.z) * s / m, y0);
+              if (Math.abs(p.y - y0) < 0.05 && Math.abs(q.y - y0) < 0.05)   // the wall's foot: a gap under it is a float
+                for (let s = 0; s <= m; s++) { const fk = cellKey(Math.floor((p.x + (q.x - p.x) * s / m) / C1), Math.floor((p.z + (q.z - p.z) * s / m) / C1)); if (!feet.has(fk) || y0 < feet.get(fk)) feet.set(fk, y0); }
+            }
+            continue;
+          }
+          for (let z = Math.floor(Math.min(a.z, b.z, d.z) / CH); z <= Math.floor(Math.max(a.z, b.z, d.z) / CH); z++)
+            for (let x = Math.floor(Math.min(a.x, b.x, d.x) / CH); x <= Math.floor(Math.max(a.x, b.x, d.x) / CH); x++) {
+              const px = (x + 0.5) * CH, pz = (z + 0.5) * CH;
+              const w0 = ((b.x - px) * (d.z - pz) - (d.x - px) * (b.z - pz)) / area, w1 = ((d.x - px) * (a.z - pz) - (a.x - px) * (d.z - pz)) / area;
+              if (w0 >= -0.05 && w1 >= -0.05 && w0 + w1 <= 1.05) put(px, pz, a.y * w0 + b.y * w1 + d.y * (1 - w0 - w1));
+            }
+        }
+      });
+      const r = { name: md.name, base: +base.toFixed(1), float: 0, floatMax: 0, floatAt: null, bury: 0, buryMax: 0, buryAt: null, blind: 0, blindAt: null };
+      // float: only wall feet count (a solid plinth's top is not hanging when its sides reach the ground); a foot is
+      // floating when nothing of the model reaches lower in that cell either
+      for (const [k, y0] of feet) {
+        const i = Math.round(k / 100003), kk = k - i * 100003, x = (i + 0.5) * C1, z = (kk + 0.5) * C1, g = heightAt(x, z);
+        if (y0 - base < 2 && y0 - g > 0.3 && lo.get(k) >= y0 - 0.05) { r.float++; if (y0 - g > r.floatMax) { r.floatMax = +(y0 - g).toFixed(1); r.floatAt = [Math.round(x), Math.round(z)]; } }
+      }
+      for (const [k, y0] of lo) {
+        const i = Math.round(k / 100003), kk = k - i * 100003, x = (i + 0.5) * C1, z = (kk + 0.5) * C1, g = heightAt(x, z);
+        if (g - y0 > 1.2) { r.bury++; if (g - y0 > r.buryMax) { r.buryMax = +(g - y0).toFixed(1); r.buryAt = [Math.round(x), Math.round(z)]; } }
+      }
+      const gr = modelGrids.find((q) => q.name === md.name);
+      if (gr) for (let kk = 0; kk < gr.nz; kk++) for (let i = 0; i < gr.nx; i++) {
+        if (!gr.solid[kk * gr.nx + i]) continue;
+        const x = gr.x0 + (i + 0.5) * gr.cell, z = gr.z0 + (kk + 0.5) * gr.cell;
+        if (!has.has(cellKey(Math.floor(x / CH), Math.floor(z / CH)))) { r.blind += gr.cell * gr.cell; r.blindAt ||= [+x.toFixed(1), +z.toFixed(1)]; }
+      }
+      r.blind = Math.round(r.blind);
+      if (r.floatMax > min || r.buryMax > 1.2 + min || r.blind > min) out.push(r);
+    }
+    return out;
+  };
+  ctx.onModel = (x, z, m = 0) => {
+    const r = Math.ceil(m / CV), i0 = Math.floor(x / CV), k0 = Math.floor(z / CV);
+    for (let k = k0 - r; k <= k0 + r; k++) for (let i = i0 - r; i <= i0 + r; i++) {
+      if (!cover.has(cellKey(i, k))) continue;
+      const dx = Math.max(0, Math.abs((i + 0.5) * CV - x) - CV / 2), dz = Math.max(0, Math.abs((k + 0.5) * CV - z) - CV / 2);
+      if (dx * dx + dz * dz <= m * m) return true;
+    }
+    return false;
+  };
 
   // every road and path surface: carriageway + sidewalks (same widths as world.js buildRoads), footpaths
   const RC = 16, rgrid = new Map();
@@ -130,9 +230,11 @@ export function makeClearance(ctx, { roads = [], sports = [], metas = [], modelG
   //   sport: extra margin around pitches; road: margin beyond the carriageway of any road but `self`;
   //   path: margin beyond any road / path surface incl. sidewalks (but `self`)
   //   cut: keep out of underpass cuts (walls, ramps, the trench under the deck; people may walk through)
-  ctx.blockedBy = (x, z, { r = 0, water = true, sport = 0, building = true, road = 0, path = false, self = null, cut = true } = {}) => {
+  //   cover: margin off a model's own paved / planted ground (false = allowed there)
+  ctx.blockedBy = (x, z, { r = 0, water = true, sport = 0, building = true, road = 0, path = false, self = null, cut = true, cover = false } = {}) => {
     if (water && ctx.wet(x, z)) return 'water';
     if (cut && corridors.length && ctx.inCut(x, z, r)) return 'underpass';
+    if (cover !== false && ctx.onModel(x, z, r + cover)) return 'model';
     if (sport !== false && ctx.inSport(x, z, r + sport)) return 'sport';
     if (building && ctx.inBuilding(x, z, r)) return 'building';
     if (road !== false && ctx.onRoad?.(x, z, self, r + road)) return 'road';
@@ -213,23 +315,23 @@ export function bankApron(ctx, T, renderH, dug, mat, { cell = 0.5 } = {}) {
 // Builders tag their meshes with userData.sanity = { kind, dy?, R? }; dy = height of the instance origin above
 // the object's foot, R = crown radius at scale 1 (trees). Rules per kind: placement options + height check.
 const RULES = {
-  tree: { o: { r: 0.25, road: 0.2, path: 0 }, h: 'ground' },
+  tree: { o: { r: 0.25, road: 0.2, path: 0, cover: 1.5 }, h: 'ground' },
   crown: { o: null },                                   // crown vs walls, checked separately
-  flower: { o: { r: 0.2, road: 0.2, path: 0 }, h: 'ground' },
+  flower: { o: { r: 0.2, road: 0.2, path: 0, cover: 0.5 }, h: 'ground' },
   lamp: { o: { r: 0.1, road: 0.05 }, h: 'top' },
   glamp: { o: { r: 0.1, road: 0.1, path: 0.05 }, h: 'top' },
   sign: { o: { r: 0.1, road: 0.1 }, h: 'top' },
-  hedge: { o: { r: 0.45, road: 0.3, path: 0 }, h: 'ground' },
+  hedge: { o: { r: 0.45, road: 0.3, path: 0, cover: 0.3 }, h: 'ground' },
   bench: { o: { r: 0.5, road: 0.2, path: 0 }, h: 'top', low: true },
   bin: { o: { r: 0.25, road: 0.05 }, h: 'top', low: true },
   car: { o: { r: 1.2, road: 0, path: 0 }, h: 'pad', low: true },
   streetcar: { o: { r: 1.0, road: false }, h: 'top', low: true },
-  ebike: { o: { r: 0.4, road: 0 }, h: 'top', low: true },
+  ebike: { o: { r: 0.4, road: 0.6 }, h: 'top', low: true },
   person: { o: { r: 0.25, road: false, cut: false }, h: 'top', low: true },
   fence: { o: { r: 0, road: false, building: false, sport: false }, h: 'ground' },
   shelter: { o: { r: 1.0, road: 0 }, h: 'top', low: true },
   busstop: { o: { r: 0.1, road: 0 }, h: 'top' },
-  grass: { o: { r: 0, road: false, path: 0, sport: 0 }, h: 'ground' },
+  grass: { o: { r: 0, road: false, path: 0, sport: 0, cover: 0.3 }, h: 'ground' },
 };
 
 export function scanWorld(ctx, scene, { limit = 30 } = {}) {
@@ -281,7 +383,7 @@ export function scanWorld(ctx, scene, { limit = 30 } = {}) {
   // roads / paths running through a building or model (centre line every 2 m, campus only): one issue per road
   // with the length inside
   for (const r of ctx.sanityRoads || []) {
-    if (r.w < 2) continue;
+    if (r.w < 2 || r.area) continue;      // area = paved square / street surface (road_audit "area"), furniture stands on it
     let inside = 0, at = null;
     for (let i = 0; i < r.pts.length - 1; i++) {
       const [x0, z0] = r.pts[i], [x1, z1] = r.pts[i + 1], L = Math.hypot(x1 - x0, z1 - z0), n = Math.max(1, Math.ceil(L / 2));

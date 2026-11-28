@@ -247,6 +247,11 @@ vec3 gOutside(vec2 p, GS s, vec3 c0, vec3 q, float dist) {
   vec2 luv = vec2((p.x + lcSize.x * 0.5) / lcSize.x, 1.0 - (p.y + lcSize.y * 0.5) / lcSize.y);
   float cls = floor(texture2D(lcMap, luv + jit).r * 255.0 + 0.5);
   vec3 a = c0 * (1.0 + 0.08 * q.y);
+  // cyan in the aerial off the campus is dust netting over building sites (西苑 west), not water or lawn: grey it
+  // and treat it as bare ground, so it no longer reads as a light-blue lake
+  float cy = smoothstep(0.03, 0.12, min(c0.g, c0.b) - c0.r);
+  a = mix(a, vec3(dot(a, vec3(0.3, 0.59, 0.11))) * vec3(1.02, 0.98, 0.9), cy);
+  if (cy > 0.5 && cls > 0.5 && cls < 9.5) cls = 9.0;
   if (cls < 0.5) return a;
   return mix(a, gCol(cls, s, c0, c0, q), 0.35 + 0.4 * (1.0 - smoothstep(60.0, 400.0, dist)));
 }
@@ -350,8 +355,12 @@ export function buildRoads(ctx, roads, tex, det = {}) {
     if (pts.length < 2) continue;
     const hw = r.w / 2, lift = 0.16 + Math.min(r.w, 18) * 0.006;
     const sw = car ? (r.sw ?? (r.w >= 7 ? 2.4 : 0)) : 0, CW = 0.18;
-    // bridge decks: level across each water crossing, 6 m approach ramps, footbridges arched (official map)
-    const pre = pts.map(([x, z]) => { const wl = ctx.waterAt ? ctx.waterAt(x, z) : null; return wl === null ? null : Math.max(wl + 1.6, heightAt(x, z) + 0.6); });
+    // bridge decks: level across each water crossing, 10 m approach ramps, footbridges arched (official map); the deck
+    // ~0.95 m over the water / 0.35 m over the bank (banks are levelled ~0.6 m above the water, tools/campus_terrain.py),
+    // so a crossing climbs ~0.35 m, not a 1 m hump in 6 m; many bridges are their own short OSM way, so the ramp
+    // cannot reach into the next way (地表观感: 跨湖的路和桥要缓)
+    const BR_RAMP = 10;
+    const pre = pts.map(([x, z]) => { const wl = ctx.waterAt ? ctx.waterAt(x, z) : null; return wl === null ? null : Math.max(wl + 0.95, heightAt(x, z) + 0.35); });
     const sArr = [0];
     for (let i = 1; i < pts.length; i++) sArr.push(sArr[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
     const decks = pre.slice();
@@ -362,12 +371,12 @@ export function buildRoads(ctx, roads, tex, det = {}) {
       const S0 = sArr[i] - 4, S1 = sArr[j - 1] + 4, top = Math.max(...pre.slice(i, j));
       const arch = NONCAR.has(r.kind) ? Math.min(1.5, (S1 - S0) * 0.07) : 0;
       for (let k = i; k < j; k++) decks[k] = top + arch * Math.sin(Math.PI * (sArr[k] - S0) / (S1 - S0));
-      for (let k = i - 1; k >= 0 && pre[k] === null && sArr[i] - sArr[k] < 6; k--) {
-        const g = heightAt(pts[k][0], pts[k][1]), t = 1 - (sArr[i] - sArr[k]) / 6;
+      for (let k = i - 1; k >= 0 && pre[k] === null && sArr[i] - sArr[k] < BR_RAMP; k--) {
+        const g = heightAt(pts[k][0], pts[k][1]), t = 1 - (sArr[i] - sArr[k]) / BR_RAMP;
         decks[k] = Math.max(g, g + (decks[i] - g) * t);
       }
-      for (let k = j; k < pts.length && pre[k] === null && sArr[k] - sArr[j - 1] < 6; k++) {
-        const g = heightAt(pts[k][0], pts[k][1]), t = 1 - (sArr[k] - sArr[j - 1]) / 6;
+      for (let k = j; k < pts.length && pre[k] === null && sArr[k] - sArr[j - 1] < BR_RAMP; k++) {
+        const g = heightAt(pts[k][0], pts[k][1]), t = 1 - (sArr[k] - sArr[j - 1]) / BR_RAMP;
         decks[k] = Math.max(g, g + (decks[j - 1] - g) * t);
       }
       i = j;
@@ -631,9 +640,29 @@ export function buildWater(ctx, list, normalTex, roads = []) {
     if (b.empty()) continue;
     const mesh = new THREE.Mesh(b.geometry(), m); mesh.castShadow = true; mesh.receiveShadow = true; scene.add(mesh);
   }
-  const inPoly = (x, z, pts) => { let s = false; for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) { const [xi, zi] = pts[i], [xj, zj] = pts[j]; if ((zi > z) !== (zj > z) && x < (xj - xi) * (z - zi) / (zj - zi) + xi) s = !s; } return s; };
+  // 性能: point-in-polygon tests only the edges spanning the point's 2 m z-band (same edges the ray can cross, so the
+  // result is identical); bankApron, tree / prop placement and the sanity rules call this hundreds of thousands of times
+  const BAND = 2;
+  for (const pl of pools) {
+    let x0 = Infinity, x1 = -Infinity, z0 = Infinity, z1 = -Infinity;
+    for (const [x, z] of pl.pts) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); z0 = Math.min(z0, z); z1 = Math.max(z1, z); }
+    const nb = Math.max(1, Math.ceil((z1 - z0) / BAND) + 1), bands = Array.from({ length: nb }, () => []);
+    for (let i = 0, j = pl.pts.length - 1; i < pl.pts.length; j = i++) {
+      const a = Math.min(pl.pts[i][1], pl.pts[j][1]), b = Math.max(pl.pts[i][1], pl.pts[j][1]);
+      for (let k = Math.floor((a - z0) / BAND); k <= Math.floor((b - z0) / BAND); k++) bands[k].push(i, j);
+    }
+    pl.ix = { x0, x1, z0, z1, bands };
+  }
+  const inPoly = (x, z, pl) => {
+    const { x0, x1, z0, z1, bands } = pl.ix;
+    if (x < x0 || x > x1 || z < z0 || z > z1) return false;
+    const e = bands[Math.floor((z - z0) / BAND)], pts = pl.pts;
+    let s = false;
+    for (let n = 0; n < e.length; n += 2) { const [xi, zi] = pts[e[n]], [xj, zj] = pts[e[n + 1]]; if ((zi > z) !== (zj > z) && x < (xj - xi) * (z - zi) / (zj - zi) + xi) s = !s; }
+    return s;
+  };
   // water level under a point (for bridges), or null on dry land
-  ctx.waterAt = (x, z) => { for (const pl of pools) if (inPoly(x, z, pl.pts)) return pl.level; return null; };
+  ctx.waterAt = (x, z) => { for (const pl of pools) if (inPoly(x, z, pl)) return pl.level; return null; };
   return mat;
 }
 
@@ -825,11 +854,23 @@ export function buildPois(ctx, pois) {
       g.add(mesh(flagGeo.clone().scale(1.4, 1.4, 1), new THREE.MeshStandardMaterial({ color: '#de2910', side: THREE.DoubleSide }), 1.26, 13, -2));
       h = 12;
     } else if (p.landmark === 'gate_generic') {
-      // campus gate from the official map's 出入口 list: two stone pillars, a beam with a sign, a guard booth
-      g.add(mesh(new THREE.BoxGeometry(1.4, 5.6, 1.4), M.pillar, -8, 2.8), mesh(new THREE.BoxGeometry(1.4, 5.6, 1.4), M.pillar, 8, 2.8),
-        mesh(new THREE.BoxGeometry(17.6, 1.1, 1.3), M.pillar, 0, 6.1), mesh(new THREE.BoxGeometry(6.5, 1.0, 0.25), M.stoneDark, 0, 6.1, 0.72),
-        mesh(new THREE.BoxGeometry(3, 2.8, 3), M.white, 11.5, 1.4), mesh(new THREE.BoxGeometry(3.6, 0.3, 3.6), M.navy, 11.5, 2.95));
-      h = 7;
+      // campus gate from the official map's 出入口 list: two stone pillars, a beam with a sign, a guard booth.
+      // pois.json may set span (pillar spacing, default 16 m), pillars:false / booth:false (booth built as a real
+      // building in extra_buildings), barrier:true (a boom barrier across the opening)
+      const span = p.span || 16, hs = span / 2;
+      if (p.pillars !== false) {
+        g.add(mesh(new THREE.BoxGeometry(1.4, 5.6, 1.4), M.pillar, -hs, 2.8), mesh(new THREE.BoxGeometry(1.4, 5.6, 1.4), M.pillar, hs, 2.8),
+          mesh(new THREE.BoxGeometry(span + 1.6, 1.1, 1.3), M.pillar, 0, 6.1), mesh(new THREE.BoxGeometry(Math.min(6.5, span * 0.6), 1.0, 0.25), M.stoneDark, 0, 6.1, 0.72));
+      }
+      if (p.booth !== false) {
+        g.add(mesh(new THREE.BoxGeometry(3, 2.8, 3), M.white, hs + 3.5, 1.4), mesh(new THREE.BoxGeometry(3.6, 0.3, 3.6), M.navy, hs + 3.5, 2.95));
+      }
+      if (p.barrier) {      // boom barrier: post at one side, red-white arm across most of the opening, 1 m up
+        const arm = Math.max(3, span - 1.5);
+        g.add(mesh(new THREE.BoxGeometry(0.5, 1.1, 0.5), M.white, -hs + 0.3, 0.55),
+          mesh(new THREE.BoxGeometry(arm, 0.12, 0.12), new THREE.MeshStandardMaterial({ color: '#d93b30', roughness: 0.6 }), -hs + 0.3 + arm / 2, 1.0));
+      }
+      h = p.pillars === false ? 3 : 7;
     } else if (p.landmark === 'obs_field' && p.plots) {
       // 气象观测场: fenced instrument plots (lawn + white walkway grid + Stevenson screens + masts), dish, brick path
       const L = (x, z) => [x - p.x, z - p.z];
@@ -1054,7 +1095,7 @@ export function buildTrees(ctx, trees, lite) {
     if (nearWater(t[0], t[1])) return u < 0.5 ? 'willow' : u < 0.75 ? 'column' : 'broad';
     return u < 0.4 ? 'round' : u < 0.68 ? 'broad' : u < 0.85 ? 'small' : 'slim';
   };
-  const CH = 600, groups = new Map(), VARS = ['broad', 'round', 'small', 'slim', 'willow', 'red', 'simple', 'conifer', 'column'];
+  const CH = ctx.treeChunk || 600, groups = new Map(), VARS = ['broad', 'round', 'small', 'slim', 'willow', 'red', 'simple', 'conifer', 'column'];
   trees.forEach((t, i) => {
     const near = inCampus(t[0], t[1]);
     if (lite && i % 2) return;
@@ -1066,14 +1107,21 @@ export function buildTrees(ctx, trees, lite) {
     const a = Math.min(1, Math.max(0, 0.5 * hash(Math.floor(t[0] / 25) + 0.3, Math.floor(t[1] / 25) + 0.7) + 0.5 * hash(t[1] * 1.9, t[0] * 2.3)));
     const h = (h0 + (h1 - h0) * a) * (t[2] / 9) ** 0.5, cr0 = r0 + (r1 - r0) * (0.7 * a + 0.3 * hash(t[0] * 5.3, t[1] * 4.1));
     let cr = t.length > 4 && t[3] < 3.0 ? Math.min(cr0, t[3]) : cr0;
-    if (near && ctx.buildingDist) cr = Math.max(1.0, Math.min(cr, ctx.buildingDist(t[0], t[1], Math.min(4, cr)) + 0.4));   // no crown in a wall (search <= 4 m, sanity.js PAD)
+    // no crown in a wall, inside the campus or not (search <= 4 m, sanity.js PAD; / 1.1 for the crown's x/z jitter below)
+    if (ctx.buildingDist) cr = Math.max(1.0, Math.min(cr, (ctx.buildingDist(t[0], t[1], Math.min(4, cr * 1.1)) + 0.4) / 1.1));
     const key = `${Math.floor((t[0] + W / 2) / CH)},${Math.floor((t[1] + D / 2) / CH)}`;
     if (!groups.has(key)) groups.set(key, Object.fromEntries(VARS.map((k) => [k, []])));
     groups.get(key)[v].push([t[0], t[1], h, cr]);
   });
   const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), s = new THREE.Vector3(), p = new THREE.Vector3(), c = new THREE.Color(), up = new THREE.Vector3(0, 1, 0);
+  // 性能 (perf.js): far away a chunk draws one 20-triangle blob per broadleaf and an 8-sided cone per conifer instead of
+  // the lobed crowns, leaf cards and trunks (ctx.detail swaps them by camera distance; unit size, instance scale = tree size)
+  const det = ctx.detail;
+  const FAR = det && { blob: gradient(new THREE.IcosahedronGeometry(1, 0).scale(1, 0.34, 1).translate(0, 0.66, 0), 0.32, 1.0),
+    cone: gradient(new THREE.ConeGeometry(1, 0.85, 8, 1, true).translate(0, 0.575, 0), 0.15, 1.0, 0.5, 1.05) };
   for (const grp of groups.values()) {
     const all = VARS.flatMap((k) => grp[k].map((t) => [t, k]));
+    const far = { blob: [], cone: [] };
     const tm = new THREE.InstancedMesh(trunkG, trunkM, all.length);
     all.forEach(([t, k], i) => {
       const [R, H] = DIM[geoOf(k)], sx = t[3] / R, sy = t[2] / H;
@@ -1081,6 +1129,8 @@ export function buildTrees(ctx, trees, lite) {
       const tw = Math.min(1.6, Math.sqrt(sx * sy)); s.set(tw, sy, tw); m4.compose(p, q, s); tm.setMatrixAt(i, m4);
     });
     tm.computeBoundingSphere(); tm.receiveShadow = true; tm.castShadow = true; tm.userData.sanity = { kind: 'tree' }; scene.add(tm);
+    const cs = det && tm.boundingSphere.clone();     // one LOD distance per chunk, so crowns and far blobs switch together
+    if (cs) cs.radius += 15;
     for (const k of VARS) {
       const list = grp[k];
       if (!list.length) continue;
@@ -1095,16 +1145,28 @@ export function buildTrees(ctx, trees, lite) {
         m4.compose(p, q, s); cm.setMatrixAt(i, m4);
         c.setHSL((hh0 + (hh1 - hh0) * (0.6 * pg + 0.4 * r1)) % 1, s0 + (s1 - s0) * ((r1 * 7) % 1), l0 + (l1 - l0) * (0.5 * pg + 0.5 * ((r1 * 13) % 1)), THREE.SRGBColorSpace);
         cm.setColorAt(i, c);
+        if (FAR) far[gk === 'conifer' || gk === 'column' ? 'cone' : 'blob'].push([p.clone(), q.clone(), new THREE.Vector3(t[3] * (0.9 + r1 * 0.2), t[2], t[3] * (1.1 - r1 * 0.2)), c.clone()]);
       });
       cm.computeBoundingSphere(); cm.castShadow = true; cm.receiveShadow = true;
       cm.userData.sanity = { kind: 'crown', R };   // sanity.js scan
       scene.add(cm);
+      det?.tag(cm, 'crown', cs);
       if (CARDS[gk]) {
         const lm = new THREE.InstancedMesh(CARDS[gk], leafM, list.length);
         lm.instanceMatrix.copy(cm.instanceMatrix); lm.instanceColor = cm.instanceColor;
         lm.computeBoundingSphere(); lm.receiveShadow = true;
         scene.add(lm);
+        det?.tag(lm, 'cards', cs);
       }
+    }
+    det?.tag(tm, 'trunk', cs);
+    if (FAR) for (const [k, list] of Object.entries(far)) {
+      if (!list.length) continue;
+      const fm = new THREE.InstancedMesh(FAR[k], k === 'cone' ? coniferM : crownM, list.length);
+      list.forEach(([pp, qq, ss, cc], i) => { m4.compose(pp, qq, ss); fm.setMatrixAt(i, m4); fm.setColorAt(i, cc); });
+      fm.computeBoundingSphere(); fm.castShadow = true; fm.receiveShadow = true;
+      scene.add(fm);
+      det.tag(fm, 'crownFar', cs);
     }
   }
 }
@@ -1124,7 +1186,7 @@ export function buildFlowers(ctx, flowers) {
   // the official 百花 points can sit on a road or the riverbank: keep each tree off carriageways + sidewalks and
   // out of the water, nudging it around its point, else drop it
   const blocked = (x, z) => (ctx.onRoad && ctx.onRoad(x, z, null, 4.0)) || (ctx.waterAt && ctx.waterAt(x, z) !== null)
-    || !!ctx.blockedBy?.(x, z, { r: 0.3, sport: 1, road: false, path: 0 });     // nor in a building, on a path or pitch
+    || !!ctx.blockedBy?.(x, z, { r: 0.3, sport: 1, road: false, path: 0, cover: 0.5 });     // nor in a building, on a path, pitch or model plaza
   for (const [x, z, name] of flowers) for (let i = 0; i < 5; i++) {
     for (let k = 0; k < 12; k++) {
       const a = i * 1.257 + x + k * 0.9, r = (i ? 3.5 + (i % 2) * 2 : 0) + k * 1.5;
@@ -1204,7 +1266,7 @@ export function buildLamps(ctx, roads) {
   const headGeo = new THREE.BoxGeometry(0.32, 0.14, 0.55).translate(0, 5.88, -1.2);
   const spots = [];
   for (const r of roads) {
-    if (r.w < 5.5) continue;
+    if (r.w < 5.5 || r.area) continue;      // area = paved street surface (road_audit "area"), not a carriageway
     let acc = 12, side = 1;
     for (let i = 0; i < r.pts.length - 1; i++) {
       const [x0, z0] = r.pts[i], [x1, z1] = r.pts[i + 1];
@@ -1236,7 +1298,7 @@ export function buildLamps(ctx, roads) {
   // garden lamps (庭院灯) along campus footpaths: 3.3 m post with a globe, every 20 m, alternating sides
   const gs = [];
   for (const r of roads) {
-    if (!NONCAR.has(r.kind) || r.kind === 'steps') continue;
+    if (!NONCAR.has(r.kind) || r.kind === 'steps' || r.area) continue;
     let acc = 8, side = 1;
     for (let i = 0; i < r.pts.length - 1; i++) {
       const [x0, z0] = r.pts[i], [x1, z1] = r.pts[i + 1];

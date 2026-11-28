@@ -87,15 +87,17 @@ export function makeAirWall(rings, openings, { gap = 14, apron = 10, bridge = 36
 // ---------------------------------------------------------------- solid models
 // Occupancy grid of a model at walking height (0.4-2.2 m above its base): cells its surfaces pass through,
 // gaps up to ~1 m closed, and everything enclosed by them (the inside of the building) solid.
-export function modelGrid(root, base, { cell = 0.5, y0 = 0.4, y1 = 2.2 } = {}) {
+// groundAt(x, z): measure the slab from the local ground instead of the model base (models spread over a slope,
+// e.g. 东大门 / the food street: paving 0.2 m above the ground must not count as a wall where the ground rises).
+export function modelGrid(root, base, { cell = 0.5, y0 = 0.4, y1 = 2.2, groundAt = null } = {}) {
   root.updateMatrixWorld(true);
   const box = new THREE.Box3().setFromObject(root);
-  if (box.isEmpty() || box.max.y < base + y0) return null;
+  if (box.isEmpty() || (!groundAt && box.max.y < base + y0)) return null;
   const x0 = box.min.x - 3 * cell, z0 = box.min.z - 3 * cell;
   const nx = Math.ceil((box.max.x - x0) / cell) + 4, nz = Math.ceil((box.max.z - z0) / cell) + 4;
   if (nx * nz > 6e6) return null;
   const occ = new Uint8Array(nx * nz);
-  const lo = base + y0, hi = base + y1, planes = [lo, (lo + hi) / 2, hi];
+  const lo = groundAt ? y0 : base + y0, hi = groundAt ? y1 : base + y1, planes = [lo, (lo + hi) / 2, hi];
   const mark = (x, z) => {
     const i = Math.floor((x - x0) / cell), k = Math.floor((z - z0) / cell);
     if (i >= 0 && i < nx && k >= 0 && k < nz) occ[k * nx + i] = 1;
@@ -139,6 +141,7 @@ export function modelGrid(root, base, { cell = 0.5, y0 = 0.4, y1 = 2.2 } = {}) {
       for (let t = 0; t + 2 < n; t += 3) {
         const i0 = idx ? idx.getX(t) : t, i1 = idx ? idx.getX(t + 1) : t + 1, i2 = idx ? idx.getX(t + 2) : t + 2;
         a.fromBufferAttribute(pos, i0).applyMatrix4(m); b.fromBufferAttribute(pos, i1).applyMatrix4(m); c.fromBufferAttribute(pos, i2).applyMatrix4(m);
+        if (groundAt) { a.y -= groundAt(a.x, a.z); b.y -= groundAt(b.x, b.z); c.y -= groundAt(c.x, c.z); }
         tri(a, b, c);
       }
     }

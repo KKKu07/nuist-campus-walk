@@ -66,11 +66,16 @@ export function makeUnderpasses(list, terrainAt) {
     const h = Math.min(g, u.floorY + (u.sLow - p.s) * (st.slope || 0.45));
     return Math.max(roadY, u.floorY + 0.16 * Math.floor((h - u.floorY) / 0.16));
   };
+  // stepped segments (underpasses.json "stepped": segment indices): the floor climbs in 0.16 m risers instead of a ramp
+  const stepY = (u, i, y) => {
+    const lo = Math.min(u.prof[i][2], u.prof[i + 1][2]);
+    return lo + 0.16 * Math.floor((y - lo) / 0.16 + 1e-6);
+  };
   const cutAt = (x, z) => {
     for (const u of ups) {
       const p = project(x, z, u.prof);
       const beyond = (p.t === 0 && p.i === 0) || (p.t === 1 && p.i === u.prof.length - 2);   // past either end of the cut
-      if (p.d <= u.half && !beyond) return u.stairs ? stairY(u, p, x, z) : p.y;
+      if (p.d <= u.half && !beyond) return u.stepped?.includes(p.i) ? stepY(u, p.i, p.y) : u.stairs ? stairY(u, p, x, z) : p.y;
     }
     return null;
   };
@@ -131,15 +136,38 @@ export function makeUnderpasses(list, terrainAt) {
       for (let i = 0, acc = 0; i < P.length - 1; i++) {
         const [ax, az, ay] = P[i], [bx, bz, by] = P[i + 1], L = Math.hypot(bx - ax, bz - az), n = Math.max(1, Math.ceil(L));
         const nx = -(bz - az) / L, nz = (bx - ax) / L;
-        for (let k = 0; k < n + (i === P.length - 2 ? 1 : 0); k++) samples.push([ax + (bx - ax) * k / n, az + (bz - az) * k / n, ay + (by - ay) * k / n, nx, nz, acc + L * k / n]);
+        for (let k = 0; k < n + (i === P.length - 2 ? 1 : 0); k++) samples.push([ax + (bx - ax) * k / n, az + (bz - az) * k / n, ay + (by - ay) * k / n, nx, nz, acc + L * k / n, i]);
         acc += L;
+      }
+      // stepped segments: treads + risers across the cut (the 1 m floor strips skip them)
+      for (const i of u.stepped || []) {
+        const [ax, az, ay] = P[i], [bx, bz, by] = P[i + 1], L = Math.hypot(bx - ax, bz - az), h = u.half;
+        const nx = -(bz - az) / L, nz = (bx - ax) / L, lo = Math.min(ay, by), hi = Math.max(ay, by);
+        const at = (y) => (y - ay) / ((by - ay) || 1e-9);            // fraction along the segment where the ramp is at y
+        const cuts = [0];
+        for (let y = lo + 0.16; y < hi - 1e-6; y += 0.16) cuts.push(at(y));
+        cuts.push(1);
+        cuts.sort((a, b) => a - b);
+        for (let k = 0; k < cuts.length - 1; k++) {
+          const f0 = cuts[k], f1 = cuts[k + 1], fm = (f0 + f1) / 2;
+          const yt = stepY(u, i, ay + (by - ay) * fm) + 0.02;
+          const p0 = [ax + (bx - ax) * f0, az + (bz - az) * f0], p1 = [ax + (bx - ax) * f1, az + (bz - az) * f1];
+          floor.triFace([p0[0] + nx * h, yt, p0[1] + nz * h], [p1[0] + nx * h, yt, p1[1] + nz * h], [p1[0] - nx * h, yt, p1[1] - nz * h], floorC, () => [0, 0]);
+          floor.triFace([p0[0] + nx * h, yt, p0[1] + nz * h], [p1[0] - nx * h, yt, p1[1] - nz * h], [p0[0] - nx * h, yt, p0[1] - nz * h], floorC, () => [0, 0]);
+          if (k > 0) {                                                 // riser up from the previous tread
+            const yp = stepY(u, i, ay + (by - ay) * (cuts[k - 1] + f0) / 2) + 0.02;
+            if (Math.abs(yt - yp) > 0.01) wall2(floor, p0[0] + nx * h, p0[1] + nz * h, p0[0] - nx * h, p0[1] - nz * h, Math.min(yp, yt), Math.max(yp, yt), floorC);
+          }
+        }
       }
       // floor strip across the whole cut (under the road surface), and the two side walls + railings
       for (let k = 0; k < samples.length - 1; k++) {
-        const [x0, z0, y0, nx, nz, s0] = samples[k], [x1, z1, y1, , , s1] = samples[k + 1], h = u.half;
+        const [x0, z0, y0, nx, nz, s0, seg] = samples[k], [x1, z1, y1, , , s1] = samples[k + 1], h = u.half;
         const fh = u.stairs && k < u.sLow ? u.stairs.road : h;     // beside the stairs the floor strip is the road only
-        floor.triFace([x0 + nx * fh, y0 + 0.02, z0 + nz * fh], [x1 + nx * fh, y1 + 0.02, z1 + nz * fh], [x1 - nx * fh, y1 + 0.02, z1 - nz * fh], floorC, () => [0, 0]);
-        floor.triFace([x0 + nx * fh, y0 + 0.02, z0 + nz * fh], [x1 - nx * fh, y1 + 0.02, z1 - nz * fh], [x0 - nx * fh, y0 + 0.02, z0 - nz * fh], floorC, () => [0, 0]);
+        if (!u.stepped?.includes(seg)) {
+          floor.triFace([x0 + nx * fh, y0 + 0.02, z0 + nz * fh], [x1 + nx * fh, y1 + 0.02, z1 + nz * fh], [x1 - nx * fh, y1 + 0.02, z1 - nz * fh], floorC, () => [0, 0]);
+          floor.triFace([x0 + nx * fh, y0 + 0.02, z0 + nz * fh], [x1 - nx * fh, y1 + 0.02, z1 - nz * fh], [x0 - nx * fh, y0 + 0.02, z0 - nz * fh], floorC, () => [0, 0]);
+        }
         const roofed = inCov(u, (s0 + s1) / 2);
         if (roofed) {                                   // tunnel roof between the mouths, just under the ground surface
           const g = Math.min(terrainAt(x0 + nx * h, z0 + nz * h), terrainAt(x0 - nx * h, z0 - nz * h), terrainAt(x1 + nx * h, z1 + nz * h), terrainAt(x1 - nx * h, z1 - nz * h));

@@ -222,7 +222,7 @@ export function createWalkers(ctx, roads, count, groups = 14) {
 // cls(x, z): ground class reader (makeGroundReader: the ground material map the terrain shows; or land cover).
 // Never on a pitch / court / track, a road or path surface, or inside a building (sanity.js rules).
 export function createGrass(ctx, cls, max = 9000) {
-  const lawn = (x, z) => cls(x, z) === 1 && !ctx.inSport?.(x, z, 1) && !ctx.onSurface?.(x, z, 0.3) && !ctx.inBuilding?.(x, z, 0) && !ctx.inCut?.(x, z, 0.5);   // nor in an underpass cut
+  const lawn = (x, z) => cls(x, z) === 1 && !ctx.inSport?.(x, z, 1) && !ctx.onSurface?.(x, z, 0.3) && !ctx.inBuilding?.(x, z, 0) && !ctx.inCut?.(x, z, 0.5) && !ctx.onModel?.(x, z, 0.3);   // nor in an underpass cut or on a model's own plaza / lawn
   const blades = [];
   for (let k = 0; k < 6; k++) {
     const a = k / 6 * Math.PI * 2 + 0.3, lean = 0.12 + (k % 3) * 0.05, h = 0.28 + (k % 2) * 0.12;
@@ -329,7 +329,7 @@ export function buildShrubs(ctx, lcAt, { step = 2.3 } = {}) {
     if (lcAt(jx, jz) !== 2) continue;
     const edge = [[2.6, 0], [-2.6, 0], [0, 2.6], [0, -2.6]].some(([dx, dz]) => PAVED.has(lcAt(jx + dx, jz + dz)));
     if (hash(jx * 1.3, jz * 0.7) > (edge ? 0.55 : 0.06)) continue;
-    if (ctx.blockedBy?.(jx, jz, { r: 0.9, sport: 1, road: 0.4, path: 0.3 })) continue;
+    if (ctx.blockedBy?.(jx, jz, { r: 0.9, sport: 1, road: 0.4, path: 0.3, cover: 0.3 })) continue;   // cover: not on a model's own plaza / island (常识排查)
     spots.push([jx, jz]);
   }
   const geo = new THREE.IcosahedronGeometry(1, 1), pos = geo.attributes.position, col = [];
@@ -376,7 +376,7 @@ export function buildHedges(ctx, roads, lcAt) {
         if (!((cl === 1 || cl === 2) && ctx.inCampus(x, z) && !ctx.onRoad?.(x, z, r, 1.5))) continue;
         // the 3 m hedge (both ends too) keeps off water, pitches, buildings and every other road or path it would
         // block, and leaves building entrances open (sanity.js)
-        if (ctx.blockedBy && [-1.4, 0, 1.4].some((u) => ctx.blockedBy(x + dx * u, z + dz * u, { r: 0.45, road: false, path: 0 }))) continue;
+        if (ctx.blockedBy && [-1.4, 0, 1.4].some((u) => ctx.blockedBy(x + dx * u, z + dz * u, { r: 0.45, road: false, path: 0, cover: 0.3 }))) continue;
         if (doors.some((d) => Math.hypot(d.x - x, d.z - z) < 6)) continue;
         spots.push([x, z, Math.atan2(dx, dz), hash(r.pts[0][0] * 0.13 + i * 7.1 + s, r.pts[0][1] * 0.17)]);   // variety per run
       }
